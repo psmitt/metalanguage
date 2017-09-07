@@ -1,3 +1,5 @@
+## 0.3.0 - GitHub repository recreated due to publishing errors
+
 ## 0.2.0 - XML-based syntax template for maximum readability and fast learning
   * DTD, XSL and default CSS for the XML-based syntax
   * Screenshot of the self-descriptive Syntax.xml
