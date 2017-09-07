@@ -1,3 +1,5 @@
 .DS_Store
 npm-debug.log
 node_modules
+schema-for-xslt30.rnc
+XML2JSON.xsl
