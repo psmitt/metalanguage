@@ -1,0 +1,97 @@
+body {
+  font-family: Cambria;
+  font-size: large;
+  line-height: 30px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:target {
+  background-color: Yellow;
+}
+
+fieldset {
+  display: inline-block;
+  padding-left: 15px;
+}
+
+legend {
+  font-weight: bold;
+}
+
+#toggle-guide {
+  color: Blue;
+  font-size: smaller;
+  font-weight: normal;
+  vertical-align: top;
+  cursor: pointer;
+}
+
+section {
+  margin-top: 20px;
+}
+
+div.definition {
+  margin-left: 20px;
+}
+
+span {
+  margin-left: 10px;
+}
+
+span > :first-child,
+span > :first-child  > :first-child {
+  margin: 0;
+}
+
+span.nonterminal {
+  font-style: italic;
+  color: black;
+}
+
+span.token {
+  color: Maroon;
+  font-weight: bold;
+}
+
+span.terminal {
+  font-family: Anonymous Pro, monospace;
+  font-weight: bold;
+}
+
+span.case-insensitive {
+  color: darkgreen;
+}
+
+span.regular {
+  color: Blue;
+  font-weight: normal;
+}
+
+span.optional {
+  background-color: Gainsboro;
+  background-clip: content-box;
+}
+
+span.repeated {
+  padding-bottom: 2px;
+  border-bottom: thin solid red;
+}
+
+span.exception {
+  text-decoration: line-through;
+}
+
+div.comment {
+  color: Sienna;
+  margin-left: 10px;
+}
+
+div.definition div.comment {
+  display: inline-block;
+  margin-left: 50px;
+  vertical-align: top;
+}

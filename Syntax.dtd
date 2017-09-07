@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT syntax      ((rule|comment)+)>
+<!ATTLIST syntax
+          language    CDATA #REQUIRED
+          start       CDATA #REQUIRED
+>
+<!ELEMENT rule        (definition+)>
+<!ATTLIST rule
+          name        CDATA #REQUIRED
+          token       (yes|no) "no"
+>
+<!ELEMENT definition  ((repeated|optional|nonterminal|terminal)+,exception?,comment?)>
+<!ELEMENT repeated    ((optional|nonterminal|terminal)+)>
+<!ELEMENT optional    ((nonterminal|terminal)+)>
+<!ELEMENT nonterminal EMPTY>
+<!ATTLIST nonterminal
+          name        CDATA #REQUIRED
+>
+<!ELEMENT terminal    (#PCDATA)>
+<!ATTLIST terminal
+          type        (case-sensitive|case-insensitive|regular) "case-sensitive"
+>
+<!ELEMENT exception   ((repeated|nonterminal|terminal)+)>
+<!ELEMENT comment     (#PCDATA)>

@@ -1,0 +1,145 @@
+(* ISO/IEC 19757-2:2008 Annex C *)
+
+(* Similarly to W3C, this syntax uses ::= as defining symbol and + as repetition symbol. *)
+
+topLevel ::= decl* (pattern | grammarContent*)
+
+decl ::= ("namespace" identifierOrKeyword "=" namespaceURILiteral)
+       | ("default" "namespace" [identifierOrKeyword] "=" namespaceURILiteral)
+       | ("datatypes" identifierOrKeyword "=" literal)
+
+pattern ::= ("element" nameClass "{" pattern "}")
+          | ("attribute" nameClass "{" pattern "}")
+          | (pattern ("," pattern)+)
+          | (pattern ("&" pattern)+)
+          | (pattern ("|" pattern)+)
+          | (pattern "?")
+          | (pattern "*")
+          | (pattern "+")
+          | ("list" "{" pattern "}")
+          | ("mixed" "{" pattern "}")
+          | identifier
+          | ("parent" identifier)
+          | "empty"
+          | "text"
+          | ([datatypeName] datatypeValue)
+          | (datatypeName ["{" param* "}"] [exceptPattern])
+          | "notAllowed"
+          | ("external" anyURILiteral [inherit])
+          | ("grammar" "{" grammarContent* "}")
+          | ("(" pattern ")")
+
+param ::= identifierOrKeyword "=" literal
+
+exceptPattern ::= "-" pattern
+
+grammarContent ::= start
+                 | define
+                 | ("div" "{" grammarContent* "}")
+                 | ("include" anyURILiteral [inherit] ["{" includeContent* "}"])
+
+includeContent ::= define
+                 | start
+                 | ("div" "{" includeContent* "}")
+
+start ::= "start" assignMethod pattern
+
+define ::= identifier assignMethod pattern
+
+assignMethod ::= "="
+               | "|="
+               | "&="
+
+nameClass ::= name
+            | (nsName [exceptNameClass])
+            | (anyName [exceptNameClass])
+            | (nameClass "|" nameClass)
+            | ("(" nameClass ")")
+
+name ::= identifierOrKeyword
+       | CName
+
+exceptNameClass ::= "-" nameClass
+
+datatypeName ::= CName
+               | "string"
+               | "token"
+
+datatypeValue ::= literal
+
+anyURILiteral ::= literal
+
+namespaceURILiteral ::= literal
+                      | "inherit"
+
+inherit ::= "inherit" "=" identifierOrKeyword
+
+identifierOrKeyword ::= identifier
+                      | keyword
+
+identifier ::= (NCName - keyword)
+             | quotedIdentifier
+(* NCName is defined in http://www.w3.org/TR/REC-xml-names
+
+   In order to use a keyword as an identifier, it must be quoted with \.
+   It is not necessary to quote a keyword that is used as
+   the name of an element or attribute or as datatype parameter.
+*)
+quotedIdentifier ::= "\" NCName
+
+CName ::= NCName ":" NCName
+
+nsName ::= NCName ":*"
+
+anyName ::= "*"
+
+literal ::= literalSegment ("~" literalSegment)+
+
+literalSegment ::= ('"' (Char - ('"' | newline))* '"')
+                 | ("'" (Char - ("'" | newline))* "'")
+                 | ('"""' (['"'] ['"'] (Char - '"'))* '"""')
+                 | ("'''" (["'"] ["'"] (Char - "'"))* "'''")
+
+(* Char is defined in http://www.w3.org/TR/REC-xml as
+
+   Char ::= #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]
+   /* any Unicode character, excluding the surrogate blocks, FFFE, and FFFF. */
+*)
+
+keyword ::= "attribute"
+          | "default"
+          | "datatypes"
+          | "div"
+          | "element"
+          | "empty"
+          | "external"
+          | "grammar"
+          | "include"
+          | "inherit"
+          | "list"
+          | "mixed"
+          | "namespace"
+          | "notAllowed"
+          | "parent"
+          | "start"
+          | "string"
+          | "text"
+          | "token"
+
+(* There is no notion of operator precedence.
+   It is an error for patterns to combine the |, &, , and - operators
+   without using parentheses to make the grouping explicit.
+   For example, foo | bar, baz is not allowed; instead, either (foo | bar), baz or foo | (bar, baz) must be used.
+   A similar restriction applies to name classes and the use of the | and - operators.
+   These restrictions are not expressed in the above EBNF
+*)
+
+(* An annotation in square brackets can be inserted immediately before
+   a pattern, param, nameClass, grammarContent or includeContent.
+   It has the following syntax: *)
+
+annotation ::= "[" annotationAttribute* annotationElement* "]"
+
+annotationAttribute ::= name "=" literal
+
+annotationElement ::= name "[" annotationAttribute* (annotationElement | literal)* "]"

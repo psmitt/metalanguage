@@ -1,0 +1,119 @@
+; Cursive Script Object Notation ( https://noe.mearie.org/cson/ )
+
+CSON-text = object / object-items / array
+
+object = begin-object [ object-items ] end-object
+
+begin-object    = ws %x7B ws    ; { left curly bracket
+end-object      = ws %x7D ws    ; } right curly bracket
+
+object-items = member *( value-separator member ) [ value-separator ]
+
+member = name name-separator value
+
+name = bare-string / string
+
+bare-string = id-start *id-end  ; an union of JS identifier and XML name
+id-start = %x24                 ; $ dollar sing
+         / %x2D                 ; - hyphen-minus
+         / %x41-5A              ; A-Z latin capital letters
+         / %x5F                 ; _ low line
+         / %x61-7A              ; a-z latin small letters
+         / %xAA                 ; ª feminin ordinal indicator
+         / %xB5                 ; µ micro sign
+         / %xBA                 ; º masculin ordinal indicator
+         / %xC0-D6              ; Latin-1 Supplement letters, except × multiplication sign
+         / %xD8-F6              ; Latin-1 Supplement letters, except ÷ division sign
+         / %xF8-02FF            ; Latin Extended, IPA, Spacing Modifiers
+         / %x0370-037D          ; Greek and Coptic, except ; greek question mark
+         / %x037F-1FFF          ; Other Languages
+         / %x200C-200D          ; zero width non-joiner and joiner characters
+         / %x2070-218F          ; Super/Subscripts, Currency, Combining, Letterlike, Number Forms
+         / %x2C00-2FEF          ; supplementary lanugage symbols
+         / %x3001-D7FF          ; Ideographs
+         / %xF900-FDCF          ; Compatibility Ideographs, Presentation Forms
+         / %xFDF0-FFFD          ; Presentation, Halfwidth and Fullwidth Forms
+         / %x10000-EFFFF        ; Other Planes
+id-end = id-start
+         / %x2E                 ; . full stop
+         / %x30-39              ; 0-9 decimal digits
+         / %xB7                 ; · middle dot
+         / %x0300-036F          ; Combining Diacritical Marks
+         / %x203F-2040          ; ‿⁀ undertie and tie characters
+
+string = quotation-mark *dquoted-char quotation-mark
+       / apostrophe-mark *squoted-char apostrophe-mark
+
+quotation-mark = %x22           ; " quotation mark
+dquoted-char = dquoted-unescaped / escaped
+dquoted-unescaped = %x20-21 / %x23-5B / %x5D-10FFFF ; not " or \
+
+apostrophe-mark = %x27          ; ' apostrophe
+squoted-char = squoted-unescaped / escaped
+squoted-unescaped = %x20-26 / %x28-5B / %x5D-10FFFF ; not ' or \
+
+escaped = escape (
+           %x22 /               ; "    quotation mark  U+0022
+           %x27 /               ; '    apostrophe      U+0027
+           %x2F /               ; /    solidus         U+002F
+           %x5C /               ; \    reverse solidus U+005C
+           %x62 /               ; b    backspace       U+0008
+           %x66 /               ; f    form feed       U+000C
+           %x6E /               ; n    line feed       U+000A
+           %x72 /               ; r    carriage return U+000D
+           %x74 /               ; t    tab             U+0009
+           %x75 4HEXDIG )       ; uXXXX                U+XXXX
+
+escape = %x5C                   ; \
+
+name-separator  = ws %x3A ws    ; : colon
+                / ws %x3D ws    ; = equal sign
+
+value = false / null / true / object / array / number / string
+
+false = %x66.61.6c.73.65        ; false
+null  = %x6e.75.6c.6c           ; null
+true  = %x74.72.75.65           ; true
+
+array = begin-array [ array-items ] end-array
+
+begin-array     = ws %x5B ws    ; [ left square bracket
+end-array       = ws %x5D ws    ; ] right square bracket
+
+array-items = value *( value-separator value ) [ value-separator ]
+
+value-separator = ws %x2C ws    ; , comma
+                / newline ws    ; comma can be replaced with a newline
+
+ws = *(
+        %x20 /                ; Space
+        %x09 /                ; Horizontal Tab
+        newline-char /
+        comment
+      )
+
+newline-char = %x0A             ; Line Feed or New line
+             / %x0D             ; Carriage Return
+
+newline = *(%x09 / %x20) newline-char
+
+comment = sharp *comment-char   ; line comment
+sharp = %x23                    ; # sharp
+comment-char = %x00-09 / %x0B-0C / %x0E-10FFFF ; not CR and LF
+
+number = [ minus ] int [ frac ] [ exp ]
+decimal-point = %x2E            ; .
+digit1-9 = %x31-39              ; 1-9
+e = %x65 / %x45                 ; e E
+exp = e [ minus / plus ] 1*DIGIT
+frac = decimal-point 1*DIGIT
+int = zero / ( digit1-9 *DIGIT )
+minus = %x2D                    ; -
+plus = %x2B                     ; +
+zero = %x30                     ; 0
+
+; Verbatim string, which is analogous to Python’s raw triple-quoted string, can be used. Verbatim string is one or more lines starting with | (the first line can be prefixed with other constructs), and each occurrence of <newline><spaces>| is replaced with \n except for the first one which is ignored. It does not undergo any other processing, so it can be used to write a verbatim string.
+verbatim-string = verbatim-fragment *(newline ws verbatim-fragment)
+verbatim-fragment = pipe *verbatim-char
+pipe = %x7C                     ; | vertical line
+verbatim-char = %x20-10FFFF     ; not Control character

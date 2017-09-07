@@ -1,0 +1,56 @@
+/* EBNF-like notation used in W3C specifications */
+
+Grammar ::= (Rule Space? #xA)+
+
+Rule ::= Symbol Space '::=' Space Expression
+
+Symbol ::= [A-Za-z]+
+
+Space ::= (#x20 | #x9 | #xD | #xA | Comment)+
+
+Comment ::= '/*' Character* '*/'
+
+Character ::= [#x1-#xD7FF]
+            | [#xE000-#xFFFD]
+            | [#x10000-#x10FFFF]
+/* any Unicode character, excluding the surrogate blocks, FFFE, and FFFF. */
+
+Expression ::= Concatenation (Space '|' Space Concatenation)* /* Alternation */
+
+Concatenation ::= Repetition (Space Repetition)*
+                | Repetition (Space '-' Repetition)?
+
+Repetition ::= SimpleExpression [?+*]?  /* '?' means zero or one occurrence
+                                           '+' means one or more occurrence
+                                           '*' means zero or more occurrence */
+
+SimpleExpression ::= EncodedCharacter
+                   | PositiveCharacterSet
+                   | NegativeCharacterSet
+                   | SingleQuotedString
+                   | DoubleQuotedString
+                   | '(' Space? Expression Space? ')'
+
+EncodedCharacter ::= '#x' HexaDigit+          /* code point in ISO/IEC 10646 */
+
+HexaDigit ::= [0-9A-F]
+
+PositiveCharacterSet ::= '[' (Enumeration | Range)+ ']'
+
+NegativeCharacterSet ::= '[^' (Enumeration | Range)+ ']'
+
+Enumeration ::= (Character | EncodedCharacter)+
+
+Range ::= Character '-' Character
+        | EncodedCharacter '-' EncodedCharacter
+
+SingleQuotedString ::= "'" [^']* "'"
+
+DoubleQuotedString ::= '"' [^"]* '"'
+
+/* Other notations used in the W3C specifications are:
+   [ wfc: ... ]
+   well-formedness constraint; this identifies by name a constraint on well-formed documents associated with a production.
+   [ vc: ... ]
+   validity constraint; this identifies by name a constraint on valid documents associated with a production.
+*/

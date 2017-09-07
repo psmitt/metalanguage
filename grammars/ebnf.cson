@@ -1,0 +1,101 @@
+scopeName: 'source.ebnf'
+name: 'EBNF'
+fileTypes: ['ebnf']
+patterns: [
+  {
+    begin: '\\s*\\(\\*'
+    beginCaptures:
+      0:
+        name: 'comment.block.begin.ebnf'
+    end: '\\*\\)\\s*'
+    endCaptures:
+      0:
+        name: 'comment.block.end.ebnf'
+    contentName: 'comment.block.ebnf'
+  }
+  {
+    begin: '\\s*"'
+    beginCaptures:
+      0:
+        name: 'punctuation.definition.string.begin.ebnf'
+    end: '"\\s*'
+    endCaptures:
+      0:
+        name: 'punctuation.definition.string.end.ebnf'
+    contentName: 'string.quoted.double.ebnf'
+  }
+  {
+    begin: "\\s*'"
+    beginCaptures:
+      0:
+        name: 'punctuation.definition.string.begin.ebnf'
+    end: "'\\s*"
+    endCaptures:
+      0:
+        name: 'punctuation.definition.string.end.ebnf'
+    contentName: 'string.quoted.single.ebnf'
+  }
+  {
+    begin: '\\s*\\?'
+    beginCaptures:
+      0:
+        name: 'other.description.begin.ebnf'
+    end: '\\?\\s*'
+    endCaptures:
+      0:
+        name: 'other.description.end.ebnf'
+    contentName: 'other.description.ebnf'
+  }
+  {
+    match: '([A-Za-z][A-Za-z0-9 ]*)'
+    name: 'entity.name.tag.ebnf'
+  }
+  {
+    match: '\\s*,\\s*'
+    name: 'keyword.operator.concatenation.ebnf'
+  }
+  {
+    match: '\\s*=\\s*'
+    name: 'keyword.operator.assignment.ebnf'
+  }
+  {
+    match: '\\s*([|/!])\\s*'
+    name: 'keyword.operator.or.ebnf'
+  }
+  {
+    match: '\\s*\\*\\s*'
+    name: 'keyword.operator.repeat.ebnf'
+  }
+  {
+    match: '\\s*-\\s*'
+    name: 'keyword.operator.exception.ebnf'
+  }
+  {
+    match: '\\s*[;.]\\s*'
+    name: 'puntuation.terminator.ebnf'
+  }
+  {
+    match: '\\s*\\(\\s*'
+    name: 'punctuation.bracket.round.begin.ebnf'
+  }
+  {
+    match: '\\s*\\)\\s*'
+    name: 'punctuation.bracket.round.end.ebnf'
+  }
+  {
+    match: '\\s*(\\[|\\(/)\\s*'
+    name: 'punctuation.bracket.square.begin.ebnf'
+  }
+  {
+    match: '\\s*(\\]|/\\))\\s*'
+    name: 'punctuation.bracket.square.end.ebnf'
+  }
+  {
+    match: '\\s*({|\\(:)\\s*'
+    name: 'punctuation.bracket.curly.begin.ebnf'
+  }
+  {
+    match: '\\s*(}|:\\))\\s*'
+    name: 'punctuation.bracket.curly.end.ebnf'
+  }
+]

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE table SYSTEM "../Syntax.dtd">
+<?xml-stylesheet type="text/xsl" href="../Syntax.xsl"?>
+<syntax language="BNF" start="Syntax">
+  <rule name="Syntax">
+    <definition>
+      <repeated>
+        <nonterminal name="Rule"/>
+      </repeated>
+    </definition>
+  </rule>
+  <comment>
+    <![CDATA[
+      Definition elements must be strictly concatenated without additional whitespaces! <br/>
+      Optional whitespaces are explicitely indicated.
+    ]]>
+  </comment>
+  <rule name="Rule">
+    <definition>
+      <optional>
+        <nonterminal name="WhiteSpace"/>
+      </optional>
+      <terminal>&lt;</terminal>
+      <nonterminal name="RuleName"/>
+      <terminal>&gt;</terminal>
+      <optional>
+        <nonterminal name="WhiteSpace"/>
+      </optional>
+      <terminal>::=</terminal>
+      <optional>
+        <nonterminal name="WhiteSpace"/>
+      </optional>
+      <nonterminal name="Expression"/>
+      <nonterminal name="LineEnd"/>
+    </definition>
+  </rule>
+  <rule name="WhiteSpace">
+    <definition>
+      <repeated>
+        <terminal type="regular">\u0020</terminal>
+      </repeated>
+      <comment>ASCII space</comment>
+    </definition>
+  </rule>
+  <rule name="RuleName" token="yes">
+    <definition>
+      <nonterminal name="Letter"/>
+      <optional>
+        <repeated>
+          <nonterminal name="RuleCharacter"/>
+        </repeated>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="Letter">
+    <definition>
+      <terminal type="regular">[A-Za-z]</terminal>
+    </definition>
+  </rule>
+  <rule name="RuleCharacter">
+    <definition>
+      <terminal type="regular">[-0-9A-Za-z]</terminal>
+    </definition>
+  </rule>
+  <rule name="Expression">
+    <definition>
+      <nonterminal name="List"/>
+      <repeated>
+        <optional>
+          <nonterminal name="WhiteSpace"/>
+          <terminal>|</terminal>
+          <nonterminal name="WhiteSpace"/>
+          <nonterminal name="List"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="List">
+    <definition>
+      <nonterminal name="Term"/>
+      <repeated>
+        <optional>
+          <nonterminal name="WhiteSpace"/>
+          <nonterminal name="Term"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="Term" token="yes">
+    <definition>
+      <terminal>&lt;</terminal>
+      <nonterminal name="RuleName"/>
+      <terminal>&gt;</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="Literal"/>
+    </definition>
+  </rule>
+  <rule name="Literal" token="yes">
+    <definition>
+      <terminal>"</terminal>
+      <optional>
+        <terminal type="regular">\p{ASCII}&amp;\p{print}-["]</terminal>
+      </optional>
+      <terminal>"</terminal>
+    </definition>
+    <definition>
+      <terminal>'</terminal>
+      <optional>
+        <terminal type="regular">\p{ASCII}&amp;\p{print}-[']</terminal>
+      </optional>
+      <terminal>'</terminal>
+    </definition>
+  </rule>
+  <rule name="LineEnd">
+    <definition>
+      <repeated>
+        <optional>
+          <nonterminal name="WhiteSpace"/>
+        </optional>
+        <optional>
+          <terminal type="regular">\u000D</terminal>
+        </optional>
+        <terminal type="regular">\u000A</terminal>
+      </repeated>
+      <comment>
+        ASCII CR and/or LF
+      </comment>
+    </definition>
+  </rule>
+</syntax>

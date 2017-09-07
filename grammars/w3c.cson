@@ -1,0 +1,89 @@
+scopeName: 'source.w3c'
+name: 'W3C'
+fileTypes: ['w3c']
+patterns: [
+  {
+    begin: '\\s*/\\*'
+    beginCaptures:
+      0:
+        name: 'comment.block.begin.w3c'
+    end: '\\*/\\s*'
+    endCaptures:
+      0:
+        name: 'comment.block.end.w3c'
+    contentName: 'comment.block.w3c'
+  }
+  {
+    begin: '\\s*"'
+    beginCaptures:
+      0:
+        name: 'punctuation.definition.string.begin.w3c'
+    end: '"\\s*'
+    endCaptures:
+      0:
+        name: 'punctuation.definition.string.end.w3c'
+    contentName: 'string.quoted.double.w3c'
+  }
+  {
+    begin: "\\s*'"
+    beginCaptures:
+      0:
+        name: 'punctuation.definition.string.begin.w3c'
+    end: "'\\s*"
+    endCaptures:
+      0:
+        name: 'punctuation.definition.string.end.w3c'
+    contentName: 'string.quoted.single.w3c'
+  }
+  {
+    begin: '\\s*\\['
+    beginCaptures:
+      0:
+        name: 'constant.character.group.begin.w3c'
+    end: '\\]\\s*'
+    endCaptures:
+      0:
+        name: 'constant.character.group.end.w3c'
+    name: 'constant.character.group.w3c'
+  }
+  {
+    match: '#x[0-9A-F]+'
+    name: 'constant.numeric.hexadecimal.w3c'
+  }
+  {
+    match: '\\s*[A-Za-z]+\\s*'
+    name: 'entity.name.tag.w3c'
+  }
+  {
+    match: '\\s*\\(\\s*'
+    name: 'punctuation.bracket.round.begin.w3c'
+  }
+  {
+    match: '\\s*\\)\\s*'
+    name: 'punctuation.bracket.round.end.w3c'
+  }
+  {
+    match: '\\s*::=\\s*'
+    name: 'keyword.operator.assignment.w3c'
+  }
+  {
+    match: '\\s*\\|\\s*'
+    name: 'keyword.operator.or.w3c'
+  }
+  {
+    match: '\\s*\\?\\s*'
+    name: 'keyword.operator.repeat.w3c'
+  }
+  {
+    match: '\\s*\\+\\s*'
+    name: 'keyword.operator.repeat.w3c'
+  }
+  {
+    match: '\\s*\\*\\s*'
+    name: 'keyword.operator.repeat.w3c'
+  }
+  {
+    match: '\\s*-\\s*'
+    name: 'keyword.operator.exception.w3c'
+  }
+]

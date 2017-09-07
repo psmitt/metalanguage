@@ -1,0 +1,142 @@
+(* Extended Backus-Naur Form, ISO/IEC 14977:1996 *)
+
+(* 1. Character set: ISO/IEC 646:1991  *)
+
+letter = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | '|' | 'm'
+       | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
+       | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M'
+       | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
+
+decimal digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+
+concatenate symbol = ',';
+
+defining symbol = '=';
+
+definition separator symbol = '|' | '/' | '!';
+
+end comment symbol = '*)';
+
+end group symbol = ')';
+
+end option symbol = ']' | '/)';
+
+end repeat symbol = '}' | ':)';
+
+except symbol = '-';
+
+first quote symbol = "'";
+
+repetition symbol = '*';
+
+second quote symbol = '"';
+
+special sequence symbol = '?';
+
+start comment symbol = '(*';
+
+start group symbol = '(';
+
+start option symbol = '[' | '(/';
+
+start repeat symbol = '{' | '(:';
+
+terminator symbol = ';' | '.';
+
+other character = ' ' | ':' | '+' | '_' | '%'
+                | '@' | '&' | '#' | '$' | '<'
+                | '>' | '\' | '^' | '`' | '~';
+
+space character = ' ';
+
+horizontal tabulation character = ? ISO 6429 character Horizontal Tabulation ? ;
+
+new line = { ? ISO 6429 character Carriage Return ? },
+             ? ISO 6429 character Line Feed ?,
+           { ? ISO 6429 character Carriage Return ? };
+
+vertical tabulation character = ? ISO 6429 character Vertical Tabulation ? ;
+
+form feed = ? ISO 6429 character Form Feed ? ;
+
+(* 2. Removal of unnecessary non-printing characters *)
+
+terminal character = letter | decimal digit| concatenate symbol | defining symbol
+                   | definition separator symbol | end comment symbol | end group symbol
+                   | end option symbol | end repeat symbol | except symbol | first quote symbol
+                   | repetition symbol | second quote symbol | special sequence symbol
+                   | start comment symbol | start group symbol | start option symbol
+                   | start repeat symbol | terminator symbol | other character;
+
+gap free symbol = terminal character - (first quote symbol | second quote symbol)
+                | terminal string;
+
+terminal string = first quote symbol, first terminal character,
+                 {first terminal character}, first quote symbol
+                | second quote symbol, second terminal character,
+                 {second terminal character}, second quote symbol;
+
+first terminal character = terminal character - first quote symbol;
+
+second terminal character = terminal character - second quote symbol;
+
+gap separator = space character | horizontal tabulation character | new line
+              | vertical tabulation character | form feed;
+
+syntax = {gap separator}, gap free symbol, {gap separator}, {gap free symbol, {gap separator}};
+
+(* 3. Removal of bracketed-textual-comments from gap-free-symbols that form a syntax. *)
+
+commentless symbol = terminal character
+                     - (letter | decimal digit | first quote symbol | second quote symbol
+                        | start comment symbol | end comment symbol | special sequence symbol
+                        | other character)
+                     | meta identifier | integer | terminal string | special sequence;
+
+integer = decimal digit, {decimal digit};
+
+meta identifier = letter, {meta identifier character};
+
+meta identifier character = letter | decimal digit;
+
+special sequence = special sequence symbol, {special sequence character}, special sequence symbol;
+    (* The meaning of a <special sequence> is not defined in the standard metalanguage. *)
+
+special sequence character = terminal character - special sequence symbol;
+
+comment symbol = bracketed textual comment | other character | commentless symbol;
+
+bracketed textual comment = start comment symbol, {comment symbol}, end comment symbol;
+    (* A bracketed textual comment is allowed anywhere outside a <terminal string>,
+       <meta identifier>, <integer> or <special sequence> *)
+
+syntax = {bracketed textual comment}, commentless symbol, {bracketed textual comment},
+            {commentless symbol, {bracketed textual comment}};
+
+(* 4. Abstract syntax *)
+
+syntax = syntax rule, {syntax rule};
+
+syntax rule = meta identifier, defining symbol, definitions list, terminator symbol;
+
+definitions list = single definition, {definition separator symbol, single definition};
+
+single definition = syntactic term, {concatenate symbol, syntactic term};
+
+syntactic term = syntactic factor, [except symbol, syntactic exception];
+
+syntactic exception = ? a syntactic-factor that could be replaced
+                        by a syntactic-factor containing no meta-identifiers ? ;
+
+syntactic factor = [integer, repetition symbol], syntactic primary;
+
+syntactic primary = optional sequence | repeated sequence | grouped sequence
+                  | meta identifier | terminal string | special sequence | empty sequence;
+
+optional sequence = start option symbol, definitions list, end option symbol;
+
+repeated sequence = start repeat symbol, definitions list, end repeat symbol;
+
+grouped sequence = start group symbol, definitions list, end group symbol;
+
+empty sequence = ;

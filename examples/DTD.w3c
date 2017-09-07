@@ -1,0 +1,162 @@
+/* XML Document Type Definition, http://www.w3.org/TR/xml/#sec-prolog-dtd */
+
+doctypedef ::= XMLDecl S? intSubset
+
+XMLDecl ::= '<?xml' VersionInfo EncodingDecl? SDDecl? S? '?>'
+
+VersionInfo ::= S 'version' Eq ("'" VersionNum "'" | '"' VersionNum '"')
+
+S ::= (#x20 | #x9 | #xD | #xA)+
+
+Eq ::= S? '=' S?
+
+VersionNum ::= '1.0' | '1.1'
+
+EncodingDecl ::= S 'encoding' Eq ('"' EncName '"' | "'" EncName "'" )
+
+EncName ::= [A-Za-z] ([A-Za-z0-9._] | '-')*
+
+SDDecl ::= S 'standalone' Eq (("'" ('yes' | 'no') "'") | ('"' ('yes' | 'no') '"'))
+
+intSubset ::= (markupdecl | DeclSep)*
+
+markupdecl ::= elementdecl
+             | AttlistDecl
+             | EntityDecl
+             | NotationDecl
+             | PI
+             | Comment
+
+elementdecl ::= '<!ELEMENT' S Name S contentspec S? '>'
+
+Name ::= NameStartChar (NameChar)*
+
+NameStartChar ::= ":"
+                | [A-Z]
+                | "_"
+                | [a-z]
+                | [#xC0-#xD6]
+                | [#xD8-#xF6]
+                | [#xF8-#x2FF]
+                | [#x370-#x37D]
+                | [#x37F-#x1FFF]
+                | [#x200C-#x200D]
+                | [#x2070-#x218F]
+                | [#x2C00-#x2FEF]
+                | [#x3001-#xD7FF]
+                | [#xF900-#xFDCF]
+                | [#xFDF0-#xFFFD]
+                | [#x10000-#xEFFFF]
+
+NameChar ::= NameStartChar
+           | "-"
+           | "."
+           | [0-9]
+           | #xB7
+           | [#x0300-#x036F]
+           | [#x203F-#x2040]
+
+contentspec ::= 'EMPTY' | 'ANY' | Mixed | children
+
+Mixed ::= '(' S? '#PCDATA' (S? '|' S? Name)* S? ')*'
+        | '(' S? '#PCDATA' S? ')' /* parsed character data*/
+
+children ::= (choice | seq) ('?' | '*' | '+')?
+
+choice ::= '(' S? cp ( S? '|' S? cp )+ S? ')'
+
+cp ::= (Name | choice | seq) ('?' | '*' | '+')?
+
+seq ::= '(' S? cp ( S? ',' S? cp )* S? ')'
+
+AttlistDecl ::= '<!ATTLIST' S Name AttDef* S? '>'
+
+AttDef ::= S Name S AttType S DefaultDecl
+
+AttType ::= StringType | TokenizedType | EnumeratedType
+
+StringType ::= 'CDATA' /* character data not parsed */
+
+TokenizedType ::= 'ID'
+                | 'IDREF'
+                | 'IDREFS'
+                | 'ENTITY'
+                | 'ENTITIES'
+                | 'NMTOKEN'
+                | 'NMTOKENS'
+
+EnumeratedType ::= NotationType | Enumeration
+
+NotationType ::= 'NOTATION' S '(' S? Name (S? '|' S? Name)* S? ')'
+
+Enumeration ::= '(' S? Nmtoken (S? '|' S? Nmtoken)* S? ')'
+
+Nmtoken ::= (NameChar)+
+
+DefaultDecl ::= '#REQUIRED'
+              | '#IMPLIED'
+              | (('#FIXED' S)? AttValue)
+
+AttValue ::= '"' ([^<&"] | Reference)* '"'
+           | "'" ([^<&'] | Reference)* "'"
+
+Reference ::= EntityRef | CharRef
+
+EntityRef ::= '&' Name ';'  /* &lt;   <
+                               &gt;   >
+                               &amp;  &
+                               &quot; "
+                               &apos; '
+                            */
+
+CharRef ::= '&#' [0-9]+ ';'
+          | '&#x' [0-9a-fA-F]+ ';'
+
+EntityDecl ::= GEDecl | PEDecl
+
+GEDecl ::= '<!ENTITY' S Name S EntityDef S? '>'
+
+EntityDef ::= EntityValue | (ExternalID NDataDecl?)
+
+EntityValue ::= '"' ([^%&"] | PEReference | Reference)* '"'
+              | "'" ([^%&'] | PEReference | Reference)* "'"
+
+PEReference ::= '%' Name ';'
+
+ExternalID ::= 'SYSTEM' S SystemLiteral
+             | 'PUBLIC' S PubidLiteral S SystemLiteral
+
+SystemLiteral ::= ('"' [^"]* '"')
+                | ("'" [^']* "'")
+
+PubidLiteral ::= '"' PubidChar* '"'
+               | "'" (PubidChar - "'")* "'"
+
+PubidChar ::= #x20
+            | #xD
+            | #xA
+            | [a-zA-Z0-9]
+            | [-'()+,./:=?;!*#@$_%]
+
+NDataDecl ::= S 'NDATA' S Name
+
+PEDecl ::= '<!ENTITY' S '%' S Name S PEDef S? '>'
+
+PEDef ::= EntityValue | ExternalID
+
+NotationDecl ::= '<!NOTATION' S Name S (ExternalID | PublicID) S? '>'
+
+PublicID ::= 'PUBLIC' S PubidLiteral
+
+PI ::= '<?' PITarget (S (Char* - (Char* '?>' Char*)))? '?>'
+
+PITarget ::= Name - (('X' | 'x') ('M' | 'm') ('L' | 'l'))
+
+Comment ::= '<!--' ((Char - '-') | ('-' (Char - '-')))* '-->'
+
+Char ::= [#x1-#xD7FF]
+       | [#xE000-#xFFFD]
+       | [#x10000-#x10FFFF]
+/* any Unicode character, excluding the surrogate blocks, FFFE, and FFFF. */
+
+DeclSep ::= PEReference | S

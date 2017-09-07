@@ -1,0 +1,14 @@
+scopeName: 'source.wsn'
+name: 'WSN'
+fileTypes: ['wsn']
+patterns: [
+	{
+		match: '(^|\\s+)([a-zA-Z]*)\\s+'
+		name: 'entity.name.tag.wsn'
+	}
+	{
+		begin: '"'
+		end: '"'
+		name: 'string.quoted.double.wsn'
+	}
+]

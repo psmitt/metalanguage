@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE table SYSTEM "Syntax.dtd">
+<?xml-stylesheet type="text/xsl" href="Syntax.xsl"?>
+<syntax language="Syntax" start="Syntax">
+  <rule name="Syntax">
+    <definition>
+      <repeated>
+        <optional>
+          <nonterminal name="Comments"/>
+        </optional>
+        <nonterminal name="Rule"/>
+        <optional>
+          <nonterminal name="Comments"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <comment>
+    Comments provide semantic explanation for the Rules.
+  </comment>
+  <rule name="Comments">
+    <definition>
+      <repeated>
+        <nonterminal name="Comment"/>
+        <nonterminal name="LineBreak"/>
+      </repeated>
+      <comment>
+        LineBreak is rendered by the display system.
+      </comment>
+    </definition>
+  </rule>
+  <rule name="Rule">
+    <definition>
+      <nonterminal name="RuleName"/>
+      <nonterminal name="LineBreak"/>
+      <repeated>
+        <nonterminal name="Definition"/>
+        <optional>
+          <nonterminal name="Exception"/>
+        </optional>
+        <optional>
+          <nonterminal name="Comment"/>
+        </optional>
+        <nonterminal name="LineBreak"/>
+      </repeated>
+    </definition>
+  </rule>
+  <comment>
+    Definitions are indented by the display system under the Rule Name.
+  </comment>
+  <comment>
+    <![CDATA[The elements in the definition sequence of a
+    <span class='nonterminal'>NonTerminal Symbol</span> can be <br/>
+    arbitrarily separated by additional whitespaces in the production system.]]>
+  </comment>
+  <comment>
+    <![CDATA[The elements in the definition sequence of a
+    <span class='nonterminal token'>NonTerminal Token</span> must not be <br/>
+    separated by additional characters or symbols in the production system.]]>
+  </comment>
+  <rule name="RuleName" token="yes">
+    <definition>
+      <nonterminal name="UppercaseLetter"/>
+      <optional>
+        <repeated>
+          <nonterminal name="Letter"/>
+        </repeated>
+      </optional>
+      <comment>Rule Names are written in CamelCase.</comment>
+    </definition>
+  </rule>
+  <rule name="UppercaseLetter">
+    <definition>
+      <terminal type="regular">\p{Uppercase_Letter}</terminal>
+    </definition>
+  </rule>
+  <rule name="Letter">
+    <definition>
+      <terminal type="regular">\p{Letter}</terminal>
+    </definition>
+  </rule>
+  <rule name="Definition">
+    <definition>
+      <repeated>
+        <nonterminal name="RepeatedSequence"/>
+      </repeated>
+    </definition>
+    <definition>
+      <optional>
+        <nonterminal name="OptionalSequence"/>
+      </optional>
+    </definition>
+    <definition>
+      <nonterminal name="NonTerminalSymbol"/>
+    </definition>
+    <definition>
+      <nonterminal name="TerminalSymbol"/>
+    </definition>
+    <definition>
+      <nonterminal name="Definition"/>
+      <nonterminal name="Definition"/>
+    </definition>
+  </rule>
+  <rule name="RepeatedSequence">
+    <definition>
+      <optional>
+        <nonterminal name="OptionalSequence"/>
+      </optional>
+    </definition>
+    <definition>
+      <nonterminal name="NonTerminalSymbol"/>
+    </definition>
+    <definition>
+      <nonterminal name="TerminalSymbol"/>
+    </definition>
+    <definition>
+      <nonterminal name="RepeatedSequence"/>
+      <nonterminal name="RepeatedSequence"/>
+    </definition>
+  </rule>
+  <rule name="OptionalSequence">
+    <definition>
+      <nonterminal name="NonTerminalSymbol"/>
+    </definition>
+    <definition>
+      <nonterminal name="TerminalSymbol"/>
+    </definition>
+    <definition>
+      <nonterminal name="OptionalSequence"/>
+      <nonterminal name="OptionalSequence"/>
+    </definition>
+  </rule>
+  <rule name="NonTerminalSymbol">
+    <definition>
+      <nonterminal name="RuleName"/>
+    </definition>
+  </rule>
+  <rule name="TerminalSymbol">
+    <definition>
+      <nonterminal name="CaseSenstiveTerminalString"/>
+      <comment>
+        <![CDATA[Terminal Strings can contain any
+        <u><a href="http://www.unicode.org/charts" target="_blank">Unicode character</a></u>.]]>
+      </comment>
+    </definition>
+    <definition>
+      <nonterminal name="CaseInsensitiveTerminalString"/>
+    </definition>
+    <definition>
+      <nonterminal name="UnicodeRegularExpression"/>
+      <comment>
+        <![CDATA[<u><a href="http://unicode.org/reports/tr18" target="_blank">Unicode Regular Expressions</a></u>
+        are used for defining character groups.]]>
+      </comment>
+    </definition>
+  </rule>
+  <rule name="Exception">
+    <definition>
+      <repeated>
+        <nonterminal name="RepeatedSequence"/>
+      </repeated>
+    </definition>
+    <definition>
+      <nonterminal name="NonTerminalSymbol"/>
+    </definition>
+    <definition>
+      <nonterminal name="TerminalSymbol"/>
+    </definition>
+    <definition>
+      <nonterminal name="Exception"/>
+      <nonterminal name="Exception"/>
+    </definition>
+  </rule>
+</syntax>

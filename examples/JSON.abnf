@@ -1,0 +1,80 @@
+; JavaScript Object Notation Data Interchange Format (ECMA-404, RFC 7159)
+
+JSON-text = ws value ws
+
+ws = *(
+        %x20 /                ; Space
+        %x09 /                ; Horizontal tab
+        %x0A /                ; Line feed or New line
+        %x0D )                ; Carriage return
+
+value = null / false / true / number / string / array / object
+
+null  = %x6e.75.6c.6c         ; null
+
+false = %x66.61.6c.73.65      ; false
+
+true  = %x74.72.75.65         ; true
+
+number = [ minus ] int [ frac ] [ exp ]
+
+minus = %x2D                  ; -
+
+int = zero / ( digit1-9 *DIGIT )
+
+zero = %x30                   ; 0
+
+digit1-9 = %x31-39            ; 1-9
+
+DIGIT = %x30-39               ; core rule, see in ABNF.abnf
+
+frac = decimal-point 1*DIGIT
+
+decimal-point = %x2E          ; .
+
+exp = e [ minus / plus ] 1*DIGIT
+
+e = %x65 / %x45               ; e E
+
+plus = %x2B                   ; +
+
+string = quotation-mark *char quotation-mark
+
+char = unescaped /
+        escape (
+        %x22 /                ; "    quotation mark  U+0022
+        %x2F /                ; /    solidus         U+002F
+        %x5C /                ; \    reverse solidus U+005C
+        %x62 /                ; b    backspace       U+0008
+        %x66 /                ; f    form feed       U+000C
+        %x6E /                ; n    line feed       U+000A
+        %x72 /                ; r    carriage return U+000D
+        %x74 /                ; t    tab             U+0009
+        %x75 4HEXDIG )        ; uXXXX                U+XXXX
+
+escape = %x5C                 ; \
+
+HEXDIG = DIGIT / "A" / "B" / "C" / "D" / "E" / "F" ; core rule, see in ABNF.abnf
+
+quotation-mark = %x22         ; "
+
+unescaped = %x20-21 / %x23-5B / %x5D-10FFFF
+
+array = begin-array [ value *( value-separator value ) ] end-array
+
+begin-array     = ws %x5B ws  ; [ left square bracket
+
+value-separator = ws %x2C ws  ; , comma
+
+end-array       = ws %x5D ws  ; ] right square bracket
+
+object = begin-object [ member *( value-separator member ) ]
+         end-object
+
+begin-object    = ws %x7B ws  ; { left curly bracket
+
+member = string name-separator value
+
+name-separator  = ws %x3A ws  ; : colon
+
+end-object      = ws %x7D ws  ; } right curly bracket
