@@ -14,12 +14,12 @@
       <nonterminal name="Line"/>
       <optional>
         <repeated>
-          <nonterminal name="TERMINATOR"/>
+          <nonterminal name="TERMINATORS"/>
           <nonterminal name="Line"/>
         </repeated>
       </optional>
       <optional>
-        <nonterminal name="TERMINATOR"/>
+        <nonterminal name="TERMINATORS"/>
       </optional>
     </definition>
   </rule>
@@ -148,6 +148,10 @@
       <nonterminal name="String"/>
     </definition>
   </rule>
+  <comment>
+    Alphanumerics are separated from the other literals
+    because they can also serve as keys in object literals.
+  </comment>
   <rule name="String">
     <definition>
       <nonterminal name="STRING"/>
@@ -206,6 +210,9 @@
       <nonterminal name="NAN"/>
     </definition>
   </rule>
+  <comment>
+     Immediate values generally can be passed straight through and printed to JavaScript.
+  </comment>
   <rule name="Assign">
     <definition>
       <nonterminal name="Assignable"/>
@@ -384,12 +391,21 @@
       <nonterminal name="Block"/>
     </definition>
   </rule>
+  <comment>
+    Code is the function literal.
+  </comment>
   <rule name="FuncGlyph">
     <definition>
       <terminal>-></terminal>
+      <comment>
+        ordinary function
+      </comment>
     </definition>
     <definition>
       <terminal>=></terminal>
+      <comment>
+        function bound to the current value of this
+      </comment>
     </definition>
   </rule>
   <rule name="ParamList">
@@ -401,18 +417,10 @@
     <definition>
       <nonterminal name="ParamList"/>
       <repeated>
-        <terminal>,</terminal>
-        <nonterminal name="Param"/>
-      </repeated>
-    </definition>
-    <definition>
-      <nonterminal name="ParamList"/>
-      <repeated>
         <optional>
-          <terminal>,</terminal>
+          <nonterminal name="SEPARATOR"/>
+          <nonterminal name="Param"/>
         </optional>
-        <nonterminal name="TERMINATOR"/>
-        <nonterminal name="Param"/>
       </repeated>
     </definition>
     <definition>
@@ -428,6 +436,17 @@
         </optional>
         <nonterminal name="OUTDENT"/>
       </repeated>
+    </definition>
+  </rule>
+  <rule name="SEPARATOR">
+    <definition>
+      <terminal>,</terminal>
+    </definition>
+    <definition>
+      <optional>
+        <terminal>,</terminal>
+      </optional>
+      <nonterminal name="TERMINATOR"/>
     </definition>
   </rule>
   <rule name="Param">
@@ -451,6 +470,10 @@
       </optional>
     </definition>
   </rule>
+  <comment>
+    A single parameter in a function definition can be ordinary,
+    or a splat that hoovers up the remaining arguments.
+  </comment>
   <rule name="ParamVar">
     <definition>
       <nonterminal name="Identifier"/>
@@ -559,6 +582,826 @@
     </definition>
     <definition>
       <nonterminal name="Index"/>
+    </definition>
+  </rule>
+  <rule name="Index">
+    <definition>
+      <nonterminal name="INDEX_START"/>
+      <nonterminal name="IndexValue"/>
+      <nonterminal name="INDEX_END"/>
+    </definition>
+    <definition>
+      <nonterminal name="INDEX_SOAK"/>
+      <nonterminal name="Index"/>
+    </definition>
+  </rule>
+  <rule name="IndexValue">
+    <definition>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Slice"/>
+    </definition>
+  </rule>
+  <rule name="Object">
+    <definition>
+      <terminal>{</terminal>
+      <nonterminal name="AssignList"/>
+      <optional>
+        <terminal>,</terminal>
+      </optional>
+      <terminal>}</terminal>
+    </definition>
+  </rule>
+  <rule name="AssignList">
+    <definition>
+      <optional>
+        <nonterminal name="AssignObj"/>
+      </optional>
+    </definition>
+    <definition>
+      <nonterminal name="AssignList"/>
+      <repeated>
+        <optional>
+          <nonterminal name="SEPARATOR"/>
+          <nonterminal name="AssignObj"/>
+        </optional>
+      </repeated>
+    </definition>
+    <definition>
+      <nonterminal name="AssignList"/>
+      <repeated>
+        <optional>
+          <terminal>,</terminal>
+        </optional>
+        <nonterminal name="INDENT"/>
+        <nonterminal name="AssignList"/>
+        <optional>
+          <terminal>,</terminal>
+        </optional>
+        <nonterminal name="OUTDENT"/>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="Class">
+    <definition>
+      <nonterminal name="CLASS"/>
+      <optional>
+        <nonterminal name="SimpleAssignable"/>
+      </optional>
+      <optional>
+        <nonterminal name="EXTENDS"/>
+        <nonterminal name="Expression"/>
+      </optional>
+      <optional>
+        <nonterminal name="Block"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="Import">
+    <definition>
+      <nonterminal name="IMPORT"/>
+      <optional>
+        <terminal>{}</terminal>
+        <nonterminal name="FROM"/>
+      </optional>
+      <nonterminal name="String"/>
+    </definition>
+    <definition>
+      <nonterminal name="IMPORT"/>
+      <nonterminal name="ImportDefaultSpecifier"/>
+      <nonterminal name="FROM"/>
+      <nonterminal name="String"/>
+    </definition>
+    <definition>
+      <nonterminal name="IMPORT"/>
+      <optional>
+        <nonterminal name="ImportDefaultSpecifier"/>
+        <terminal>,</terminal>
+      </optional>
+      <nonterminal name="ImportNamespaceSpecifier"/>
+      <nonterminal name="FROM"/>
+      <nonterminal name="String"/>
+    </definition>
+    <definition>
+      <nonterminal name="IMPORT"/>
+      <optional>
+        <nonterminal name="ImportDefaultSpecifier"/>
+        <terminal>,</terminal>
+      </optional>
+      <terminal>{</terminal>
+      <nonterminal name="ImportSpecifierList"/>
+      <optional>
+        <terminal>,</terminal>
+      </optional>
+      <terminal>}</terminal>
+      <nonterminal name="FROM"/>
+      <nonterminal name="String"/>
+    </definition>
+  </rule>
+  <rule name="ImportSpecifierList">
+    <definition>
+      <nonterminal name="ImportSpecifier"/>
+    </definition>
+    <definition>
+      <nonterminal name="ImportSpecifierList"/>
+      <repeated>
+        <optional>
+          <nonterminal name="SEPARATOR"/>
+          <nonterminal name="ImportSpecifier"/>
+        </optional>
+      </repeated>
+    </definition>
+    <definition>
+      <nonterminal name="INDENT"/>
+      <nonterminal name="ImportSpecifierList"/>
+      <optional>
+        <terminal>,</terminal>
+      </optional>
+      <nonterminal name="OUTDENT"/>
+    </definition>
+    <definition>
+      <nonterminal name="ImportSpecifierList"/>
+      <repeated>
+        <optional>
+          <terminal>,</terminal>
+        </optional>
+        <nonterminal name="INDENT"/>
+        <nonterminal name="ImportSpecifierList"/>
+        <optional>
+          <terminal>,</terminal>
+        </optional>
+        <nonterminal name="OUTDENT"/>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="ImportSpecifier">
+    <definition>
+      <nonterminal name="Identifier"/>
+      <optional>
+        <nonterminal name="AS"/>
+        <nonterminal name="Identifier"/>
+      </optional>
+    </definition>
+    <definition>
+      <nonterminal name="DEFAULT"/>
+      <optional>
+        <nonterminal name="AS"/>
+        <nonterminal name="Identifier"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="ImportDefaultSpecifier">
+    <definition>
+      <nonterminal name="Identifier"/>
+    </definition>
+  </rule>
+  <rule name="ImportNamespaceSpecifier">
+    <definition>
+      <nonterminal name="IMPORT_ALL"/>
+      <nonterminal name="AS"/>
+      <nonterminal name="Identifier"/>
+    </definition>
+  </rule>
+  <rule name="Export">
+    <definition>
+      <nonterminal name="EXPORT"/>
+      <nonterminal name="DEFAULT"/>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="EXPORT"/>
+      <nonterminal name="Identifier"/>
+      <terminal>=</terminal>
+      <optional>
+        <nonterminal name="TERMINATOR"/>
+      </optional>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="EXPORT"/>
+      <nonterminal name="Identifier"/>
+      <terminal>=</terminal>
+      <nonterminal name="INDENT"/>
+      <nonterminal name="Expression"/>
+      <nonterminal name="OUTDENT"/>
+    </definition>
+    <definition>
+      <nonterminal name="EXPORT"/>
+      <nonterminal name="Class"/>
+    </definition>
+    <definition>
+      <nonterminal name="EXPORT"/>
+      <terminal>{}</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="EXPORT"/>
+      <terminal>{</terminal>
+      <nonterminal name="ExportSpecifierList"/>
+      <optional>
+        <terminal>,</terminal>
+      </optional>
+      <terminal>}</terminal>
+      <optional>
+        <nonterminal name="FROM"/>
+        <nonterminal name="String"/>
+      </optional>
+    </definition>
+    <definition>
+      <nonterminal name="EXPORT"/>
+      <nonterminal name="EXPORT_ALL"/>
+      <nonterminal name="FROM"/>
+      <nonterminal name="String"/>
+    </definition>
+  </rule>
+  <rule name="ExportSpecifierList">
+    <definition>
+      <nonterminal name="ExportSpecifier"/>
+    </definition>
+    <definition>
+      <nonterminal name="ExportSpecifierList"/>
+      <repeated>
+        <optional>
+          <nonterminal name="SEPARATOR"/>
+          <nonterminal name="ExportSpecifier"/>
+        </optional>
+      </repeated>
+    </definition>
+    <definition>
+      <nonterminal name="INDENT"/>
+      <nonterminal name="ExportSpecifierList"/>
+      <optional>
+        <terminal>,</terminal>
+      </optional>
+      <nonterminal name="OUTDENT"/>
+    </definition>
+    <definition>
+      <nonterminal name="ExportSpecifierList"/>
+      <repeated>
+        <optional>
+          <terminal>,</terminal>
+        </optional>
+        <nonterminal name="INDENT"/>
+        <nonterminal name="ExportSpecifierList"/>
+        <optional>
+          <terminal>,</terminal>
+        </optional>
+        <nonterminal name="OUTDENT"/>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="ExportSpecifier">
+    <definition>
+      <nonterminal name="Identifier"/>
+      <optional>
+        <nonterminal name="AS"/>
+        <nonterminal name="Identifier"/>
+      </optional>
+    </definition>
+    <definition>
+      <nonterminal name="Identifier"/>
+      <nonterminal name="AS"/>
+      <nonterminal name="DEFAULT"/>
+    </definition>
+    <definition>
+      <nonterminal name="DEFAULT"/>
+      <optional>
+        <nonterminal name="AS"/>
+        <nonterminal name="Identifier"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="Invocation">
+    <definition>
+      <nonterminal name="Value"/>
+      <optional>
+        <nonterminal name="FUNC_EXIST"/>
+      </optional>
+      <nonterminal name="String"/>
+    </definition>
+    <definition>
+      <nonterminal name="Value"/>
+      <optional>
+        <nonterminal name="FUNC_EXIST"/>
+      </optional>
+      <nonterminal name="Argument"/>
+    </definition>
+    <definition>
+      <nonterminal name="SUPER"/>
+      <optional>
+        <nonterminal name="FUNC_EXIST"/>
+      </optional>
+      <nonterminal name="Argument"/>
+    </definition>
+  </rule>
+  <rule name="Arguments">
+    <definition>
+      <nonterminal name="CALL_START"/>
+      <nonterminal name="CALL_END"/>
+    </definition>
+    <definition>
+      <nonterminal name="CALL_START"/>
+      <nonterminal name="ArgList"/>
+      <optional>
+        <terminal>,</terminal>
+      </optional>
+      <nonterminal name="CALL_END"/>
+    </definition>
+  </rule>
+  <rule name="This">
+    <definition>
+      <nonterminal name="THIS"/>
+    </definition>
+    <definition>
+      <terminal>@</terminal>
+    </definition>
+  </rule>
+  <rule name="ThisProperty">
+    <definition>
+      <terminal>@</terminal>
+      <nonterminal name="Property"/>
+    </definition>
+  </rule>
+  <rule name="Array">
+    <definition>
+      <terminal>[]</terminal>
+    </definition>
+    <definition>
+      <terminal>[</terminal>
+      <nonterminal name="ArgList"/>
+      <optional>
+        <terminal>,</terminal>
+      </optional>
+      <terminal>]</terminal>
+    </definition>
+  </rule>
+  <rule name="RangeDots">
+    <definition>
+      <terminal>..</terminal>
+    </definition>
+    <definition>
+      <terminal>...</terminal>
+    </definition>
+  </rule>
+  <rule name="Range">
+    <definition>
+      <terminal>[</terminal>
+      <nonterminal name="Expression"/>
+      <nonterminal name="RangeDots"/>
+      <nonterminal name="Expression"/>
+      <terminal>]</terminal>
+    </definition>
+  </rule>
+  <rule name="Slice">
+    <definition>
+      <optional>
+        <nonterminal name="Expression"/>
+      </optional>
+      <nonterminal name="RangeDots"/>
+      <optional>
+        <nonterminal name="Expression"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="ArgList">
+    <definition>
+      <nonterminal name="Arg"/>
+    </definition>
+    <definition>
+      <nonterminal name="ArgList"/>
+      <repeated>
+        <optional>
+          <nonterminal name="SEPARATOR"/>
+          <nonterminal name="Arg"/>
+        </optional>
+      </repeated>
+    </definition>
+    <definition>
+      <nonterminal name="INDENT"/>
+      <nonterminal name="ArgList"/>
+      <optional>
+        <terminal>,</terminal>
+      </optional>
+      <nonterminal name="OUTDENT"/>
+    </definition>
+    <definition>
+      <nonterminal name="ArgList"/>
+      <repeated>
+        <optional>
+          <terminal>,</terminal>
+        </optional>
+        <nonterminal name="INDENT"/>
+        <nonterminal name="ArgList"/>
+        <optional>
+          <terminal>,</terminal>
+        </optional>
+        <nonterminal name="OUTDENT"/>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="Arg">
+    <definition>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Splat"/>
+    </definition>
+    <definition>
+      <nonterminal name="..."/>
+    </definition>
+  </rule>
+  <rule name="SimpleArgs">
+    <definition>
+      <nonterminal name="Expression"/>
+      <repeated>
+        <optional>
+          <terminal>,</terminal>
+          <nonterminal name="Expression"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="Try">
+    <definition>
+      <nonterminal name="TRY"/>
+      <nonterminal name="Block"/>
+      <optional>
+        <nonterminal name="Catch"/>
+      </optional>
+      <optional>
+        <nonterminal name="FINALLY"/>
+        <nonterminal name="Block"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="Catch">
+    <definition>
+      <nonterminal name="Catch"/>
+      <optional>
+        <nonterminal name="Identifier"/>
+      </optional>
+      <nonterminal name="Block"/>
+    </definition>
+    <definition>
+      <nonterminal name="Catch"/>
+      <nonterminal name="Object"/>
+      <nonterminal name="Block"/>
+    </definition>
+  </rule>
+  <rule name="Throw">
+    <definition>
+      <nonterminal name="THROW"/>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="THROW"/>
+      <nonterminal name="INDENT"/>
+      <nonterminal name="Object"/>
+      <nonterminal name="OUTDENT"/>
+    </definition>
+  </rule>
+  <rule name="Parenthetical">
+    <definition>
+      <terminal>(</terminal>
+      <nonterminal name="Body"/>
+      <terminal>)</terminal>
+    </definition>
+    <definition>
+      <terminal>(</terminal>
+      <nonterminal name="INDENT"/>
+      <nonterminal name="Body"/>
+      <nonterminal name="OUTDENT"/>
+      <terminal>)</terminal>
+    </definition>
+  </rule>
+  <rule name="WhileSource">
+    <definition>
+      <nonterminal name="WHILE"/>
+      <nonterminal name="Expression"/>
+      <optional>
+        <nonterminal name="WHEN"/>
+        <nonterminal name="Expression"/>
+      </optional>
+    </definition>
+    <definition>
+      <nonterminal name="UNTIL"/>
+      <nonterminal name="Expression"/>
+      <optional>
+        <nonterminal name="WHEN"/>
+        <nonterminal name="Expression"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="While">
+    <definition>
+      <nonterminal name="WhileSource"/>
+      <nonterminal name="Block"/>
+    </definition>
+    <definition>
+      <nonterminal name="Statement"/>
+      <nonterminal name="WhileSource"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <nonterminal name="WhileSource"/>
+    </definition>
+    <definition>
+      <nonterminal name="Loop"/>
+    </definition>
+  </rule>
+  <rule name="Loop">
+    <definition>
+      <nonterminal name="LOOP"/>
+      <nonterminal name="Block"/>
+    </definition>
+    <definition>
+      <nonterminal name="LOOP"/>
+      <nonterminal name="Expression"/>
+    </definition>
+  </rule>
+  <rule name="For">
+    <definition>
+      <nonterminal name="Statement"/>
+      <nonterminal name="ForBody"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <nonterminal name="ForBody"/>
+    </definition>
+    <definition>
+      <nonterminal name="ForBody"/>
+      <nonterminal name="Block"/>
+    </definition>
+  </rule>
+  <rule name="ForBody">
+    <definition>
+      <nonterminal name="FOR"/>
+      <nonterminal name="Range"/>
+      <optional>
+        <nonterminal name="BY"/>
+        <nonterminal name="Expression"/>
+      </optional>
+    </definition>
+    <definition>
+      <nonterminal name="ForStart"/>
+      <nonterminal name="ForSource"/>
+    </definition>
+  </rule>
+  <rule name="ForStart">
+    <definition>
+      <nonterminal name="FOR"/>
+      <optional>
+        <nonterminal name="OWN"/>
+      </optional>
+      <nonterminal name="ForVariables"/>
+    </definition>
+  </rule>
+  <rule name="ForValue">
+    <definition>
+      <nonterminal name="Identifier"/>
+    </definition>
+    <definition>
+      <nonterminal name="ThisProperty"/>
+    </definition>
+    <definition>
+      <nonterminal name="Array"/>
+    </definition>
+    <definition>
+      <nonterminal name="Object"/>
+    </definition>
+  </rule>
+  <rule name="ForVariables">
+    <definition>
+      <nonterminal name="ForValue"/>
+      <optional>
+        <terminal>,</terminal>
+        <nonterminal name="ForValue"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="ForSource">
+    <definition>
+      <nonterminal name="FORIN"/>
+      <nonterminal name="Expression"/>
+      <optional>
+        <nonterminal name="WHEN"/>
+        <nonterminal name="Expression"/>
+      </optional>
+      <optional>
+        <nonterminal name="BY"/>
+        <nonterminal name="Expression"/>
+      </optional>
+    </definition>
+    <definition>
+      <nonterminal name="FORIN"/>
+      <nonterminal name="Expression"/>
+      <optional>
+        <nonterminal name="BY"/>
+        <nonterminal name="Expression"/>
+      </optional>
+      <optional>
+        <nonterminal name="WHEN"/>
+        <nonterminal name="Expression"/>
+      </optional>
+    </definition>
+    <definition>
+      <nonterminal name="FOROF"/>
+      <nonterminal name="Expression"/>
+      <optional>
+        <nonterminal name="WHEN"/>
+        <nonterminal name="Expression"/>
+      </optional>
+    </definition>
+    <definition>
+      <nonterminal name="FORFROM"/>
+      <nonterminal name="Expression"/>
+      <optional>
+        <nonterminal name="WHEN"/>
+        <nonterminal name="Expression"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="Switch">
+    <definition>
+      <nonterminal name="SWITCH"/>
+      <optional>
+        <nonterminal name="Expression"/>
+      </optional>
+      <nonterminal name="INDENT"/>
+      <repeated>
+        <nonterminal name="When"/>
+      </repeated>
+      <optional>
+        <nonterminal name="ELSE"/>
+        <nonterminal name="Block"/>
+      </optional>
+      <nonterminal name="OUTDENT"/>
+    </definition>
+  </rule>
+  <rule name="When">
+    <definition>
+      <nonterminal name="LEADING_WHEN"/>
+      <nonterminal name="SimpleArgs"/>
+      <nonterminal name="Block"/>
+      <optional>
+        <nonterminal name="TERMINATOR"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="IfBlock">
+    <definition>
+      <nonterminal name="IF"/>
+      <nonterminal name="Expression"/>
+      <nonterminal name="Block"/>
+      <repeated>
+        <optional>
+          <nonterminal name="ELSE"/>
+          <nonterminal name="IF"/>
+          <nonterminal name="Expression"/>
+          <nonterminal name="Block"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="If">
+    <definition>
+      <nonterminal name="IfBlock"/>
+      <optional>
+        <nonterminal name="ELSE"/>
+        <nonterminal name="Block"/>
+      </optional>
+    </definition>
+    <definition>
+      <nonterminal name="Statement"/>
+      <nonterminal name="POST_IF"/>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <nonterminal name="POST_IF"/>
+      <nonterminal name="Expression"/>
+    </definition>
+  </rule>
+  <rule name="Operation">
+    <definition>
+      <nonterminal name="UNARY"/>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="UNARY_MATH"/>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <terminal>-</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <terminal>+</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="AWAIT"/>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <terminal>--</terminal>
+      <nonterminal name="SimpleAssignable"/>
+    </definition>
+    <definition>
+      <terminal>++</terminal>
+      <nonterminal name="SimpleAssignable"/>
+    </definition>
+    <definition>
+      <nonterminal name="SimpleAssignable"/>
+      <terminal>--</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="SimpleAssignable"/>
+      <terminal>++</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <terminal>?</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <terminal>+</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <terminal>-</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <nonterminal name="MATH"/>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <terminal>**</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <nonterminal name="SHIFT"/>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <nonterminal name="COMPARE"/>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <terminal>&amp;</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <terminal>^</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <terminal>|</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <terminal>&amp;&amp;</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <terminal>||</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <nonterminal name="BIN?"/>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <nonterminal name="RELATION"/>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="SimpleAssignable"/>
+      <nonterminal name="COMPOUND_ASSIGN"/>
+      <optional>
+        <nonterminal name="TERMINATOR"/>
+      </optional>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="SimpleAssignable"/>
+      <nonterminal name="COMPOUND_ASSIGN"/>
+      <nonterminal name="INDENT"/>
+      <nonterminal name="Expression"/>
+      <nonterminal name="OUTDENT"/>
     </definition>
   </rule>
 </syntax>
