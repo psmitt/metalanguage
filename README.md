@@ -18,6 +18,7 @@ Provides basic syntax highlighting and transformation tools for formal language 
 
   * [ABNF (self-descriptive)](https://tools.ietf.org/html/rfc5234)
   * [BNF (self-descriptive)](http://en.wikipedia.org/wiki/Backus–Naur_Form)
+  * [CoffeeScript](http://coffeescript.org/v2/annotated-source/grammar.html)
   * [CSON - Cursive Script Object Notation](https://noe.mearie.org/cson)
   * CSS (planned)
   * [DTD](http://www.w3.org/TR/xml/#sec-prolog-dtd)

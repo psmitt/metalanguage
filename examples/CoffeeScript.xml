@@ -14,12 +14,12 @@
       <nonterminal name="Line"/>
       <optional>
         <repeated>
-          <nonterminal name="TERMINATORS"/>
+          <nonterminal name="TERMINATOR"/>
           <nonterminal name="Line"/>
         </repeated>
       </optional>
       <optional>
-        <nonterminal name="TERMINATORS"/>
+        <nonterminal name="TERMINATOR"/>
       </optional>
     </definition>
   </rule>
