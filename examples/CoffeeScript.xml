@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE table SYSTEM "../Syntax.dtd">
+<!DOCTYPE syntax SYSTEM "../Syntax.dtd">
 <?xml-stylesheet type="text/xsl" href="../Syntax.xsl"?>
 <syntax language="CoffeeScript" start="Root">
   <rule name="Root">
@@ -12,12 +12,12 @@
   <rule name="Body">
     <definition>
       <nonterminal name="Line"/>
-      <optional>
-        <repeated>
+      <repeated>
+        <optional>
           <nonterminal name="TERMINATOR"/>
           <nonterminal name="Line"/>
-        </repeated>
-      </optional>
+        </optional>
+      </repeated>
       <optional>
         <nonterminal name="TERMINATOR"/>
       </optional>
@@ -122,9 +122,6 @@
     <definition>
       <nonterminal name="IDENTIFIER"/>
     </definition>
-    <comment>
-      identifier literal
-    </comment>
     <definition>
       <nonterminal name="CSX_TAG"/>
     </definition>
@@ -133,56 +130,34 @@
     <definition>
       <nonterminal name="PROPERTY"/>
     </definition>
-    <comment>
-      property name
-    </comment>
   </rule>
   <rule name="Alphanumeric">
     <definition>
       <nonterminal name="NUMBER"/>
     </definition>
-    <comment>
-      number literal
-    </comment>
     <definition>
       <nonterminal name="String"/>
     </definition>
   </rule>
-  <comment>
-    Alphanumerics are separated from the other literals
-    because they can also serve as keys in object literals.
-  </comment>
   <rule name="String">
     <definition>
       <nonterminal name="STRING"/>
     </definition>
-    <comment>
-      string literal
-    </comment>
     <definition>
       <nonterminal name="STRING_START"/>
       <nonterminal name="Body"/>
       <nonterminal name="STRING_END"/>
     </definition>
-    <comment>
-      string with interpolations
-    </comment>
   </rule>
   <rule name="Regex">
     <definition>
       <nonterminal name="REGEX"/>
     </definition>
-    <comment>
-      regex literal
-    </comment>
     <definition>
       <nonterminal name="REGEX_START"/>
       <nonterminal name="Invocation"/>
       <nonterminal name="REGEX_END"/>
     </definition>
-    <comment>
-      regex with interpolations
-    </comment>
   </rule>
   <rule name="Literal">
     <definition>
@@ -396,13 +371,13 @@
   </comment>
   <rule name="FuncGlyph">
     <definition>
-      <terminal>-></terminal>
+      <terminal>-&gt;</terminal>
       <comment>
         ordinary function
       </comment>
     </definition>
     <definition>
-      <terminal>=></terminal>
+      <terminal>=&gt;</terminal>
       <comment>
         function bound to the current value of this
       </comment>
@@ -1405,3 +1380,4 @@
     </definition>
   </rule>
 </syntax>
+

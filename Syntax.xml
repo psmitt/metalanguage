@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE table SYSTEM "Syntax.dtd">
+<!DOCTYPE syntax SYSTEM "Syntax.dtd">
 <?xml-stylesheet type="text/xsl" href="Syntax.xsl"?>
 <syntax language="Syntax" start="Syntax">
   <rule name="Syntax">

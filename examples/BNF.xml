@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE table SYSTEM "../Syntax.dtd">
+<!DOCTYPE syntax SYSTEM "../Syntax.dtd">
 <?xml-stylesheet type="text/xsl" href="../Syntax.xsl"?>
 <syntax language="BNF" start="Syntax">
   <rule name="Syntax">
@@ -45,11 +45,11 @@
   <rule name="RuleName" token="yes">
     <definition>
       <nonterminal name="Letter"/>
-      <optional>
-        <repeated>
+      <repeated>
+        <optional>
           <nonterminal name="RuleCharacter"/>
-        </repeated>
-      </optional>
+        </optional>
+      </repeated>
     </definition>
   </rule>
   <rule name="Letter">
@@ -129,3 +129,4 @@
     </definition>
   </rule>
 </syntax>
+
