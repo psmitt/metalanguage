@@ -81,10 +81,10 @@
       <nonterminal name="Assignment"/>
     </definition>
     <definition>
-      <nonterminal name="Function"/>
+      <nonterminal name="Class"/>
     </definition>
     <definition>
-      <nonterminal name="Yield"/>
+      <nonterminal name="Function"/>
     </definition>
     <definition>
       <nonterminal name="If"/>
@@ -105,10 +105,9 @@
       <nonterminal name="Throw"/>
     </definition>
     <definition>
-      <nonterminal name="Class"/>
+      <nonterminal name="Yield"/>
     </definition>
   </rule>
-
   <rule name="Value">
     <definition>
       <nonterminal name="Parenthetical"/>
@@ -156,7 +155,6 @@
       <terminal>@</terminal>
     </definition>
   </rule>
-
   <rule name="Literal">
     <definition>
       <terminal>undefined</terminal>
@@ -310,7 +308,6 @@
       <terminal>`</terminal>
     </definition>
   </rule>
-
   <rule name="Range">
     <definition>
       <terminal>[</terminal>
@@ -328,7 +325,6 @@
       <terminal>...</terminal>
     </definition>
   </rule>
-
   <rule name="Array">
     <definition>
       <terminal>[</terminal>
@@ -372,7 +368,6 @@
       </optional>
     </definition>
   </rule>
-
   <rule name="Invocation">
     <definition>
       <nonterminal name="Value"/>
@@ -410,7 +405,6 @@
       <terminal>)</terminal>
     </definition>
   </rule>
-
   <rule name="Super">
     <definition>
       <terminal>super</terminal>
@@ -424,7 +418,6 @@
       <terminal>]</terminal>
     </definition>
   </rule>
-
   <rule name="Operation">
     <definition>
       <nonterminal name="SimpleAssignable"/>
@@ -648,7 +641,6 @@
       <nonterminal name="OUTDENT"/>
     </definition>
   </rule>
-
   <rule name="Assignable">
     <definition>
       <nonterminal name="SimpleAssignable"/>
@@ -734,20 +726,11 @@
       <comment>slice</comment>
     </definition>
   </rule>
-
-
-  
-
-  
-
-
   <rule name="Object">
     <definition>
       <terminal>{</terminal>
       <nonterminal name="AssignList"/>
-      <optional>
-        <terminal>,</terminal>
-      </optional>
+      <nonterminal name="C"/>
       <terminal>}</terminal>
     </definition>
   </rule>
@@ -792,6 +775,7 @@
       <nonterminal name="SimpleObjAssignable"/>
       <terminal>=</terminal>
       <nonterminal name="Expression"/>
+      <comment>???</comment>
     </definition>
     <definition>
       <nonterminal name="SimpleObjAssignable"/>
@@ -799,6 +783,18 @@
       <nonterminal name="INDENT"/>
       <nonterminal name="Expression"/>
       <nonterminal name="OUTDENT"/>
+      <comment>???</comment>
+    </definition>
+  </rule>
+  <rule name="ObjAssignable">
+    <definition>
+      <nonterminal name="Number"/>
+    </definition>
+    <definition>
+      <nonterminal name="String"/>
+    </definition>
+    <definition>
+      <nonterminal name="SimpleObjAssignable"/>
     </definition>
   </rule>
   <rule name="SimpleObjAssignable">
@@ -810,17 +806,6 @@
     </definition>
     <definition>
       <nonterminal name="ThisProperty"/>
-    </definition>
-  </rule>
-  <rule name="ObjAssignable">
-    <definition>
-      <nonterminal name="SimpleObjAssignable"/>
-    </definition>
-    <definition>
-      <nonterminal name="Number"/>
-    </definition>
-    <definition>
-      <nonterminal name="String"/>
     </definition>
   </rule>
   <rule name="ObjRestValue">
@@ -843,19 +828,16 @@
   </rule>
   <rule name="ObjSpreadExpr">
     <definition>
-      <nonterminal name="ObjSpreadIdentifier"/>
+      <nonterminal name="Parenthetical"/>
     </definition>
     <definition>
       <nonterminal name="Object"/>
     </definition>
     <definition>
-      <nonterminal name="Parenthetical"/>
+      <nonterminal name="This"/>
     </definition>
     <definition>
       <nonterminal name="Super"/>
-    </definition>
-    <definition>
-      <nonterminal name="This"/>
     </definition>
     <definition>
       <terminal>super</terminal>
@@ -869,8 +851,6 @@
       <nonterminal name="ObjSpreadExpr"/>
       <nonterminal name="Arguments"/>
     </definition>
-  </rule>
-  <rule name="ObjSpreadIdentifier">
     <definition>
       <nonterminal name="SimpleObjAssignable"/>
       <nonterminal name="ObjSpreadAccessor"/>
@@ -882,16 +862,15 @@
   </rule>
   <rule name="ObjSpreadAccessor">
     <definition>
-      <terminal>.</terminal>
-      <nonterminal name="Property"/>
-    </definition>
-    <definition>
       <terminal>[</terminal>
       <nonterminal name="Index"/>
       <terminal>]</terminal>
     </definition>
+    <definition>
+      <terminal>.</terminal>
+      <nonterminal name="Property"/>
+    </definition>
   </rule>
-
   <rule name="Class">
     <definition>
       <terminal>class</terminal>
