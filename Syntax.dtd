@@ -4,7 +4,7 @@
           language    CDATA #REQUIRED
           start       CDATA #REQUIRED
 >
-<!ELEMENT rule        (definition+)>
+<!ELEMENT rule        (comment?,definition+)>
 <!ATTLIST rule
           name        CDATA #REQUIRED
           token       (yes|no) "no"
@@ -22,3 +22,4 @@
 >
 <!ELEMENT exception   ((repeated|nonterminal|terminal)+)>
 <!ELEMENT comment     (#PCDATA)>
+

@@ -44,9 +44,16 @@
           </div>
         </fieldset>
         <xsl:for-each select="syntax/*">
-          <section>
-            <xsl:apply-templates select="."/>
-          </section>
+          <xsl:choose>
+            <xsl:when test="name()='comment'">
+              <xsl:apply-templates select="."/>
+            </xsl:when>
+            <xsl:otherwise>
+              <table>
+                <xsl:apply-templates select="."/>
+              </table>
+            </xsl:otherwise>
+          </xsl:choose>
         </xsl:for-each>
         <script><![CDATA[
           window.onload = function () {
@@ -68,7 +75,8 @@
   </xsl:template>
 
   <xsl:template match="rule">
-      <div class="rule">
+    <tr>
+      <td class="rule">
         <xsl:element name="a">
           <xsl:attribute name="id">
             <xsl:value-of select="@name"/>
@@ -79,14 +87,23 @@
             <xsl:value-of select="@name"/>
           </xsl:element>
         </xsl:element>
-      </div>
-      <xsl:apply-templates select="definition"/>
+      </td>
+      <td>
+        <xsl:apply-templates select="comment"/>
+      </td>
+    </tr>
+    <xsl:apply-templates select="definition"/>
   </xsl:template>
 
   <xsl:template match="definition">
-    <div class="definition">
-      <xsl:apply-templates/>
-    </div>
+    <tr>
+      <td class="definition">
+        <xsl:apply-templates select="node()[not(self::comment)]"/>
+      </td>
+      <td>
+        <xsl:apply-templates select="comment"/>
+      </td>
+    </tr>
   </xsl:template>
 
   <xsl:template match="repeated">

@@ -30,12 +30,17 @@ legend {
   cursor: pointer;
 }
 
-section {
+table {
   margin-top: 20px;
 }
 
-div.definition {
-  margin-left: 20px;
+td {
+  padding-left: 20px;
+  vertical-align: top;
+}
+
+td.rule {
+  padding: 0;
 }
 
 span {
@@ -53,7 +58,7 @@ span.nonterminal {
 }
 
 span.token {
-  color: Maroon;
+/*  color: Maroon; */
   font-weight: bold;
 }
 
@@ -87,11 +92,11 @@ span.exception {
 
 div.comment {
   color: Sienna;
+  margin-top: 20px;
   margin-left: 10px;
 }
 
-div.definition div.comment {
-  display: inline-block;
-  margin-left: 50px;
+td div.comment {
+  margin: 0;
   vertical-align: top;
 }
