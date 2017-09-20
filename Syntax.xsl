@@ -144,7 +144,7 @@
   </xsl:template>
 
   <xsl:template match="exception">
-    <span class="repeated">
+    <span class="exception">
       <xsl:apply-templates/>
     </span>
   </xsl:template>

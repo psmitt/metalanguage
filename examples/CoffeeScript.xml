@@ -9,42 +9,6 @@
       </optional>
     </definition>
   </rule>
-  <rule name="C">
-    <comment>optional comma</comment>
-    <definition>
-      <optional>
-        <terminal>,</terminal>
-      </optional>
-    </definition>
-  </rule>
-  <rule name="T">
-    <comment>TERMINATOR</comment>
-    <definition>
-      <terminal>;</terminal>
-    </definition>
-    <definition>
-      <optional>
-        <terminal type="regular">\u000D</terminal>
-      </optional>
-      <terminal type="regular">\u000A</terminal>
-      <comment>CR LF</comment>
-    </definition>
-    <definition>
-      <repeated>
-        <nonterminal name="T"/>
-      </repeated>
-    </definition>
-  </rule>
-  <rule name="S">
-    <comment>SEPARATOR</comment>
-    <definition>
-      <terminal>,</terminal>
-    </definition>
-    <definition>
-      <nonterminal name="C"/>
-      <nonterminal name="T"/>
-    </definition>
-  </rule>
   <rule name="Body">
     <definition>
       <nonterminal name="Line"/>
@@ -59,6 +23,60 @@
       </optional>
     </definition>
   </rule>
+  <rule name="T">
+    <comment>TERMINATOR</comment>
+    <definition>
+      <terminal>;</terminal>
+      <comment>semicolon</comment>
+    </definition>
+    <definition>
+      <optional>
+        <terminal type="regular">\u000D</terminal>
+      </optional>
+      <terminal type="regular">\u000A</terminal>
+      <comment>line break</comment>
+    </definition>
+    <definition>
+      <terminal type="regular">^\s*#(?!##[^#]).*</terminal>
+      <comment>line comment</comment>
+    </definition>
+    <definition>
+      <repeated>
+        <nonterminal name="T"/>
+      </repeated>
+    </definition>
+  </rule>
+  <comment>
+   Block comments can be embedded or multi-line according to the next pattern:
+   &lt;br/&gt;&lt;span class="regular"&gt;
+   ^\s*###([^#][\s\S]*?)(?:###[^\n\S]*|###$)
+   &lt;/span&gt;
+  </comment>
+  <rule name="Block">
+    <definition>
+      <nonterminal name="IN"/>
+      <optional>
+        <nonterminal name="Body"/>
+      </optional>
+      <nonterminal name="OUT"/>
+    </definition>
+  </rule>
+  <rule name="IN">
+    <definition>
+      <terminal>then</terminal>
+      <comment>inline INDENT closed by a TERMINATOR or by the syntax</comment>
+    </definition>
+    <definition>
+      <terminal type="regular">\n+[^\n\S]+</terminal>
+      <comment>newline INDENT closed by newline OUTDENT</comment>
+    </definition>
+  </rule>
+  <comment>
+   Operators and backslash at the end of a line suppress the following &lt;br/&gt;
+   TERMINATOR or IN token. The same happens by&amp;nbsp; &lt;b&gt;&lt;code
+   style="color:black"&gt;extends&lt;/code&gt;&lt;/b&gt;&amp;nbsp; and
+   &amp;nbsp;&lt;b&gt;&lt;code style="color:black"&gt;default&lt;/code&gt;&lt;/b&gt; .
+  </comment>
   <rule name="Line">
     <definition>
       <nonterminal name="Expression"/>
@@ -78,16 +96,16 @@
       <nonterminal name="Operation"/>
     </definition>
     <definition>
-      <nonterminal name="Assignment"/>
-    </definition>
-    <definition>
-      <nonterminal name="Class"/>
-    </definition>
-    <definition>
+      <optional>
+        <terminal>do</terminal>
+      </optional>
       <nonterminal name="Function"/>
     </definition>
     <definition>
-      <nonterminal name="If"/>
+      <nonterminal name="Assignment"/>
+    </definition>
+    <definition>
+      <nonterminal name="Conditional"/>
     </definition>
     <definition>
       <nonterminal name="Switch"/>
@@ -107,16 +125,16 @@
     <definition>
       <nonterminal name="Yield"/>
     </definition>
+    <definition>
+      <nonterminal name="Class"/>
+    </definition>
   </rule>
   <rule name="Value">
     <definition>
-      <nonterminal name="Parenthetical"/>
-    </definition>
-    <definition>
-      <nonterminal name="This"/>
-    </definition>
-    <definition>
       <nonterminal name="Literal"/>
+    </definition>
+    <definition>
+      <nonterminal name="Parenthetical"/>
     </definition>
     <definition>
       <nonterminal name="Range"/>
@@ -125,34 +143,13 @@
       <nonterminal name="Invocation"/>
     </definition>
     <definition>
-      <nonterminal name="Super"/>
-    </definition>
-    <definition>
       <nonterminal name="Assignable"/>
     </definition>
-  </rule>
-  <rule name="Parenthetical">
-  <comment>creates value from expression</comment>
     <definition>
-      <terminal>(</terminal>
-      <nonterminal name="Body"/>
-      <terminal>)</terminal>
+      <nonterminal name="This"/>
     </definition>
     <definition>
-      <terminal>(</terminal>
-      <nonterminal name="INDENT"/>
-      <nonterminal name="Body"/>
-      <nonterminal name="OUTDENT"/>
-      <terminal>)</terminal>
-    </definition>
-  </rule>
-  <rule name="This">
-  <comment>reference to current object</comment>
-    <definition>
-      <terminal>this</terminal>
-    </definition>
-    <definition>
-      <terminal>@</terminal>
+      <nonterminal name="Super"/>
     </definition>
   </rule>
   <rule name="Literal">
@@ -172,7 +169,7 @@
       <nonterminal name="String"/>
     </definition>
     <definition>
-      <nonterminal name="Regex"/>
+      <nonterminal name="RegExp"/>
     </definition>
     <definition>
       <nonterminal name="JavaScript"/>
@@ -222,200 +219,19 @@
       <terminal>NaN</terminal>
     </definition>
   </rule>
-  <rule name="String" token="yes">
+  <rule name="Parenthetical">
+  <comment>creates value from expression</comment>
     <definition>
-      <terminal>'</terminal>
-      <terminal type="regular">^(?:[^\\']|\\[\s\S])*</terminal>
-      <terminal>'</terminal>
-    </definition>
-    <definition>
-      <terminal>"</terminal>
-      <optional>
-        <nonterminal name="StrChars"/>
-      </optional>
-      <repeated>
-        <optional>
-          <terminal>#{</terminal>
-          <nonterminal name="Expression"/>
-          <terminal>}</terminal>
-        </optional>
-        <optional>
-          <nonterminal name="StrChars"/>
-        </optional>
-      </repeated>
-      <terminal>"</terminal>
-    </definition>
-    <definition>
-      <terminal>'''</terminal>
-      <terminal type="regular">^(?:[^\\']|\\[\s\S]|'(?!''))*</terminal>
-      <terminal>'''</terminal>
-    </definition>
-    <definition>
-      <terminal>"""</terminal>
-      <optional>
-        <nonterminal name="HereChars"/>
-      </optional>
-      <repeated>
-        <optional>
-          <terminal>#{</terminal>
-          <nonterminal name="Expression"/>
-          <terminal>}</terminal>
-        </optional>
-        <optional>
-          <nonterminal name="HereChars"/>
-        </optional>
-      </repeated>
-      <terminal>"""</terminal>
-    </definition>
-  </rule>
-  <rule name="StrChars" token="yes">
-    <definition>
-      <terminal type="regular">^(?:[^\\"#]|\\[\s\S]|\#(?!\{))*</terminal>
-    </definition>
-  </rule>
-  <rule name="HereChars" token="yes">
-    <definition>
-      <terminal type="regular">^(?:[^\\"#]|\\[\s\S]|"(?!"")|\#(?!\{))*</terminal>
-    </definition>
-  </rule>
-  <rule name="Regex" token="yes">
-    <definition>
-      <terminal>/</terminal>
-      <terminal type="regular">^(?!/)((?:[^[/\n\\]|\\[^\n]|\[(?:\\[^\n]|[^\]\n\\])*\])*)</terminal>
-      <terminal>/</terminal>
-      <optional>
-        <nonterminal name="Flags"/>
-      </optional>
-    </definition>
-    <definition>
-      <terminal>///</terminal>
-      <terminal type="regular">^(?:[^\\/#]|\\[\s\S]|/(?!//)|\#(?!\{))*</terminal>
-      <terminal>///</terminal>
-      <optional>
-        <nonterminal name="Flags"/>
-      </optional>
-    </definition>
-  </rule>
-  <rule name="Flags" token="yes">
-    <definition>
-      <terminal type="regular">^(?!.*(.).*\1)[imguy]*$</terminal>
-    </definition>
-  </rule>
-  <rule name="JavaScript" token="yes">
-    <definition>
-      <terminal>`</terminal>
-      <nonterminal name="JSource"/>
-      <terminal>`</terminal>
-    </definition>
-  </rule>
-  <rule name="Range">
-    <definition>
-      <terminal>[</terminal>
+      <terminal>(</terminal>
       <nonterminal name="Expression"/>
-      <nonterminal name="RangeDots"/>
-      <nonterminal name="Expression"/>
-      <terminal>]</terminal>
-    </definition>
-  </rule>
-  <rule name="RangeDots">
-    <definition>
-      <terminal>..</terminal>
-    </definition>
-    <definition>
-      <terminal>...</terminal>
-    </definition>
-  </rule>
-  <rule name="Array">
-    <definition>
-      <terminal>[</terminal>
-      <optional>
-        <nonterminal name="ArgList"/>
-        <nonterminal name="C"/>
-      </optional>
-      <terminal>]</terminal>
-    </definition>
-  </rule>
-  <rule name="ArgList">
-    <definition>
-      <optional>
-        <nonterminal name="ArgList"/>
-        <nonterminal name="S"/>
-      </optional>
-      <nonterminal name="Arg"/>
-    </definition>
-    <definition>
-      <optional>
-        <nonterminal name="ArgList"/>
-        <nonterminal name="C"/>
-      </optional>
-      <nonterminal name="INDENT"/>
-      <nonterminal name="ArgList"/>
-      <nonterminal name="C"/>
-      <nonterminal name="OUTDENT"/>
-    </definition>
-  </rule>
-  <rule name="Arg">
-    <definition>
-      <nonterminal name="Expression"/>
-      <optional>
-        <terminal>...</terminal>
-      </optional>
-    </definition>
-    <definition>
-      <terminal>...</terminal>
-      <optional>
-        <nonterminal name="Expression"/>
-      </optional>
-    </definition>
-  </rule>
-  <rule name="Invocation">
-    <definition>
-      <nonterminal name="Value"/>
-      <optional>
-        <terminal>?</terminal>
-      </optional>
-      <nonterminal name="String"/>
-    </definition>
-    <definition>
-      <nonterminal name="Value"/>
-      <optional>
-        <terminal>?</terminal>
-      </optional>
-      <nonterminal name="Arguments"/>
-    </definition>
-    <definition>
-      <terminal>super</terminal>
-      <optional>
-        <terminal>?</terminal>
-      </optional>
-      <nonterminal name="Arguments"/>
-    </definition>
-  </rule>
-  <rule name="Arguments">
-    <definition>
-      <nonterminal name="ArgList"/>
-      <nonterminal name="C"/>
+      <terminal>)</terminal>
     </definition>
     <definition>
       <terminal>(</terminal>
-      <optional>
-        <nonterminal name="ArgList"/>
-        <nonterminal name="C"/>
-      </optional>
-      <terminal>)</terminal>
-    </definition>
-  </rule>
-  <rule name="Super">
-    <definition>
-      <terminal>super</terminal>
-      <terminal>.</terminal>
-      <nonterminal name="Property"/>
-    </definition>
-    <definition>
-      <terminal>super</terminal>
-      <terminal>[</terminal>
+      <nonterminal name="IN"/>
       <nonterminal name="Expression"/>
-      <terminal>]</terminal>
+      <nonterminal name="OUT"/>
+      <terminal>)</terminal>
     </definition>
   </rule>
   <rule name="Operation">
@@ -624,106 +440,90 @@
       <terminal>|=</terminal>
     </definition>
   </rule>
-  <rule name="Assignment">
+  <rule name="String" token="yes">
     <definition>
-      <nonterminal name="Assignable"/>
-      <nonterminal name="Assign"/>
+      <terminal>'</terminal>
+      <terminal type="regular">^(?:[^\\']|\\[\s\S])*</terminal>
+      <terminal>'</terminal>
+    </definition>
+    <definition>
+      <terminal>"</terminal>
       <optional>
-        <nonterminal name="T"/>
+        <nonterminal name="StrChars"/>
       </optional>
-      <nonterminal name="Expression"/>
+      <repeated>
+        <optional>
+          <terminal>#{</terminal>
+          <nonterminal name="Expression"/>
+          <terminal>}</terminal>
+        </optional>
+        <optional>
+          <nonterminal name="StrChars"/>
+        </optional>
+      </repeated>
+      <terminal>"</terminal>
     </definition>
     <definition>
-      <nonterminal name="Assignable"/>
-      <nonterminal name="Assign"/>
-      <nonterminal name="INDENT"/>
-      <nonterminal name="Expression"/>
-      <nonterminal name="OUTDENT"/>
-    </definition>
-  </rule>
-  <rule name="Assignable">
-    <definition>
-      <nonterminal name="SimpleAssignable"/>
+      <terminal>'''</terminal>
+      <terminal type="regular">^(?:[^\\']|\\[\s\S]|'(?!''))*</terminal>
+      <terminal>'''</terminal>
     </definition>
     <definition>
-      <nonterminal name="Array"/>
-    </definition>
-    <definition>
-      <nonterminal name="Object"/>
-    </definition>
-  </rule>
-  <rule name="SimpleAssignable">
-    <definition>
-      <nonterminal name="Identifier"/>
-    </definition>
-    <definition>
-      <nonterminal name="ThisProperty"/>
-    </definition>
-    <definition>
-      <nonterminal name="Value"/>
-      <nonterminal name="Accessor"/>
-    </definition>
-    <definition>
-      <nonterminal name="Function"/>
-      <nonterminal name="Accessor"/>
-    </definition>
-  </rule>
-  <rule name="Identifier" token="yes">
-  <comment>WHat about CSX tags?</comment>
-    <definition>
-      <terminal type="regular">^(?!\d)((?:(?!\s)[$\w\x7f-\uffff])+)([^\n\S]*:(?!:))?</terminal>
-    </definition>
-  </rule>
-  <rule name="ThisProperty">
-    <definition>
-      <terminal>this</terminal>
-      <terminal>.</terminal>
-      <nonterminal name="Property"/>
-    </definition>
-    <definition>
-      <terminal>@</terminal>
-      <nonterminal name="Property"/>
-    </definition>
-  </rule>
-  <rule name="Accessor">
-    <definition>
+      <terminal>"""</terminal>
       <optional>
-        <terminal>?</terminal>
+        <nonterminal name="HereChars"/>
       </optional>
-      <terminal>[</terminal>
-      <nonterminal name="Index"/>
-      <terminal>]</terminal>
+      <repeated>
+        <optional>
+          <terminal>#{</terminal>
+          <nonterminal name="Expression"/>
+          <terminal>}</terminal>
+        </optional>
+        <optional>
+          <nonterminal name="HereChars"/>
+        </optional>
+      </repeated>
+      <terminal>"""</terminal>
+    </definition>
+  </rule>
+  <rule name="StrChars" token="yes">
+    <definition>
+      <terminal type="regular">^(?:[^\\"#]|\\[\s\S]|\#(?!\{))*</terminal>
+    </definition>
+  </rule>
+  <rule name="HereChars" token="yes">
+    <definition>
+      <terminal type="regular">^(?:[^\\"#]|\\[\s\S]|"(?!"")|\#(?!\{))*</terminal>
+    </definition>
+  </rule>
+  <rule name="RegExp" token="yes">
+    <definition>
+      <terminal>/</terminal>
+      <terminal type="regular">^(?!/)((?:[^[/\n\\]|\\[^\n]|\[(?:\\[^\n]|[^\]\n\\])*\])*)</terminal>
+      <terminal>/</terminal>
+      <optional>
+        <nonterminal name="Flags"/>
+      </optional>
     </definition>
     <definition>
+      <terminal>///</terminal>
+      <terminal type="regular">^(?:[^\\/#]|\\[\s\S]|/(?!//)|\#(?!\{))*</terminal>
+      <terminal>///</terminal>
       <optional>
-        <terminal>?</terminal>
-      </optional>
-      <terminal>.</terminal>
-      <nonterminal name="Property"/>
-    </definition>
-    <definition>
-      <optional>
-        <terminal>?</terminal>
-      </optional>
-      <terminal>::</terminal>
-      <optional>
-        <nonterminal name="Property"/>
+        <nonterminal name="Flags"/>
       </optional>
     </definition>
   </rule>
-  <rule name="Index">
+  <rule name="Flags" token="yes">
     <definition>
-      <nonterminal name="Expression"/>
+      <terminal type="regular">^(?!.*(.).*\1)[imguy]*$</terminal>
     </definition>
+  </rule>
+  <rule name="JavaScript" token="yes">
     <definition>
-      <optional>
-        <nonterminal name="Expression"/>
-      </optional>
-      <nonterminal name="RangeDots"/>
-      <optional>
-        <nonterminal name="Expression"/>
-      </optional>
-      <comment>slice</comment>
+      <terminal>`</terminal>
+      <nonterminal name="JSource"/>
+      <terminal>`</terminal>
     </definition>
   </rule>
   <rule name="Object">
@@ -746,10 +546,10 @@
       <optional>
         <nonterminal name="AssignList"/>
         <nonterminal name="C"/>
-        <nonterminal name="INDENT"/>
+        <nonterminal name="IN"/>
         <nonterminal name="AssignList"/>
         <nonterminal name="C"/>
-        <nonterminal name="OUTDENT"/>
+        <nonterminal name="OUT"/>
       </optional>
     </definition>
   </rule>
@@ -764,9 +564,9 @@
     <definition>
       <nonterminal name="ObjAssignable"/>
       <terminal>:</terminal>
-      <nonterminal name="INDENT"/>
+      <nonterminal name="IN"/>
       <nonterminal name="Expression"/>
-      <nonterminal name="OUTDENT"/>
+      <nonterminal name="OUT"/>
     </definition>
     <definition>
       <nonterminal name="ObjRestValue"/>
@@ -780,9 +580,9 @@
     <definition>
       <nonterminal name="SimpleObjAssignable"/>
       <terminal>=</terminal>
-      <nonterminal name="INDENT"/>
+      <nonterminal name="IN"/>
       <nonterminal name="Expression"/>
-      <nonterminal name="OUTDENT"/>
+      <nonterminal name="OUT"/>
       <comment>???</comment>
     </definition>
   </rule>
@@ -871,6 +671,15 @@
       <nonterminal name="Property"/>
     </definition>
   </rule>
+  <rule name="This">
+  <comment>reference to current object</comment>
+    <definition>
+      <terminal>this</terminal>
+    </definition>
+    <definition>
+      <terminal>@</terminal>
+    </definition>
+  </rule>
   <rule name="Class">
     <definition>
       <terminal>class</terminal>
@@ -886,13 +695,239 @@
       </optional>
     </definition>
   </rule>
-  <rule name="Block">
+  <rule name="Range">
     <definition>
-      <nonterminal name="INDENT"/>
+      <terminal>[</terminal>
+      <nonterminal name="Expression"/>
+      <nonterminal name="RangeDots"/>
+      <nonterminal name="Expression"/>
+      <terminal>]</terminal>
+    </definition>
+  </rule>
+  <rule name="RangeDots">
+    <definition>
+      <terminal>..</terminal>
+    </definition>
+    <definition>
+      <terminal>...</terminal>
+    </definition>
+  </rule>
+  <rule name="C">
+    <comment>optional comma</comment>
+    <definition>
       <optional>
-        <nonterminal name="Body"/>
+        <terminal>,</terminal>
       </optional>
-      <nonterminal name="OUTDENT"/>
+    </definition>
+  </rule>
+  <rule name="S">
+    <comment>SEPARATOR</comment>
+    <definition>
+      <terminal>,</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="C"/>
+      <nonterminal name="T"/>
+    </definition>
+  </rule>
+  <rule name="Array">
+    <definition>
+      <terminal>[</terminal>
+      <optional>
+        <nonterminal name="ArgList"/>
+        <nonterminal name="C"/>
+      </optional>
+      <terminal>]</terminal>
+    </definition>
+  </rule>
+  <rule name="ArgList">
+    <definition>
+      <optional>
+        <nonterminal name="ArgList"/>
+        <nonterminal name="S"/>
+      </optional>
+      <nonterminal name="Arg"/>
+    </definition>
+    <definition>
+      <optional>
+        <nonterminal name="ArgList"/>
+        <nonterminal name="C"/>
+      </optional>
+      <nonterminal name="IN"/>
+      <nonterminal name="ArgList"/>
+      <nonterminal name="C"/>
+      <nonterminal name="OUT"/>
+    </definition>
+  </rule>
+  <rule name="Arg">
+    <definition>
+      <nonterminal name="Expression"/>
+      <optional>
+        <terminal>...</terminal>
+      </optional>
+    </definition>
+    <definition>
+      <terminal>...</terminal>
+      <optional>
+        <nonterminal name="Expression"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="Invocation">
+    <definition>
+      <nonterminal name="Value"/>
+      <optional>
+        <terminal>?</terminal>
+      </optional>
+      <nonterminal name="String"/>
+    </definition>
+    <definition>
+      <nonterminal name="Value"/>
+      <optional>
+        <terminal>?</terminal>
+      </optional>
+      <nonterminal name="Arguments"/>
+    </definition>
+    <definition>
+      <terminal>super</terminal>
+      <optional>
+        <terminal>?</terminal>
+      </optional>
+      <nonterminal name="Arguments"/>
+    </definition>
+  </rule>
+  <rule name="Arguments">
+    <definition>
+      <nonterminal name="ArgList"/>
+      <nonterminal name="C"/>
+    </definition>
+    <definition>
+      <terminal>(</terminal>
+      <optional>
+        <nonterminal name="ArgList"/>
+        <nonterminal name="C"/>
+      </optional>
+      <terminal>)</terminal>
+    </definition>
+  </rule>
+  <rule name="Super">
+    <definition>
+      <terminal>super</terminal>
+      <terminal>.</terminal>
+      <nonterminal name="Property"/>
+    </definition>
+    <definition>
+      <terminal>super</terminal>
+      <terminal>[</terminal>
+      <nonterminal name="Expression"/>
+      <terminal>]</terminal>
+    </definition>
+  </rule>
+  <rule name="Assignment">
+    <definition>
+      <nonterminal name="Assignable"/>
+      <nonterminal name="Assign"/>
+      <optional>
+        <nonterminal name="T"/>
+      </optional>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Assignable"/>
+      <nonterminal name="Assign"/>
+      <nonterminal name="IN"/>
+      <nonterminal name="Expression"/>
+      <nonterminal name="OUT"/>
+    </definition>
+  </rule>
+  <rule name="Assignable">
+    <definition>
+      <nonterminal name="SimpleAssignable"/>
+    </definition>
+    <definition>
+      <nonterminal name="Array"/>
+    </definition>
+    <definition>
+      <nonterminal name="Object"/>
+    </definition>
+  </rule>
+  <rule name="SimpleAssignable">
+    <definition>
+      <nonterminal name="Identifier"/>
+    </definition>
+    <definition>
+      <nonterminal name="ThisProperty"/>
+    </definition>
+    <definition>
+      <nonterminal name="Value"/>
+      <nonterminal name="Accessor"/>
+    </definition>
+    <definition>
+      <nonterminal name="Function"/>
+      <nonterminal name="Accessor"/>
+    </definition>
+  </rule>
+  <rule name="Identifier" token="yes">
+    <definition>
+      <terminal type="regular">^(?!\d)((?:(?!\s)[$\w\x7f-\uffff])+)([^\n\S]*:(?!:))?</terminal>
+      <exception>
+        <nonterminal name="Reserved"/>
+      </exception>
+    </definition>
+    <definition>
+      <nonterminal name="CSXtag"/>
+    </definition>
+  </rule>
+  <rule name="ThisProperty">
+    <definition>
+      <terminal>this</terminal>
+      <terminal>.</terminal>
+      <nonterminal name="Property"/>
+    </definition>
+    <definition>
+      <terminal>@</terminal>
+      <nonterminal name="Property"/>
+    </definition>
+  </rule>
+  <rule name="Accessor">
+    <definition>
+      <optional>
+        <terminal>?</terminal>
+      </optional>
+      <terminal>[</terminal>
+      <nonterminal name="Index"/>
+      <terminal>]</terminal>
+    </definition>
+    <definition>
+      <optional>
+        <terminal>?</terminal>
+      </optional>
+      <terminal>.</terminal>
+      <nonterminal name="Property"/>
+    </definition>
+    <definition>
+      <optional>
+        <terminal>?</terminal>
+      </optional>
+      <terminal>::</terminal>
+      <optional>
+        <nonterminal name="Property"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="Index">
+    <definition>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <optional>
+        <nonterminal name="Expression"/>
+      </optional>
+      <nonterminal name="RangeDots"/>
+      <optional>
+        <nonterminal name="Expression"/>
+      </optional>
+      <comment>slice</comment>
     </definition>
   </rule>
 
@@ -933,10 +968,10 @@
       <optional>
         <nonterminal name="ParamList"/>
         <nonterminal name="C"/>
-        <nonterminal name="INDENT"/>
+        <nonterminal name="IN"/>
         <nonterminal name="ParamList"/>
         <nonterminal name="C"/>
-        <nonterminal name="OUTDENT"/>
+        <nonterminal name="OUT"/>
       </optional>
     </definition>
   </rule>
@@ -976,15 +1011,15 @@
     </definition>
   </rule>
 
-  <rule name="If">
+  <rule name="Conditional">
     <definition>
-      <terminal>if</terminal>
+      <nonterminal name="If"/>
       <nonterminal name="Expression"/>
       <nonterminal name="Block"/>
       <repeated>
         <optional>
           <terminal>else</terminal>
-          <terminal>if</terminal>
+          <nonterminal name="If"/>
           <nonterminal name="Expression"/>
           <nonterminal name="Block"/>
         </optional>
@@ -996,13 +1031,21 @@
     </definition>
     <definition>
       <nonterminal name="Expression"/>
-      <terminal>if</terminal>
+      <nonterminal name="If"/>
       <nonterminal name="Expression"/>
     </definition>
     <definition>
       <nonterminal name="Statement"/>
-      <terminal>if</terminal>
+      <nonterminal name="If"/>
       <nonterminal name="Expression"/>
+    </definition>
+  </rule>
+  <rule name="If">
+    <definition>
+      <terminal>if</terminal>
+    </definition>
+    <definition>
+      <terminal>unless</terminal>
     </definition>
   </rule>
   <rule name="Switch">
@@ -1011,7 +1054,7 @@
       <optional>
         <nonterminal name="Expression"/>
       </optional>
-      <nonterminal name="INDENT"/>
+      <nonterminal name="IN"/>
       <repeated>
         <terminal>when</terminal>
         <nonterminal name="Cases"/>
@@ -1024,7 +1067,7 @@
         <terminal>else</terminal>
         <nonterminal name="Block"/>
       </optional>
-      <nonterminal name="OUTDENT"/>
+      <nonterminal name="OUT"/>
     </definition>
   </rule>
   <rule name="Cases">
@@ -1173,9 +1216,9 @@
     </definition>
     <definition>
       <terminal>return</terminal>
-      <nonterminal name="INDENT"/>
+      <nonterminal name="IN"/>
       <nonterminal name="Object"/>
-      <nonterminal name="OUTDENT"/>
+      <nonterminal name="OUT"/>
     </definition>
     <definition>
       <nonterminal name="Import"/>
@@ -1238,10 +1281,10 @@
         <nonterminal name="ImportSpecifierList"/>
         <nonterminal name="C"/>
       </optional>
-      <nonterminal name="INDENT"/>
+      <nonterminal name="IN"/>
       <nonterminal name="ImportSpecifierList"/>
       <nonterminal name="C"/>
-      <nonterminal name="OUTDENT"/>
+      <nonterminal name="OUT"/>
     </definition>
   </rule>
   <rule name="ImportSpecifier">
@@ -1279,9 +1322,9 @@
       <terminal>export</terminal>
       <nonterminal name="Identifier"/>
       <terminal>=</terminal>
-      <nonterminal name="INDENT"/>
+      <nonterminal name="IN"/>
       <nonterminal name="Expression"/>
-      <nonterminal name="OUTDENT"/>
+      <nonterminal name="OUT"/>
     </definition>
     <definition>
       <terminal>export</terminal>
@@ -1320,10 +1363,10 @@
         <nonterminal name="ExportSpecifierList"/>
         <nonterminal name="C"/>
       </optional>
-      <nonterminal name="INDENT"/>
+      <nonterminal name="IN"/>
       <nonterminal name="ExportSpecifierList"/>
       <nonterminal name="C"/>
-      <nonterminal name="OUTDENT"/>
+      <nonterminal name="OUT"/>
     </definition>
   </rule>
   <rule name="ExportSpecifier">
@@ -1382,9 +1425,9 @@
     </definition>
     <definition>
       <terminal>throw</terminal>
-      <nonterminal name="INDENT"/>
+      <nonterminal name="IN"/>
       <nonterminal name="Object"/>
-      <nonterminal name="OUTDENT"/>
+      <nonterminal name="OUT"/>
     </definition>
   </rule>
   <rule name="Yield">
