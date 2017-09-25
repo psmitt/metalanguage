@@ -568,11 +568,11 @@
       <nonterminal name="SimpleAssignable"/>
     </definition>
     <definition>
-      <nonterminal name="Array"/>
+      <nonterminal name="Object"/>
       <comment>destructuring assignment</comment>
     </definition>
     <definition>
-      <nonterminal name="Object"/>
+      <nonterminal name="Array"/>
       <comment>destructuring assignment</comment>
     </definition>
   </rule>
@@ -614,6 +614,40 @@
       <optional>
         <nonterminal name="Property"/>
       </optional>
+      <comment>prototype accessor</comment>
+    </definition>
+  </rule>
+  <rule name="Index">
+    <definition>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <optional>
+        <nonterminal name="Expression"/>
+      </optional>
+      <nonterminal name="RangeDots"/>
+      <optional>
+        <nonterminal name="Expression"/>
+      </optional>
+      <comment>slice</comment>
+    </definition>
+  </rule>
+  <rule name="C">
+    <comment>optional comma</comment>
+    <definition>
+      <optional>
+        <terminal>,</terminal>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="S">
+    <comment>SEPARATOR</comment>
+    <definition>
+      <terminal>,</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="C"/>
+      <nonterminal name="T"/>
     </definition>
   </rule>
   <rule name="Object">
@@ -660,20 +694,6 @@
     </definition>
     <definition>
       <nonterminal name="ObjRestValue"/>
-    </definition>
-    <definition>
-      <nonterminal name="SimpleObjAssignable"/>
-      <terminal>=</terminal>
-      <nonterminal name="Expression"/>
-      <comment>???</comment>
-    </definition>
-    <definition>
-      <nonterminal name="SimpleObjAssignable"/>
-      <terminal>=</terminal>
-      <nonterminal name="IN"/>
-      <nonterminal name="Expression"/>
-      <nonterminal name="OUT"/>
-      <comment>???</comment>
     </definition>
   </rule>
   <rule name="ObjAssignable">
@@ -740,14 +760,6 @@
     </definition>
     <definition>
       <nonterminal name="ObjSpreadExpr"/>
-      <nonterminal name="Arguments"/>
-    </definition>
-    <definition>
-      <nonterminal name="SimpleObjAssignable"/>
-      <nonterminal name="Accessor"/>
-    </definition>
-    <definition>
-      <nonterminal name="ObjSpreadExpr"/>
       <nonterminal name="Accessor"/>
     </definition>
   </rule>
@@ -758,6 +770,19 @@
     </definition>
     <definition>
       <terminal>@</terminal>
+    </definition>
+  </rule>
+  <rule name="SuperProperty">
+    <definition>
+      <terminal>super</terminal>
+      <terminal>.</terminal>
+      <nonterminal name="Property"/>
+    </definition>
+    <definition>
+      <terminal>super</terminal>
+      <terminal>[</terminal>
+      <nonterminal name="Expression"/>
+      <terminal>]</terminal>
     </definition>
   </rule>
   <rule name="Class">
@@ -773,24 +798,6 @@
       <optional>
         <nonterminal name="Block"/>
       </optional>
-    </definition>
-  </rule>
-  <rule name="C">
-    <comment>optional comma</comment>
-    <definition>
-      <optional>
-        <terminal>,</terminal>
-      </optional>
-    </definition>
-  </rule>
-  <rule name="S">
-    <comment>SEPARATOR</comment>
-    <definition>
-      <terminal>,</terminal>
-    </definition>
-    <definition>
-      <nonterminal name="C"/>
-      <nonterminal name="T"/>
     </definition>
   </rule>
   <rule name="Array">
@@ -853,73 +860,6 @@
       <terminal>...</terminal>
     </definition>
   </rule>
-  <rule name="Invocation">
-    <definition>
-      <nonterminal name="Value"/>
-      <optional>
-        <terminal>?</terminal>
-      </optional>
-      <nonterminal name="String"/>
-      <comment>tagged template call</comment>
-    </definition>
-    <definition>
-      <nonterminal name="Value"/>
-      <optional>
-        <terminal>?</terminal>
-      </optional>
-      <nonterminal name="Arguments"/>
-    </definition>
-    <definition>
-      <terminal>super</terminal>
-      <optional>
-        <terminal>?</terminal>
-      </optional>
-      <nonterminal name="Arguments"/>
-    </definition>
-  </rule>
-  <rule name="Arguments">
-    <definition>
-      <nonterminal name="ArgList"/>
-      <nonterminal name="C"/>
-    </definition>
-    <definition>
-      <terminal>(</terminal>
-      <optional>
-        <nonterminal name="ArgList"/>
-        <nonterminal name="C"/>
-      </optional>
-      <terminal>)</terminal>
-    </definition>
-  </rule>
-  <rule name="SuperProperty">
-    <definition>
-      <terminal>super</terminal>
-      <terminal>.</terminal>
-      <nonterminal name="Property"/>
-    </definition>
-    <definition>
-      <terminal>super</terminal>
-      <terminal>[</terminal>
-      <nonterminal name="Expression"/>
-      <terminal>]</terminal>
-    </definition>
-  </rule>
-  <rule name="Index">
-    <definition>
-      <nonterminal name="Expression"/>
-    </definition>
-    <definition>
-      <optional>
-        <nonterminal name="Expression"/>
-      </optional>
-      <nonterminal name="RangeDots"/>
-      <optional>
-        <nonterminal name="Expression"/>
-      </optional>
-      <comment>slice</comment>
-    </definition>
-  </rule>
-
   <rule name="Function">
     <definition>
       <optional>
@@ -972,12 +912,14 @@
         <terminal>=</terminal>
         <nonterminal name="Expression"/>
       </optional>
+      <comment>default parameter</comment>
     </definition>
     <definition>
       <nonterminal name="ParamVar"/>
       <optional>
         <terminal>...</terminal>
       </optional>
+      <comment>rest parameter</comment>
     </definition>
     <definition>
       <terminal>...</terminal>
@@ -996,13 +938,80 @@
       <nonterminal name="Property"/>
     </definition>
     <definition>
-      <nonterminal name="Array"/>
-    </definition>
-    <definition>
       <nonterminal name="Object"/>
     </definition>
+    <definition>
+      <nonterminal name="Array"/>
+    </definition>
   </rule>
-
+  <rule name="Invocation">
+    <definition>
+      <nonterminal name="Value"/>
+      <optional>
+        <terminal>?</terminal>
+      </optional>
+      <nonterminal name="Arguments"/>
+    </definition>
+    <definition>
+      <nonterminal name="Value"/>
+      <optional>
+        <terminal>?</terminal>
+      </optional>
+      <nonterminal name="String"/>
+      <comment>tagged template call</comment>
+    </definition>
+    <definition>
+      <terminal>super</terminal>
+      <optional>
+        <terminal>?</terminal>
+      </optional>
+      <nonterminal name="Arguments"/>
+    </definition>
+  </rule>
+  <rule name="Arguments">
+    <definition>
+      <nonterminal name="ArgList"/>
+      <nonterminal name="C"/>
+    </definition>
+    <definition>
+      <terminal>(</terminal>
+      <optional>
+        <nonterminal name="ArgList"/>
+        <nonterminal name="C"/>
+      </optional>
+      <terminal>)</terminal>
+    </definition>
+  </rule>
+  <rule name="Yield">
+    <definition>
+      <terminal>yield</terminal>
+    </definition>
+    <definition>
+      <terminal>yield</terminal>
+      <optional>
+        <terminal>from</terminal>
+      </optional>
+      <nonterminal name="Expression"/>
+    </definition>
+  </rule>
+  <rule name="FuncDirective">
+    <definition>
+      <terminal>yield</terminal>
+      <terminal>return</terminal>
+      <optional>
+        <nonterminal name="Expression"/>
+      </optional>
+      <comment>forced generator</comment>
+    </definition>
+    <definition>
+      <terminal>await</terminal>
+      <terminal>return</terminal>
+      <optional>
+        <nonterminal name="Expression"/>
+      </optional>
+      <comment>forced async</comment>
+    </definition>
+  </rule>
   <rule name="Conditional">
     <definition>
       <nonterminal name="If"/>
@@ -1073,7 +1082,6 @@
       </repeated>
     </definition>
   </rule>
-
   <rule name="Loop">
     <definition>
       <terminal>loop</terminal>
@@ -1192,7 +1200,45 @@
       </optional>
     </definition>
   </rule>
-
+  <rule name="Try">
+    <definition>
+      <terminal>try</terminal>
+      <nonterminal name="Block"/>
+      <optional>
+        <nonterminal name="Catch"/>
+      </optional>
+      <optional>
+        <terminal>finally</terminal>
+        <nonterminal name="Block"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="Catch">
+    <definition>
+      <terminal>catch</terminal>
+      <optional>
+        <nonterminal name="Identifier"/>
+      </optional>
+      <nonterminal name="Block"/>
+    </definition>
+    <definition>
+      <terminal>catch</terminal>
+      <nonterminal name="Object"/>
+      <nonterminal name="Block"/>
+    </definition>
+  </rule>
+  <rule name="Throw">
+    <definition>
+      <terminal>throw</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <terminal>throw</terminal>
+      <nonterminal name="IN"/>
+      <nonterminal name="Object"/>
+      <nonterminal name="OUT"/>
+    </definition>
+  </rule>
   <rule name="Statement">
     <definition>
       <terminal>break</terminal>
@@ -1379,74 +1425,6 @@
       <optional>
         <terminal>as</terminal>
         <nonterminal name="Identifier"/>
-      </optional>
-    </definition>
-  </rule>
-
-  <rule name="Try">
-    <definition>
-      <terminal>try</terminal>
-      <nonterminal name="Block"/>
-      <optional>
-        <nonterminal name="Catch"/>
-      </optional>
-      <optional>
-        <terminal>finally</terminal>
-        <nonterminal name="Block"/>
-      </optional>
-    </definition>
-  </rule>
-  <rule name="Catch">
-    <definition>
-      <terminal>catch</terminal>
-      <optional>
-        <nonterminal name="Identifier"/>
-      </optional>
-      <nonterminal name="Block"/>
-    </definition>
-    <definition>
-      <terminal>catch</terminal>
-      <nonterminal name="Object"/>
-      <nonterminal name="Block"/>
-    </definition>
-  </rule>
-  <rule name="Throw">
-    <definition>
-      <terminal>throw</terminal>
-      <nonterminal name="Expression"/>
-    </definition>
-    <definition>
-      <terminal>throw</terminal>
-      <nonterminal name="IN"/>
-      <nonterminal name="Object"/>
-      <nonterminal name="OUT"/>
-    </definition>
-  </rule>
-  <rule name="Yield">
-    <definition>
-      <terminal>yield</terminal>
-    </definition>
-    <definition>
-      <terminal>yield</terminal>
-      <optional>
-        <terminal>from</terminal>
-      </optional>
-      <nonterminal name="Expression"/>
-    </definition>
-  </rule>
-  <rule name="FuncDirective">
-    <definition>
-      <terminal>yield</terminal>
-      <terminal>return</terminal>
-      <optional>
-        <nonterminal name="Expression"/>
-      </optional>
-    </definition>
-    <definition>
-      <terminal>await</terminal>
-      <terminal>return</terminal>
-      <optional>
-        <nonterminal name="Expression"/>
       </optional>
     </definition>
   </rule>
