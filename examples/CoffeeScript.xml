@@ -967,6 +967,10 @@
       </optional>
       <nonterminal name="Arguments"/>
     </definition>
+    <definition>
+      <terminal>do</terminal>
+      <nonterminal name="Function"/>
+    </definition>
   </rule>
   <rule name="Arguments">
     <definition>
