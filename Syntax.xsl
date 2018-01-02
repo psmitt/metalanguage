@@ -7,6 +7,12 @@
   <xsl:template match="/">
     <html>
       <link href="Syntax.css" rel="stylesheet"/>
+      <xsl:element name="link">
+        <xsl:attribute name="href">
+          <xsl:value-of select="syntax/@language"/>.css
+        </xsl:attribute>
+        <xsl:attribute name="rel">stylesheet</xsl:attribute>
+      </xsl:element>
       <body>
         <h1>
           <xsl:value-of select="syntax/@language"/>
@@ -18,9 +24,6 @@
           </div>
           <div class="guide">
             <span class='nonterminal'>NonTerminal Symbol</span>
-          </div>
-          <div class="guide">
-            <span class='nonterminal token'>NonTerminal Token</span>
           </div>
           <div class="guide">
             <span class='terminal'>Case-Sensitive Terminal String</span>
@@ -82,8 +85,7 @@
             <xsl:value-of select="@name"/>
           </xsl:attribute>
           <xsl:element name="span">
-            <xsl:attribute name="class">nonterminal<xsl:if test="@token='yes'"> token</xsl:if>
-            </xsl:attribute>
+            <xsl:attribute name="class">nonterminal</xsl:attribute>
             <xsl:value-of select="@name"/>
           </xsl:element>
         </xsl:element>

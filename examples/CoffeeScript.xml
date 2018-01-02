@@ -172,7 +172,7 @@
       <nonterminal name="JavaScript"/>
     </definition>
   </rule>
-  <rule name="Boolean" token="yes">
+  <rule name="Boolean">
     <definition>
       <terminal>true</terminal>
     </definition>
@@ -192,7 +192,7 @@
       <terminal>off</terminal>
     </definition>
   </rule>
-  <rule name="Number" token="yes">
+  <rule name="Number">
     <definition>
       <terminal type="regular">^0b[01]+</terminal>
       <comment>binary</comment>
@@ -311,7 +311,7 @@
       <nonterminal name="Assignment"/>
     </definition>
   </rule>
-  <rule name="Step" token="yes">
+  <rule name="Step">
     <definition>
       <terminal>++</terminal>
     </definition>
@@ -319,7 +319,7 @@
       <terminal>--</terminal>
     </definition>
   </rule>
-  <rule name="Unary" token="yes">
+  <rule name="Unary">
     <definition>
       <terminal>delete</terminal>
     </definition>
@@ -342,7 +342,7 @@
       <terminal>not</terminal>
     </definition>
   </rule>
-  <rule name="Multiplicative" token="yes">
+  <rule name="Multiplicative">
     <definition>
       <terminal>*</terminal>
     </definition>
@@ -359,7 +359,7 @@
       <terminal>%%</terminal>
     </definition>
   </rule>
-  <rule name="Additive" token="yes">
+  <rule name="Additive">
     <definition>
       <terminal>+</terminal>
     </definition>
@@ -367,7 +367,7 @@
       <terminal>-</terminal>
     </definition>
   </rule>
-  <rule name="Shift" token="yes">
+  <rule name="Shift">
     <definition>
       <terminal>&lt;&lt;</terminal>
     </definition>
@@ -378,7 +378,7 @@
       <terminal>&gt;&gt;&gt;</terminal>
     </definition>
   </rule>
-  <rule name="Relation" token="yes">
+  <rule name="Relation">
     <definition>
       <terminal>of</terminal>
     </definition>
@@ -389,7 +389,7 @@
       <terminal>instanceof</terminal>
     </definition>
   </rule>
-  <rule name="Comparison" token="yes">
+  <rule name="Comparison">
     <definition>
       <terminal>&lt;</terminal>
     </definition>
@@ -415,7 +415,7 @@
       <terminal>isnt</terminal>
     </definition>
   </rule>
-  <rule name="AND" token="yes">
+  <rule name="AND">
     <definition>
       <terminal>&amp;&amp;</terminal>
     </definition>
@@ -423,7 +423,7 @@
       <terminal>and</terminal>
     </definition>
   </rule>
-  <rule name="OR" token="yes">
+  <rule name="OR">
     <definition>
       <terminal>||</terminal>
     </definition>
@@ -431,7 +431,7 @@
       <terminal>or</terminal>
     </definition>
   </rule>
-  <rule name="Assign" token="yes">
+  <rule name="Assign">
     <definition>
       <terminal>=</terminal>
     </definition>
@@ -460,7 +460,7 @@
       <terminal>|=</terminal>
     </definition>
   </rule>
-  <rule name="String" token="yes">
+  <rule name="String">
     <definition>
       <terminal>'</terminal>
       <terminal type="regular">^(?:[^\\']|\\[\s\S])*</terminal>
@@ -506,17 +506,17 @@
       <terminal>"""</terminal>
     </definition>
   </rule>
-  <rule name="StrChars" token="yes">
+  <rule name="StrChars">
     <definition>
       <terminal type="regular">^(?:[^\\"#]|\\[\s\S]|\#(?!\{))*</terminal>
     </definition>
   </rule>
-  <rule name="HereChars" token="yes">
+  <rule name="HereChars">
     <definition>
       <terminal type="regular">^(?:[^\\"#]|\\[\s\S]|"(?!"")|\#(?!\{))*</terminal>
     </definition>
   </rule>
-  <rule name="RegExp" token="yes">
+  <rule name="RegExp">
     <definition>
       <terminal>/</terminal>
       <terminal type="regular">^(?!/)((?:[^[/\n\\]|\\[^\n]|\[(?:\\[^\n]|[^\]\n\\])*\])*)</terminal>
@@ -534,12 +534,12 @@
       </optional>
     </definition>
   </rule>
-  <rule name="Flags" token="yes">
+  <rule name="Flags">
     <definition>
       <terminal type="regular">^(?!.*(.).*\1)[imguy]*$</terminal>
     </definition>
   </rule>
-  <rule name="JavaScript" token="yes">
+  <rule name="JavaScript">
     <definition>
       <terminal>`</terminal>
       <nonterminal name="JSource"/>
@@ -576,7 +576,7 @@
       <comment>destructuring assignment</comment>
     </definition>
   </rule>
-  <rule name="SimpleAssignable" token="yes">
+  <rule name="SimpleAssignable">
     <definition>
       <nonterminal name="Identifier"/>
     </definition>
@@ -588,7 +588,7 @@
       <nonterminal name="Accessor"/>
     </definition>
   </rule>
-  <rule name="Identifier" token="yes">
+  <rule name="Identifier">
     <definition>
       <terminal type="regular">^(?!\d)((?:(?!\s)[$\w\x7f-\uffff])+)([^\n\S]*:(?!:))?</terminal>
       <exception>

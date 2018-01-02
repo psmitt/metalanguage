@@ -42,7 +42,7 @@
       <comment>ASCII space</comment>
     </definition>
   </rule>
-  <rule name="RuleName" token="yes">
+  <rule name="RuleName">
     <definition>
       <nonterminal name="Letter"/>
       <repeated>
@@ -86,7 +86,7 @@
       </repeated>
     </definition>
   </rule>
-  <rule name="Term" token="yes">
+  <rule name="Term">
     <definition>
       <terminal>&lt;</terminal>
       <nonterminal name="RuleName"/>
@@ -96,7 +96,7 @@
       <nonterminal name="Literal"/>
     </definition>
   </rule>
-  <rule name="Literal" token="yes">
+  <rule name="Literal">
     <definition>
       <terminal>"</terminal>
       <optional>

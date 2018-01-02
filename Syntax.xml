@@ -48,17 +48,7 @@
   <comment>
     Definitions are indented by the display system under the Rule Name.
   </comment>
-  <comment>
-    <![CDATA[The elements in the definition sequence of a
-    <span class='nonterminal'>NonTerminal Symbol</span> can be <br/>
-    arbitrarily separated by additional whitespaces in the production system.]]>
-  </comment>
-  <comment>
-    <![CDATA[The elements in the definition sequence of a
-    <span class='nonterminal token'>NonTerminal Token</span> must not be <br/>
-    separated by additional characters or symbols in the production system.]]>
-  </comment>
-  <rule name="RuleName" token="yes">
+  <rule name="RuleName">
     <definition>
       <nonterminal name="UppercaseLetter"/>
       <optional>
@@ -150,7 +140,7 @@
       <nonterminal name="UnicodeRegularExpression"/>
       <comment>
         <![CDATA[<u><a href="http://unicode.org/reports/tr18" target="_blank">Unicode Regular Expressions</a></u>
-        are used for defining character groups.]]>
+        are used for defining tokens.]]>
       </comment>
     </definition>
   </rule>

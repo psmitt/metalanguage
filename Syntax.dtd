@@ -7,9 +7,8 @@
 <!ELEMENT rule        (comment?,definition+)>
 <!ATTLIST rule
           name        CDATA #REQUIRED
-          token       (yes|no) "no"
 >
-<!ELEMENT definition  ((repeated|optional|nonterminal|terminal)+,exception?,comment?)>
+<!ELEMENT definition  ((repeated|optional|nonterminal|terminal)*,exception?,comment?)>
 <!ELEMENT repeated    ((optional|nonterminal|terminal)+)>
 <!ELEMENT optional    ((nonterminal|terminal)+)>
 <!ELEMENT nonterminal EMPTY>
@@ -22,4 +21,7 @@
 >
 <!ELEMENT exception   ((repeated|nonterminal|terminal)+)>
 <!ELEMENT comment     (#PCDATA)>
+
+
+
 
