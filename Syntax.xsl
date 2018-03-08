@@ -9,8 +9,7 @@
       <link href="Syntax.css" rel="stylesheet"/>
       <xsl:element name="link">
         <xsl:attribute name="href">
-          <xsl:value-of select="syntax/@language"/>.css
-        </xsl:attribute>
+          <xsl:value-of select="syntax/@language"/>.css</xsl:attribute>
         <xsl:attribute name="rel">stylesheet</xsl:attribute>
       </xsl:element>
       <body>
