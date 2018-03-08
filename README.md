@@ -26,6 +26,8 @@ Provides basic syntax highlighting and transformation tools for formal language 
   * [JSON](https://tools.ietf.org/html/rfc7159)
   * LESS (planned)
   * [RELAX NG Compact Syntax](http://standards.iso.org/ittf/PubliclyAvailableStandards/c052348_ISO_IEC_19757-2_2008%28E%29.zip)
+  * [UTFool Lexical Structure](https://rawgit.com/psmitt/metalanguage/master/examples/UTFool Lexical Structure.xml)
+  * [UTFool Syntactic Grammar](https://rawgit.com/psmitt/metalanguage/master/examples/UTFool Syntactic Grammar.xml)
   * [WSN (self-descriptive)](https://en.wikipedia.org/wiki/Wirth_syntax_notation)
   * [XPath 3.1](https://www.w3.org/TR/xpath-31/#nt-bnf)
   * YAML (planned)
