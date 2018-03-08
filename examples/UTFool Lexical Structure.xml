@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE syntax SYSTEM "../Syntax.dtd">
+<?xml-stylesheet type="text/xsl" href="../Syntax.xsl"?>
+<syntax language="UTFool Lexical Structure" start="SourceCode">
+  <comment>
+   Terminal symbols (
+   &lt;span
+   class="case-insensitive"&gt;
+   delimiters &lt;/span&gt;,
+   &lt;span
+   class="case-insensitive"&gt;
+   operators &lt;/span&gt;,
+   &lt;span class="terminal"
+   style="color:black"&gt;
+   keywords &lt;/span&gt;)
+   &lt;br/&gt;
+   can be overridden by any unique
+   Unicode character sequence.
+  </comment>
+  <rule name="SourceCode">
+    <comment>UTF-8 encoded text file</comment>
+    <definition>
+      <repeated>
+        <nonterminal name="Line"/>
+        <nonterminal name="EndOfLine"/>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="EndOfLine">
+    <definition>
+      <nonterminal name="LineComment"/>
+    </definition>
+    <definition>
+      <nonterminal name="LineBreak"/>
+    </definition>
+  </rule>
+  <rule name="LineBreak">
+    <definition>
+      <optional>
+        <terminal type="regular">\u000D</terminal>
+      </optional>
+      <terminal type="regular">\u000A</terminal>
+      <comment>CR LF</comment>
+    </definition>
+    <definition>
+      <terminal type="regular">\u000B</terminal>
+      <comment>VT</comment>
+    </definition>
+    <definition>
+      <terminal type="regular">\u000C</terminal>
+      <comment>FF</comment>
+    </definition>
+    <definition>
+      <terminal type="regular">\u000D</terminal>
+      <comment>CR</comment>
+    </definition>
+    <definition>
+      <terminal type="regular">\u0085</terminal>
+      <comment>NEL</comment>
+    </definition>
+    <definition>
+      <terminal type="regular">\u2028</terminal>
+      <comment>LSEP</comment>
+    </definition>
+    <definition>
+      <terminal type="regular">\u2029</terminal>
+      <comment>PSEP</comment>
+    </definition>
+  </rule>
+  <rule name="LineComment">
+    <definition>
+      <terminal type="case-insensitive">
+       StartOfLineComment
+      </terminal>
+      <repeated>
+        <optional>
+          <nonterminal name="LineCharacter"/>
+        </optional>
+      </repeated>
+      <nonterminal name="LineBreak"/>
+    </definition>
+  </rule>
+  <rule name="LineCharacter">
+    <comment>UTF-8 encoded Unicode character</comment>
+    <definition>
+      <exception>
+        <nonterminal name="LineBreak"/>
+      </exception>
+    </definition>
+  </rule>
+  <rule name="Line">
+    <definition>
+      <optional>
+        <nonterminal name="Indentation"/>
+      </optional>
+      <optional>
+        <terminal>
+         section
+        </terminal>
+        <nonterminal name="WhiteSpace"/>
+      </optional>
+      <repeated>
+        <optional>
+          <nonterminal name="EmbeddedCode"/>
+        </optional>
+      </repeated>
+      <repeated>
+        <optional>
+          <nonterminal name="Token"/>
+        </optional>
+        <optional>
+          <nonterminal name="WhiteSpace"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="Indentation">
+    <definition>
+      <repeated>
+        <nonterminal name="WhiteSpace"/>
+      </repeated>
+      <exception>
+        <nonterminal name="LineBreak"/>
+      </exception>
+    </definition>
+  </rule>
+  <rule name="WhiteSpace">
+    <definition>
+      <terminal type="regular">\p{White_Space}</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="BlockComment"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expletive"/>
+    </definition>
+  </rule>
+  <comment>
+   &lt;b&gt;Expletives&lt;/b&gt; are user-defined symbols inserted into the code for sake or readability.
+  </comment>
+  <rule name="BlockComment">
+    <definition>
+      <terminal type="case-insensitive">
+       StartOfBlockComment
+      </terminal>
+      <repeated>
+        <optional>
+          <nonterminal name="BlockCommentCharacter"/>
+        </optional>
+      </repeated>
+      <terminal type="case-insensitive">
+       EndOfBlockComment
+      </terminal>
+    </definition>
+  </rule>
+  <rule name="BlockCommentCharacter">
+    <definition>
+      <exception>
+        <nonterminal name="EndOfBlockComment"/>
+      </exception>
+    </definition>
+  </rule>
+  <rule name="EmbeddedCode">
+    <definition>
+      <terminal type="case-insensitive">
+       StartOfEmbeddedCode
+      </terminal>
+      <repeated>
+        <optional>
+          <nonterminal name="EmbeddedCodeCharacter"/>
+        </optional>
+      </repeated>
+      <terminal type="case-insensitive">
+       EndOfEmbeddedCode
+      </terminal>
+    </definition>
+  </rule>
+  <comment>
+   &lt;b&gt;Embedded Code&lt;/b&gt; can also be inserted by using language-specific symbols,
+   &lt;br/&gt;
+   similar to the reserved words, defined in separate file.
+  </comment>
+  <rule name="EmbeddedCodeCharacter">
+    <definition>
+      <exception>
+        <nonterminal name="EndOfEmbeddedCode"/>
+      </exception>
+    </definition>
+  </rule>
+  <rule name="Token">
+    <definition>
+      <nonterminal name="Keyword"/>
+    </definition>
+    <definition>
+      <nonterminal name="Name"/>
+    </definition>
+    <definition>
+      <nonterminal name="Literal"/>
+    </definition>
+    <definition>
+      <nonterminal name="Operator"/>
+    </definition>
+  </rule>
+  <comment>
+   &lt;b&gt;Keywords&lt;/b&gt;, &lt;b&gt;Delimiters&lt;/b&gt; and
+   &lt;b&gt;Operators&lt;/b&gt; are user-defined unique symbols.
+   &lt;br/&gt;
+   The SourceCode can also contain user-defined unique &lt;b&gt;Aliases&lt;/b&gt; of any lexical sequence,
+   &lt;br/&gt;
+   to be replaced with the proper sequence by the lexical analyser, before tokenization.
+  </comment>
+  <rule name="Name">
+    <definition>
+      <terminal type="regular">[\$_\p{Alphabetic}]</terminal>
+      <repeated>
+        <optional>
+          <terminal type="regular">\p{alnum}</terminal>
+        </optional>
+      </repeated>
+      <exception>
+        <nonterminal name="ReservedWord"/>
+      </exception>
+    </definition>
+  </rule>
+  <comment>
+   Keywords, Delimiters and Operators are all reserved words,
+   &lt;br/&gt;
+   as well as the keywords of the compilation target language.
+   &lt;br/&gt;
+   BUT! Primitive type names must be allowed
+   (removed from reserved word list).
+  </comment>
+  <rule name="Literal">
+    <definition>
+      <terminal>null</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="Boolean"/>
+    </definition>
+    <definition>
+      <nonterminal name="Number"/>
+    </definition>
+    <definition>
+      <nonterminal name="Character"/>
+    </definition>
+    <definition>
+      <nonterminal name="String"/>
+    </definition>
+    <definition>
+      <nonterminal name="RegularExpression"/>
+    </definition>
+  </rule>
+  <rule name="Boolean">
+    <definition>
+      <terminal>true</terminal>
+    </definition>
+    <definition>
+      <terminal>false</terminal>
+    </definition>
+  </rule>
+  <rule name="Number">
+    <definition>
+      <terminal type="regular">^0b[01]+$</terminal>
+      <comment>binary</comment>
+    </definition>
+    <definition>
+      <terminal type="regular">^0o[0-7]+$</terminal>
+      <comment>octal</comment>
+    </definition>
+    <definition>
+      <terminal type="regular">^0x[0-9A-Fa-f]+$</terminal>
+      <comment>hexadecimal</comment>
+    </definition>
+    <definition>
+      <terminal type="regular">^(0|[1-9]\d*)(\.\d+)?([Ee⏨][+-]?\d+)?$</terminal>
+      <comment>decimal</comment>
+    </definition>
+    <definition>
+      <terminal>Infinity</terminal>
+    </definition>
+    <definition>
+      <terminal>NaN</terminal>
+      <comment>Not-a-Number</comment>
+    </definition>
+  </rule>
+  <rule name="Character">
+    <definition>
+      <terminal type="case-insensitive">
+       StartOfCharacter
+      </terminal>
+      <nonterminal name="CharacterValue"/>
+      <terminal type="case-insensitive">
+       EndOfCharacter
+      </terminal>    </definition>
+  </rule>
+  <rule name="CharacterValue">
+    <definition>
+      <terminal type="regular">[^\\]</terminal>
+      <exception>
+        <nonterminal name="EndOfCharacter"/>
+      </exception>
+    </definition>
+    <definition>
+      <nonterminal name="EscapeSequence"/>
+    </definition>
+  </rule>
+  <rule name="EscapeSequence">
+    <definition>
+      <terminal>\b</terminal>
+      <comment>\u0008 BS</comment>
+    </definition>
+    <definition>
+      <terminal>\t</terminal>
+      <comment>\u0009 HT</comment>
+    </definition>
+    <definition>
+      <terminal>\n</terminal>
+      <comment>\u000A LF</comment>
+    </definition>
+    <definition>
+      <terminal>\f</terminal>
+      <comment>\u000C FF</comment>
+    </definition>
+    <definition>
+      <terminal>\r</terminal>
+      <comment>\u000D CR</comment>
+    </definition>
+    <definition>
+      <terminal>\"</terminal>
+      <comment>\u0022</comment>
+    </definition>
+    <definition>
+      <terminal>\'</terminal>
+      <comment>\u0027</comment>
+    </definition>
+    <definition>
+      <terminal>\\</terminal>
+      <comment>\u005C</comment>
+    </definition>
+    <definition>
+      <terminal>\u</terminal>
+      <terminal type="regular">\p{Hex}</terminal>
+      <terminal type="regular">\p{Hex}</terminal>
+      <terminal type="regular">\p{Hex}</terminal>
+      <terminal type="regular">\p{Hex}</terminal>
+      <comment>code point</comment>
+    </definition>
+  </rule>
+  <rule name="String">
+    <definition>
+      <terminal type="case-insensitive">
+       StartOfString
+      </terminal>
+      <repeated>
+        <optional>
+          <nonterminal name="StringCharacter"/>
+        </optional>
+        <optional>
+          <nonterminal name="Interpolation"/>
+        </optional>
+      </repeated>
+      <terminal type="case-insensitive">
+       EndOfString
+      </terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">
+       StartOfText
+      </terminal>
+      <repeated>
+        <optional>
+          <nonterminal name="TextCharacter"/>
+        </optional>
+        <optional>
+          <nonterminal name="Interpolation"/>
+        </optional>
+      </repeated>
+      <terminal type="case-insensitive">
+       EndOfText
+      </terminal>
+    </definition>
+  </rule>
+  <comment>
+   Multiple lines of a String are trimmed and concatenated,
+   separated with a single space.&lt;br/&gt;
+   Multiple lines of a Text are preserved with amended indentation.
+  </comment>
+  <rule name="StringCharacter">
+    <definition>
+      <terminal type="regular">[^\\]</terminal>
+      <exception>
+        <nonterminal name="EndOfString"/>
+      </exception>
+    </definition>
+    <definition>
+      <nonterminal name="EscapeSequence"/>
+    </definition>
+  </rule>
+  <rule name="TextCharacter">
+    <definition>
+      <terminal type="regular">[^\\]</terminal>
+      <exception>
+        <nonterminal name="EndOfText"/>
+      </exception>
+    </definition>
+    <definition>
+      <nonterminal name="EscapeSequence"/>
+    </definition>
+  </rule>
+  <rule name="Interpolation">
+    <definition>
+      <terminal type="case-insensitive">
+       StartOfInterpolation
+      </terminal>
+      <repeated>
+        <optional>
+          <nonterminal name="WhiteSpace"/>
+        </optional>
+      </repeated>
+      <repeated>
+        <optional>
+          <nonterminal name="Token"/>
+        </optional>
+        <optional>
+          <nonterminal name="WhiteSpace"/>
+        </optional>
+      </repeated>
+      <terminal type="case-insensitive">
+       EndOfInterpolation
+      </terminal>
+    </definition>
+  </rule>
+  <rule name="RegularExpression">
+    <definition>
+      <terminal type="case-insensitive">
+       StartOfRegularExpression
+      </terminal>
+      <repeated>
+        <nonterminal name="RegularExpressionCharacter"/>
+      </repeated>
+      <terminal type="case-insensitive">
+       EndOfRegularExpression
+      </terminal>
+      <optional>
+        <nonterminal name="Flags"/>
+      </optional>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">
+       StartOfRegularBlock
+      </terminal>
+      <nonterminal name="EndOfLine"/>
+      <repeated>
+        <nonterminal name="RegularExpressionLine"/>
+      </repeated>
+      <terminal type="case-insensitive">
+       EndOfRegularBlock
+      </terminal>
+      <optional>
+        <nonterminal name="Flags"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="RegularExpressionLine">
+    <definition>
+      <repeated>
+        <nonterminal name="RegularExpressionCharacter"/>
+      </repeated>
+      <nonterminal name="EndOfLine"/>
+    </definition>
+  </rule>
+  <comment>
+   Regular Expression Lines in Regular Expression Blocks
+   are concatenated with | disjuctive operator.&lt;br/&gt;
+   Regular Expression Lines in Regular Expression Blocks
+   support Line Comments.
+  </comment>
+  <rule name="Flags">
+    <definition>
+      <optional>
+        <terminal>g</terminal>
+      </optional>
+      <optional>
+        <terminal>i</terminal>
+      </optional>
+      <optional>
+        <terminal>m</terminal>
+      </optional>
+      <optional>
+        <terminal>u</terminal>
+      </optional>
+      <optional>
+        <terminal>y</terminal>
+      </optional>
+    </definition>
+  </rule>
+</syntax>

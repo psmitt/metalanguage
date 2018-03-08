@@ -1,0 +1,682 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE syntax SYSTEM "../Syntax.dtd">
+<?xml-stylesheet type="text/xsl" href="../Syntax.xsl"?>
+<syntax language="UTFool Syntactic Grammar" start="CompilationUnit">
+  <comment>
+   Terminal symbols (
+   &lt;span
+   class="case-insensitive"&gt;
+   delimiters &lt;/span&gt;,
+   &lt;span
+   class="case-insensitive"&gt;
+   operators &lt;/span&gt;,
+   &lt;span class="terminal"
+   style="color:black"&gt;
+   keywords &lt;/span&gt;)
+   &lt;br/&gt;
+   can be overridden by any unique
+   Unicode character sequence.
+  </comment>
+  <comment>
+   &lt;b&gt;LIST STRUCTURE&lt;/b&gt;
+  </comment>
+  <rule name="List">
+    <definition>
+      <nonterminal name="ListElement"/>
+      <repeated>
+        <optional>
+          <terminal type="case-insensitive">ListSeparator</terminal>
+          <nonterminal name="ListElement"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <comment>
+   ListSeparator is a user-defined operator.
+  </comment>
+  <comment>
+   &lt;b&gt;NAMES&lt;/b&gt;
+  </comment>
+  <rule name="ClassName">
+    <definition>
+      <nonterminal name="Name"/>
+      <optional>
+        <terminal type="case-insensitive">
+         StartOfTypeList
+        </terminal>
+        <nonterminal name="TypeList"/>
+        <terminal type="case-insensitive">
+         EndOfTypeList
+        </terminal>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="TypeName">
+    <definition>
+      <repeated>
+        <optional>
+          <nonterminal name="Name"/>
+          <terminal type="case-insensitive">
+           Access
+          </terminal>
+        </optional>
+      </repeated>
+      <nonterminal name="ClassName"/>
+    </definition>
+  </rule>
+  <rule name="Type">
+    <definition>
+      <nonterminal name="TypeName"/>
+      <repeated>
+        <optional>
+          <terminal type="case-insensitive">
+           StartOfArray
+          </terminal>
+          <terminal type="case-insensitive">
+           EndOfArray
+          </terminal>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <comment>
+   &lt;b&gt;GENERAL GRAMMAR&lt;/b&gt;
+  </comment>
+  <rule name="CompilationUnit">
+    <definition>
+      <repeated>
+        <nonterminal name="BlockElement"/>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="Block">
+    <definition>
+      <nonterminal name="IND"/>
+      <repeated>
+        <optional>
+          <nonterminal name="BlockElement"/>
+        </optional>
+      </repeated>
+      <nonterminal name="UND"/>
+    </definition>
+  </rule>
+  <comment>
+   LineBreak is assumed to preserve Indentation level.&lt;br/&gt;
+   IND means increased Indentation level after LineBreak.&lt;br/&gt;
+   UND ( unindentation ) means decreased Indentation level after LineBreak.&lt;br/&gt;
+  </comment>
+  <rule name="BlockElement">
+    <comment>interpretation unit</comment>
+    <definition>
+      <terminal>label</terminal>
+      <nonterminal name="Name"/>
+      <nonterminal name="Block"/>
+    </definition>
+    <definition>
+      <nonterminal name="Definition"/>
+    </definition>
+    <definition>
+      <nonterminal name="Statement"/>
+    </definition>
+    <definition>
+      <nonterminal name="EmbeddedCode"/>
+      <optional>
+        <nonterminal name="BlockElement"/>
+      </optional>
+    </definition>
+    <definition>
+      <nonterminal name="EmbeddedCode"/>
+      <nonterminal name="Reference"/>
+    </definition>
+  </rule>
+  <rule name="Definition">
+    <definition>
+      <nonterminal name="Constants"/>
+    </definition>
+    <definition>
+      <nonterminal name="Interface"/>
+    </definition>
+    <definition>
+      <nonterminal name="Class"/>
+    </definition>
+    <definition>
+      <nonterminal name="Function"/>
+    </definition>
+    <definition>
+      <nonterminal name="Variable"/>
+    </definition>
+  </rule>
+  <rule name="Constants">
+    <definition>
+      <terminal>constants</terminal>
+      <nonterminal name="Name"/>
+      <nonterminal name="EndOfLine"/>
+      <nonterminal name="IND"/>
+      <repeated>
+        <optional>
+          <nonterminal name="Name"/>
+          <nonterminal name="EndOfLine"/>
+        </optional>
+      </repeated>
+      <nonterminal name="UND"/>
+    </definition>
+  </rule>
+  <rule name="Interface">
+    <definition>
+      <terminal>interface</terminal>
+      <nonterminal name="ClassName"/>
+      <optional>
+        <terminal>as</terminal>
+        <nonterminal name="TypeNameList"/>
+      </optional>
+      <nonterminal name="Block"/>
+    </definition>
+  </rule>
+  <rule name="Class">
+    <definition>
+      <terminal>class</terminal>
+      <nonterminal name="ClassName"/>
+      <optional>
+        <terminal>super</terminal>
+        <nonterminal name="TypeName"/>
+      </optional>
+      <optional>
+        <terminal>as</terminal>
+        <nonterminal name="TypeNameList"/>
+      </optional>
+      <nonterminal name="Block"/>
+    </definition>
+  </rule>
+  <rule name="Function">
+    <definition>
+      <nonterminal name="FunctionHead"/>
+      <optional>
+        <terminal>throw</terminal>
+        <nonterminal name="TypeNameList"/>
+      </optional>
+      <repeated>
+        <optional>
+          <terminal>parameter</terminal>
+          <nonterminal name="Parameter"/>
+        </optional>
+      </repeated>
+      <nonterminal name="Block"/>
+    </definition>
+  </rule>
+  <rule name="FunctionHead">
+    <definition>
+      <terminal>function</terminal>
+      <terminal>constructor</terminal>
+    </definition>
+    <definition>
+      <terminal>function</terminal>
+      <nonterminal name="Name"/>
+      <optional>
+        <terminal>as</terminal>
+        <nonterminal name="Type"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="Parameter">
+    <definition>
+      <nonterminal name="Name"/>
+      <optional>
+        <terminal>as</terminal>
+        <nonterminal name="Type"/>
+      </optional>
+      <optional>
+        <terminal>assign</terminal>
+        <nonterminal name="Expression"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="Variable">
+    <definition>
+      <nonterminal name="Name"/>
+      <optional>
+        <terminal>as</terminal>
+        <nonterminal name="Type"/>
+      </optional>
+      <terminal>assign</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Name"/>
+      <terminal>as</terminal>
+      <nonterminal name="TypeName"/>
+      <optional>
+        <terminal type="case-insensitive">Invocation</terminal>
+      </optional>
+      <comment>constructor call</comment>
+    </definition>
+    <definition>
+      <nonterminal name="Name"/>
+      <terminal>as</terminal>
+      <nonterminal name="TypeName"/>
+      <nonterminal name="ArgumentList"/>
+      <comment>constructor call</comment>
+    </definition>
+    <definition>
+      <nonterminal name="Name"/>
+      <terminal>as</terminal>
+      <nonterminal name="TypeName"/>
+      <repeated>
+        <optional>
+          <terminal type="case-insensitive">
+           StartOfArray
+          </terminal>
+          <nonterminal name="Number"/>
+          <terminal type="case-insensitive">
+           EndOfArray
+          </terminal>
+        </optional>
+      </repeated>
+      <comment>fixed length array</comment>
+    </definition>
+  </rule>
+  <rule name="Expression">
+    <definition>
+      <nonterminal name="Literal"/>
+    </definition>
+    <definition>
+      <nonterminal name="Reference"/>
+    </definition>
+    <definition>
+      <nonterminal name="UnaryOperator"/>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <nonterminal name="BinaryOperator"/>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <optional>
+        <terminal>if</terminal>
+      </optional>
+      <nonterminal name="Expression"/>
+        <terminal>then</terminal>
+      <nonterminal name="Expression"/>
+        <terminal>else</terminal>
+      <nonterminal name="Expression"/>
+      <comment>ternary expression</comment>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">
+       StartOfExpression
+      </terminal>
+      <nonterminal name="Expression"/>
+      <terminal type="case-insensitive">
+       EndOfExpression
+      </terminal>
+      <comment>parenthetical grouping</comment>
+    </definition>
+  </rule>
+  <rule name="Reference">
+    <definition>
+      <terminal>this</terminal>
+      <comment>object self reference</comment>
+    </definition>
+    <definition>
+      <terminal>super</terminal>
+      <comment>object parent reference</comment>
+    </definition>
+    <definition>
+      <nonterminal name="Name"/>
+    </definition>
+    <definition>
+      <nonterminal name="FunctionCall"/>
+    </definition>
+    <definition>
+      <nonterminal name="Reference"/>
+      <terminal type="case-insensitive">Access</terminal>
+      <nonterminal name="Reference"/>
+      <comment>direct access</comment>
+    </definition>
+    <definition>
+      <nonterminal name="Reference"/>
+      <terminal type="case-insensitive">
+       StartOfArray
+      </terminal>
+      <nonterminal name="Expression"/>
+      <terminal type="case-insensitive">
+       EndOfArray
+      </terminal>
+      <comment>computed access</comment>
+    </definition>
+  </rule>
+  <rule name="FunctionCall">
+    <definition>
+      <nonterminal name="Reference"/>
+      <terminal type="case-insensitive">Invocation</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="Reference"/>
+      <nonterminal name="ArgumentList"/>
+    </definition>
+  </rule>
+  <rule name="Argument">
+    <definition>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <optional>
+        <terminal>parameter</terminal>
+        <nonterminal name="NameList"/>
+      </optional>
+      <terminal>function</terminal>
+      <nonterminal name="Block"/>
+      <comment>anonymous function</comment>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">New</terminal>
+      <nonterminal name="TypeName"/>
+      <terminal>class</terminal>
+      <nonterminal name="Block"/>
+      <comment>anonymous class</comment>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">
+       StartOfExpression
+      </terminal>
+      <terminal type="case-insensitive">New</terminal>
+      <nonterminal name="TypeName"/>
+      <nonterminal name="ArgumentList"/>
+      <terminal type="case-insensitive">
+       EndOfExpression
+      </terminal>
+      <terminal>class</terminal>
+      <nonterminal name="Block"/>
+      <comment>anonymous class</comment>
+    </definition>
+  </rule>
+  <comment>
+   Anonymous function and class are supposed
+   to be the last argument of a function call.
+  </comment>
+  <rule name="Statement">
+    <definition>
+      <nonterminal name="LineStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="BlockStatement"/>
+    </definition>
+  </rule>
+  <rule name="LineStatement">
+    <definition>
+      <nonterminal name="FunctionCall"/>
+    </definition>
+    <definition>
+      <nonterminal name="Assignment"/>
+    </definition>
+    <definition>
+      <nonterminal name="ControlTransfer"/>
+    </definition>
+  </rule>
+  <rule name="Assignment">
+    <definition>
+      <nonterminal name="Reference"/>
+      <optional>
+        <nonterminal name="BinaryOperator"/>
+      </optional>
+      <terminal>assign</terminal>
+      <nonterminal name="Expression"/>
+      <comment>[ compound ] assignment</comment>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">
+       StartOfArray
+      </terminal>
+      <nonterminal name="References"/>
+      <terminal type="case-insensitive">
+       EndOfArray
+      </terminal>
+      <terminal>assign</terminal>
+      <nonterminal name="Expression"/>
+      <comment>destructuring assignment</comment>
+    </definition>
+  </rule>
+  <rule name="References">
+    <definition>
+      <nonterminal name="ReferenceList"/>
+      <optional>
+        <terminal type="case-insensitive">ListSeparator</terminal>
+        <terminal>ellipsis</terminal>
+      </optional>
+      <optional>
+        <terminal type="case-insensitive">ListSeparator</terminal>
+        <nonterminal name="ReferenceList"/>
+      </optional>
+    </definition>
+    <definition>
+      <terminal>ellipsis</terminal>
+      <terminal type="case-insensitive">ListSeparator</terminal>
+      <nonterminal name="ReferenceList"/>
+    </definition>
+  </rule>
+  <rule name="ControlTransfer">
+    <definition>
+      <terminal>await</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <terminal>break</terminal>
+      <optional>
+        <nonterminal name="Number"/>
+      </optional>
+    </definition>
+    <definition>
+      <terminal>break</terminal>
+      <nonterminal name="Name"/>
+    </definition>
+    <definition>
+      <terminal>continue</terminal>
+      <optional>
+        <nonterminal name="Number"/>
+      </optional>
+    </definition>
+    <definition>
+      <terminal>continue</terminal>
+      <nonterminal name="Name"/>
+    </definition>
+    <definition>
+      <terminal>fallthrough</terminal>
+    </definition>
+    <definition>
+      <terminal>goto</terminal>
+      <nonterminal name="Name"/>
+    </definition>
+    <definition>
+      <terminal>return</terminal>
+      <optional>
+        <nonterminal name="Expression"/>
+      </optional>
+    </definition>
+    <definition>
+      <terminal>throw</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <terminal>yield</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+  </rule>
+  <rule name="BlockStatement">
+    <definition>
+      <nonterminal name="Conditional"/>
+    </definition>
+    <definition>
+      <nonterminal name="Selection"/>
+    </definition>
+    <definition>
+      <nonterminal name="Loop"/>
+    </definition>
+    <definition>
+      <nonterminal name="Enumeration"/>
+    </definition>
+    <definition>
+      <nonterminal name="ExceptionHandler"/>
+    </definition>
+  </rule>
+  <rule name="Conditional">
+    <definition>
+      <terminal>if</terminal>
+      <nonterminal name="Expression"/>
+      <nonterminal name="Block"/>
+      <optional>
+        <nonterminal name="Else"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="Else">
+    <definition>
+      <terminal>else</terminal>
+      <nonterminal name="Statement"/>
+    </definition>
+    <definition>
+      <terminal>else</terminal>
+      <nonterminal name="Block"/>
+    </definition>
+  </rule>
+  <rule name="Selection">
+    <definition>
+      <terminal>switch</terminal>
+      <nonterminal name="Expression"/>
+      <optional>
+        <terminal>fallthrough</terminal>
+      </optional>
+      <nonterminal name="IND"/>
+      <repeated>
+        <terminal>case</terminal>
+        <nonterminal name="ExpressionList"/>
+        <nonterminal name="Block"/>
+      </repeated>
+      <optional>
+        <nonterminal name="Else"/>
+      </optional>
+      <nonterminal name="UND"/>
+    </definition>
+  </rule>
+  <rule name="Loop">
+    <definition>
+      <terminal>repeat</terminal>
+      <terminal>while</terminal>
+      <nonterminal name="Expression"/>
+      <nonterminal name="Block"/>
+    </definition>
+    <definition>
+      <terminal>repeat</terminal>
+      <terminal>until</terminal>
+      <nonterminal name="Expression"/>
+      <nonterminal name="Block"/>
+    </definition>
+    <definition>
+      <terminal>repeat</terminal>
+      <nonterminal name="Block"/>
+      <terminal>while</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <terminal>repeat</terminal>
+      <nonterminal name="Block"/>
+      <terminal>until</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+  </rule>
+  <rule name="Enumeration">
+    <definition>
+      <terminal>for</terminal>
+      <nonterminal name="Name"/>
+      <terminal>in</terminal>
+      <nonterminal name="Range"/>
+      <optional>
+        <terminal>by</terminal>
+        <nonterminal name="Expression"/>
+      </optional>
+      <nonterminal name="Block"/>
+      <comment>Index in Range By Step</comment>
+    </definition>
+    <definition>
+      <terminal>for</terminal>
+      <nonterminal name="NameList"/>
+      <terminal>in</terminal>
+      <nonterminal name="Expression"/>
+      <optional>
+        <terminal>as</terminal>
+        <nonterminal name="Type"/>
+      </optional>
+      <nonterminal name="Block"/>
+      <comment>[ Index , ] Item in Collection</comment>
+    </definition>
+    <definition>
+      <terminal>for</terminal>
+      <nonterminal name="NameList"/>
+      <terminal>of</terminal>
+      <nonterminal name="Expression"/>
+      <optional>
+        <terminal>as</terminal>
+        <nonterminal name="TypeList"/>
+      </optional>
+      <nonterminal name="Block"/>
+      <comment>Key [ , Value ] of Map</comment>
+    </definition>
+  </rule>
+  <rule name="Range">
+    <definition>
+      <nonterminal name="Expression"/>
+      <terminal>up_to</terminal>
+      <nonterminal name="Expression"/>
+      <comment>included - included</comment>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <terminal>down_to</terminal>
+      <nonterminal name="Expression"/>
+      <comment>included - included</comment>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <terminal>ellipsis</terminal>
+      <nonterminal name="Expression"/>
+      <comment>included - excluded</comment>
+    </definition>
+  </rule>
+  <rule name="ExceptionHandler">
+    <definition>
+      <nonterminal name="TryBlock"/>
+      <repeated>
+        <optional>
+          <nonterminal name="CatchBlock"/>
+        </optional>
+      </repeated>
+      <optional>
+        <terminal>finally</terminal>
+        <nonterminal name="Block"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="TryBlock">
+    <definition>
+      <terminal>try</terminal>
+      <repeated>
+        <optional>
+          <terminal>parameter</terminal>
+          <nonterminal name="Variable"/>
+        </optional>
+      </repeated>
+      <nonterminal name="Block"/>
+    </definition>
+  </rule>
+  <rule name="CatchBlock">
+    <definition>
+      <terminal>catch</terminal>
+      <optional>
+        <nonterminal name="Name"/>
+        <terminal>as</terminal>
+        <nonterminal name="Type"/>
+      </optional>
+      <nonterminal name="Block"/>
+    </definition>
+  </rule>
+</syntax>
+
