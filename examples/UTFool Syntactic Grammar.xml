@@ -501,6 +501,12 @@
       <nonterminal name="Expression"/>
     </definition>
   </rule>
+  <comment>
+   &lt;span class="terminal" style="color:black"&gt;fallthrough
+   &lt;/span&gt; is supposed to be the last statement of a
+   &lt;span class="terminal" style="color:black"&gt;case
+   &lt;/span&gt; block in a separate line.
+  </comment>
   <rule name="BlockStatement">
     <definition>
       <nonterminal name="Conditional"/>
@@ -542,9 +548,6 @@
     <definition>
       <terminal>switch</terminal>
       <nonterminal name="Expression"/>
-      <optional>
-        <terminal>fallthrough</terminal>
-      </optional>
       <nonterminal name="IND"/>
       <repeated>
         <terminal>case</terminal>
@@ -679,4 +682,3 @@
     </definition>
   </rule>
 </syntax>
-
