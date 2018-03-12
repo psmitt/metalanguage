@@ -273,6 +273,26 @@
       </repeated>
       <comment>fixed length array</comment>
     </definition>
+    <definition>
+      <nonterminal name="Name"/>
+      <terminal>as</terminal>
+      <nonterminal name="TypeName"/>
+      <terminal type="case-insensitive">
+       StartOfArray
+      </terminal>
+      <terminal type="case-insensitive">
+       EndOfArray
+      </terminal>
+      <terminal>assign</terminal>
+      <terminal type="case-insensitive">
+       StartOfArray
+      </terminal>
+      <nonterminal name="ExpressionList"/>
+      <terminal type="case-insensitive">
+       EndOfArray
+      </terminal>
+      <comment>initialized fixed length array</comment>
+    </definition>
   </rule>
   <rule name="Expression">
     <definition>
@@ -441,16 +461,18 @@
       <nonterminal name="ReferenceList"/>
       <optional>
         <terminal type="case-insensitive">ListSeparator</terminal>
-        <terminal>ellipsis</terminal>
       </optional>
+      <terminal>ellipsis</terminal>
       <optional>
         <terminal type="case-insensitive">ListSeparator</terminal>
         <nonterminal name="ReferenceList"/>
       </optional>
     </definition>
     <definition>
-      <terminal>ellipsis</terminal>
-      <terminal type="case-insensitive">ListSeparator</terminal>
+      <optional>
+        <terminal>ellipsis</terminal>
+        <terminal type="case-insensitive">ListSeparator</terminal>
+      </optional>
       <nonterminal name="ReferenceList"/>
     </definition>
   </rule>
@@ -481,6 +503,11 @@
     </definition>
     <definition>
       <terminal>fallthrough</terminal>
+      <comment>
+       last statement of a
+       &lt;span class="terminal" style="color:black"&gt;case
+       &lt;/span&gt; block
+      </comment>
     </definition>
     <definition>
       <terminal>goto</terminal>
@@ -501,12 +528,6 @@
       <nonterminal name="Expression"/>
     </definition>
   </rule>
-  <comment>
-   &lt;span class="terminal" style="color:black"&gt;fallthrough
-   &lt;/span&gt; is supposed to be the last statement of a
-   &lt;span class="terminal" style="color:black"&gt;case
-   &lt;/span&gt; block in a separate line.
-  </comment>
   <rule name="BlockStatement">
     <definition>
       <nonterminal name="Conditional"/>
@@ -597,11 +618,15 @@
         <nonterminal name="Expression"/>
       </optional>
       <nonterminal name="Block"/>
-      <comment>Index in Range By Step</comment>
+      <comment>Index in Range [ by Step ]</comment>
     </definition>
     <definition>
       <terminal>for</terminal>
-      <nonterminal name="NameList"/>
+      <nonterminal name="Name"/>
+      <optional>
+        <terminal>by</terminal>
+        <nonterminal name="Name"/>
+      </optional>
       <terminal>in</terminal>
       <nonterminal name="Expression"/>
       <optional>
@@ -609,37 +634,39 @@
         <nonterminal name="Type"/>
       </optional>
       <nonterminal name="Block"/>
-      <comment>[ Index , ] Item in Collection</comment>
+      <comment>Item [ by Index ]</comment>
     </definition>
     <definition>
       <terminal>for</terminal>
-      <nonterminal name="NameList"/>
+      <nonterminal name="Name"/>
       <terminal>of</terminal>
+      <optional>
+        <nonterminal name="Name"/>
+        <terminal>in</terminal>
+      </optional>
       <nonterminal name="Expression"/>
       <optional>
         <terminal>as</terminal>
         <nonterminal name="TypeList"/>
       </optional>
       <nonterminal name="Block"/>
-      <comment>Key [ , Value ] of Map</comment>
+      <comment>each Key, or Value of each Key</comment>
     </definition>
   </rule>
   <rule name="Range">
     <definition>
-      <nonterminal name="Expression"/>
-      <terminal>up_to</terminal>
-      <nonterminal name="Expression"/>
-      <comment>included - included</comment>
+      <terminal type="case-insensitive">
+       StartOfArray
+      </terminal>
+      <nonterminal name="ExpressionList"/>
+      <terminal type="case-insensitive">
+       EndOfArray
+      </terminal>
+      <comment>initialized fixed lenght array</comment>
     </definition>
     <definition>
       <nonterminal name="Expression"/>
-      <terminal>down_to</terminal>
-      <nonterminal name="Expression"/>
-      <comment>included - included</comment>
-    </definition>
-    <definition>
-      <nonterminal name="Expression"/>
-      <terminal>ellipsis</terminal>
+      <terminal>to</terminal>
       <nonterminal name="Expression"/>
       <comment>included - excluded</comment>
     </definition>
