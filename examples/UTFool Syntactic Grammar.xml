@@ -307,12 +307,12 @@
       <nonterminal name="Reference"/>
     </definition>
     <definition>
-      <nonterminal name="UnaryOperator"/>
+      <terminal type="case-insensitive">UnaryOperator</terminal>
       <nonterminal name="Expression"/>
     </definition>
     <definition>
       <nonterminal name="Expression"/>
-      <nonterminal name="BinaryOperator"/>
+      <terminal type="case-insensitive">BinaryOperator</terminal>
       <nonterminal name="Expression"/>
     </definition>
     <definition>
@@ -442,7 +442,7 @@
     <definition>
       <nonterminal name="Reference"/>
       <optional>
-        <nonterminal name="BinaryOperator"/>
+        <terminal type="case-insensitive">BinaryOperator</terminal>
       </optional>
       <terminal>assign</terminal>
       <nonterminal name="Expression"/>
@@ -612,10 +612,9 @@
       <nonterminal name="Range"/>
       <optional>
         <terminal>by</terminal>
-        <nonterminal name="Expression"/>
+        <nonterminal name="Step"/>
       </optional>
       <nonterminal name="Block"/>
-      <comment>for Numbers in Range [ by Step ]</comment>
     </definition>
     <definition>
       <terminal>iterate</terminal>
@@ -654,8 +653,20 @@
     <definition>
       <nonterminal name="Expression"/>
       <terminal>ellipsis</terminal>
+      <optional>
+        <terminal type="case-insensitive">RelationalOperator</terminal>
+      </optional>
       <nonterminal name="Expression"/>
-      <comment>included - excluded</comment>
+      <comment>less than by default</comment>
+    </definition>
+  </rule>
+  <rule name="Step">
+    <definition>
+      <optional>
+        <terminal type="case-insensitive">BinaryOperator</terminal>
+      </optional>
+      <nonterminal name="Expression"/>
+      <comment>addition or subtraction by default</comment>
     </definition>
   </rule>
   <rule name="Collection">
