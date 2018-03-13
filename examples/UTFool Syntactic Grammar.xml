@@ -284,6 +284,11 @@
        EndOfArray
       </terminal>
       <terminal>assign</terminal>
+      <nonterminal name="Array"/>
+    </definition>
+  </rule>
+  <rule name="Array">
+    <definition>
       <terminal type="case-insensitive">
        StartOfArray
       </terminal>
@@ -291,7 +296,7 @@
       <terminal type="case-insensitive">
        EndOfArray
       </terminal>
-      <comment>initialized fixed length array</comment>
+      <comment>initialized fixed length anonym array</comment>
     </definition>
   </rule>
   <rule name="Expression">
@@ -484,7 +489,7 @@
     <definition>
       <terminal>break</terminal>
       <optional>
-        <nonterminal name="Number"/>
+        <nonterminal name="Expression"/>
       </optional>
     </definition>
     <definition>
@@ -530,22 +535,31 @@
   </rule>
   <rule name="BlockStatement">
     <definition>
-      <nonterminal name="Conditional"/>
-    </definition>
-    <definition>
       <nonterminal name="Selection"/>
     </definition>
     <definition>
-      <nonterminal name="Loop"/>
+      <nonterminal name="Iteration"/>
     </definition>
     <definition>
-      <nonterminal name="Enumeration"/>
-    </definition>
-    <definition>
-      <nonterminal name="ExceptionHandler"/>
+      <nonterminal name="ExceptionHandling"/>
     </definition>
   </rule>
-  <rule name="Conditional">
+  <rule name="Selection">
+    <definition>
+      <terminal>select</terminal>
+      <nonterminal name="Expression"/>
+      <nonterminal name="IND"/>
+      <repeated>
+        <terminal>if</terminal>
+        <nonterminal name="ExpressionList"/>
+        <nonterminal name="Block"/>
+      </repeated>
+      <optional>
+        <nonterminal name="Else"/>
+      </optional>
+      <nonterminal name="UND"/>
+      <comment>case selection</comment>
+    </definition>
     <definition>
       <terminal>if</terminal>
       <nonterminal name="Expression"/>
@@ -553,6 +567,7 @@
       <optional>
         <nonterminal name="Else"/>
       </optional>
+      <comment>conditional statement</comment>
     </definition>
   </rule>
   <rule name="Else">
@@ -565,51 +580,33 @@
       <nonterminal name="Block"/>
     </definition>
   </rule>
-  <rule name="Selection">
+  <rule name="Iteration">
     <definition>
-      <terminal>switch</terminal>
-      <nonterminal name="Expression"/>
-      <nonterminal name="IND"/>
-      <repeated>
-        <terminal>case</terminal>
-        <nonterminal name="ExpressionList"/>
-        <nonterminal name="Block"/>
-      </repeated>
-      <optional>
-        <nonterminal name="Else"/>
-      </optional>
-      <nonterminal name="UND"/>
-    </definition>
-  </rule>
-  <rule name="Loop">
-    <definition>
-      <terminal>repeat</terminal>
+      <terminal>iterate</terminal>
       <terminal>while</terminal>
       <nonterminal name="Expression"/>
       <nonterminal name="Block"/>
     </definition>
     <definition>
-      <terminal>repeat</terminal>
+      <terminal>iterate</terminal>
       <terminal>until</terminal>
       <nonterminal name="Expression"/>
       <nonterminal name="Block"/>
     </definition>
     <definition>
-      <terminal>repeat</terminal>
+      <terminal>iterate</terminal>
       <nonterminal name="Block"/>
       <terminal>while</terminal>
       <nonterminal name="Expression"/>
     </definition>
     <definition>
-      <terminal>repeat</terminal>
+      <terminal>iterate</terminal>
       <nonterminal name="Block"/>
       <terminal>until</terminal>
       <nonterminal name="Expression"/>
     </definition>
-  </rule>
-  <rule name="Enumeration">
     <definition>
-      <terminal>for</terminal>
+      <terminal>iterate</terminal>
       <nonterminal name="Name"/>
       <terminal>in</terminal>
       <nonterminal name="Range"/>
@@ -618,26 +615,26 @@
         <nonterminal name="Expression"/>
       </optional>
       <nonterminal name="Block"/>
-      <comment>Index in Range [ by Step ]</comment>
+      <comment>for Numbers in Range [ by Step ]</comment>
     </definition>
     <definition>
-      <terminal>for</terminal>
+      <terminal>iterate</terminal>
       <nonterminal name="Name"/>
       <optional>
         <terminal>by</terminal>
         <nonterminal name="Name"/>
       </optional>
       <terminal>in</terminal>
-      <nonterminal name="Expression"/>
+      <nonterminal name="Collection"/>
       <optional>
         <terminal>as</terminal>
         <nonterminal name="Type"/>
       </optional>
       <nonterminal name="Block"/>
-      <comment>Item [ by Index ]</comment>
+      <comment>for each Item [ by Index ]</comment>
     </definition>
     <definition>
-      <terminal>for</terminal>
+      <terminal>iterate</terminal>
       <nonterminal name="Name"/>
       <terminal>of</terminal>
       <optional>
@@ -650,28 +647,26 @@
         <nonterminal name="TypeList"/>
       </optional>
       <nonterminal name="Block"/>
-      <comment>each Key, or Value of each Key</comment>
+      <comment>for [ Value of ] each Key of Map</comment>
     </definition>
   </rule>
   <rule name="Range">
     <definition>
-      <terminal type="case-insensitive">
-       StartOfArray
-      </terminal>
-      <nonterminal name="ExpressionList"/>
-      <terminal type="case-insensitive">
-       EndOfArray
-      </terminal>
-      <comment>initialized fixed lenght array</comment>
-    </definition>
-    <definition>
       <nonterminal name="Expression"/>
-      <terminal>to</terminal>
+      <terminal>ellipsis</terminal>
       <nonterminal name="Expression"/>
       <comment>included - excluded</comment>
     </definition>
   </rule>
-  <rule name="ExceptionHandler">
+  <rule name="Collection">
+    <definition>
+      <nonterminal name="Array"/>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+    </definition>
+  </rule>
+  <rule name="ExceptionHandling">
     <definition>
       <nonterminal name="TryBlock"/>
       <repeated>
