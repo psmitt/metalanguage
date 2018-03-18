@@ -273,35 +273,13 @@
       </repeated>
       <comment>fixed length array</comment>
     </definition>
-    <definition>
-      <nonterminal name="Name"/>
-      <terminal>as</terminal>
-      <nonterminal name="TypeName"/>
-      <terminal type="case-insensitive">
-       StartOfArray
-      </terminal>
-      <terminal type="case-insensitive">
-       EndOfArray
-      </terminal>
-      <terminal>assign</terminal>
-      <nonterminal name="Array"/>
-    </definition>
-  </rule>
-  <rule name="Array">
-    <definition>
-      <terminal type="case-insensitive">
-       StartOfArray
-      </terminal>
-      <nonterminal name="ExpressionList"/>
-      <terminal type="case-insensitive">
-       EndOfArray
-      </terminal>
-      <comment>initialized fixed length anonym array</comment>
-    </definition>
   </rule>
   <rule name="Expression">
     <definition>
       <nonterminal name="Literal"/>
+    </definition>
+    <definition>
+      <nonterminal name="Array"/>
     </definition>
     <definition>
       <nonterminal name="Reference"/>
@@ -335,6 +313,43 @@
        EndOfExpression
       </terminal>
       <comment>parenthetical grouping</comment>
+    </definition>
+  </rule>
+  <rule name="Array">
+    <comment>initialized, fixed length, anonymous array</comment>
+    <definition>
+      <terminal type="case-insensitive">
+       StartOfArray
+      </terminal>
+      <optional>
+        <nonterminal name="ExpressionList"/>
+      </optional>
+      <optional>
+        <nonterminal name="IND"/>
+        <repeated>
+          <nonterminal name="ExpressionList"/>
+          <nonterminal name="EndOfLine"/>
+        </repeated>
+        <nonterminal name="UND"/>
+      </optional>
+      <terminal type="case-insensitive">
+       EndOfArray
+      </terminal>
+    </definition>
+    <definition>
+      <terminal>array</terminal>
+      <optional>
+        <nonterminal name="ExpressionList"/>
+      </optional>
+      <nonterminal name="EndOfLine"/>
+      <optional>
+        <nonterminal name="IND"/>
+        <repeated>
+          <nonterminal name="ExpressionList"/>
+          <nonterminal name="EndOfLine"/>
+        </repeated>
+        <nonterminal name="UND"/>
+      </optional>
     </definition>
   </rule>
   <rule name="Reference">
@@ -391,14 +406,35 @@
       </optional>
       <terminal>function</terminal>
       <nonterminal name="Block"/>
+      <optional>
+        <terminal type="case-insensitive">Invocation</terminal>
+        <nonterminal name="ArgumentList"/>
+      </optional>
       <comment>anonymous function</comment>
     </definition>
     <definition>
-      <terminal type="case-insensitive">New</terminal>
-      <nonterminal name="TypeName"/>
+      <nonterminal name="SuperCall"/>
       <terminal>class</terminal>
       <nonterminal name="Block"/>
+      <optional>
+        <terminal type="case-insensitive">Invocation</terminal>
+        <terminal type="case-insensitive">Access</terminal>
+        <nonterminal name="FunctionCall"/>
+      </optional>
       <comment>anonymous class</comment>
+    </definition>
+  </rule>
+  <comment>
+   Anonymous function and class are supposed
+   to be the last argument of a function call.
+  </comment>
+  <rule name="SuperCall">
+    <definition>
+      <terminal type="case-insensitive">New</terminal>
+      <nonterminal name="TypeName"/>
+      <terminal type="case-insensitive">
+       Invocation
+      </terminal>
     </definition>
     <definition>
       <terminal type="case-insensitive">
@@ -410,15 +446,8 @@
       <terminal type="case-insensitive">
        EndOfExpression
       </terminal>
-      <terminal>class</terminal>
-      <nonterminal name="Block"/>
-      <comment>anonymous class</comment>
     </definition>
   </rule>
-  <comment>
-   Anonymous function and class are supposed
-   to be the last argument of a function call.
-  </comment>
   <rule name="Statement">
     <definition>
       <nonterminal name="LineStatement"/>
