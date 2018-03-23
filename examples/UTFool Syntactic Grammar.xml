@@ -294,13 +294,19 @@
       <nonterminal name="Expression"/>
     </definition>
     <definition>
-      <optional>
-        <terminal>if</terminal>
-      </optional>
       <nonterminal name="Expression"/>
-        <terminal>then</terminal>
+      <terminal type="case-insensitive">TernaryTrue</terminal>
       <nonterminal name="Expression"/>
-        <terminal>else</terminal>
+      <terminal type="case-insensitive">TernaryFalse</terminal>
+      <nonterminal name="Expression"/>
+      <comment>ternary expression</comment>
+    </definition>
+    <definition>
+      <terminal>if</terminal>
+      <nonterminal name="Expression"/>
+      <terminal>then</terminal>
+      <nonterminal name="Expression"/>
+      <terminal>else</terminal>
       <nonterminal name="Expression"/>
       <comment>ternary expression</comment>
     </definition>
@@ -579,9 +585,7 @@
       <nonterminal name="Expression"/>
       <nonterminal name="IND"/>
       <repeated>
-        <terminal>if</terminal>
-        <nonterminal name="ExpressionList"/>
-        <nonterminal name="Block"/>
+        <nonterminal name="Case"/>
       </repeated>
       <optional>
         <nonterminal name="Else"/>
@@ -592,11 +596,35 @@
     <definition>
       <terminal>if</terminal>
       <nonterminal name="Expression"/>
+      <terminal>then</terminal>
+      <nonterminal name="LineStatement"/>
+      <comment>conditional statement</comment>
+    </definition>
+    <definition>
+      <nonterminal name="LineStatement"/>
+      <nonterminal name="Condition"/>
+      <comment>conditional statement</comment>
+    </definition>
+    <definition>
+      <nonterminal name="Condition"/>
       <nonterminal name="Block"/>
       <optional>
         <nonterminal name="Else"/>
       </optional>
       <comment>conditional statement</comment>
+    </definition>
+  </rule>
+  <rule name="Case">
+    <definition>
+      <terminal>if</terminal>
+      <nonterminal name="ExpressionList"/>
+      <terminal>then</terminal>
+      <nonterminal name="LineStatement"/>
+    </definition>
+    <definition>
+      <terminal>if</terminal>
+      <nonterminal name="ExpressionList"/>
+      <nonterminal name="Block"/>
     </definition>
   </rule>
   <rule name="Else">
@@ -607,6 +635,16 @@
     <definition>
       <terminal>else</terminal>
       <nonterminal name="Block"/>
+    </definition>
+  </rule>
+  <rule name="Condition">
+    <definition>
+      <terminal>if</terminal>
+      <nonterminal name="Expression"/>
+    </definition>
+    <definition>
+      <terminal>unless</terminal>
+      <nonterminal name="Expression"/>
     </definition>
   </rule>
   <rule name="Iteration">
