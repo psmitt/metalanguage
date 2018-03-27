@@ -154,7 +154,7 @@
       <nonterminal name="IND"/>
       <repeated>
         <optional>
-          <nonterminal name="Name"/>
+          <nonterminal name="NameList"/>
           <nonterminal name="EndOfLine"/>
         </optional>
       </repeated>
