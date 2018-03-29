@@ -233,6 +233,7 @@
   <rule name="Literal">
     <definition>
       <terminal>null</terminal>
+      <comment>value reference, reserved name</comment>
     </definition>
     <definition>
       <nonterminal name="Boolean"/>
@@ -253,9 +254,11 @@
   <rule name="Boolean">
     <definition>
       <terminal>true</terminal>
+      <comment>value reference, reserved name</comment>
     </definition>
     <definition>
       <terminal>false</terminal>
+      <comment>value reference, reserved name</comment>
     </definition>
   </rule>
   <rule name="Number">
