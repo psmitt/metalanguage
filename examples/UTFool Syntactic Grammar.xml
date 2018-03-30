@@ -301,10 +301,21 @@
     <definition>
       <nonterminal name="Expression"/>
       <terminal type="case-insensitive">TernaryTrue</terminal>
-      <nonterminal name="Expression"/>
+      <optional>
+        <nonterminal name="Expression"/>
+      </optional>
       <terminal type="case-insensitive">TernaryFalse</terminal>
       <nonterminal name="Expression"/>
-      <comment>ternary expression</comment>
+      <comment>null-coalescing or ternary expression</comment>
+    </definition>
+    <definition>
+      <nonterminal name="Expression"/>
+      <terminal type="case-insensitive">TernaryTrue</terminal>
+      <terminal type="case-insensitive">BinaryOperator</terminal>
+      <nonterminal name="Expression"/>
+      <terminal type="case-insensitive">RelationalOperator</terminal>
+      <nonterminal name="Expression"/>
+      <comment>existence-based relational expression</comment>
     </definition>
     <definition>
       <terminal>if</terminal>
@@ -494,11 +505,18 @@
     <definition>
       <nonterminal name="Reference"/>
       <optional>
-        <terminal type="case-insensitive">BinaryOperator</terminal>
+        <terminal type="case-insensitive">TernaryTrue</terminal>
       </optional>
       <terminal>assign</terminal>
       <nonterminal name="Expression"/>
-      <comment>[ compound ] assignment</comment>
+      <comment>[ existential ] assignment</comment>
+    </definition>
+    <definition>
+      <nonterminal name="Reference"/>
+      <terminal type="case-insensitive">BinaryOperator</terminal>
+      <terminal>assign</terminal>
+      <nonterminal name="Expression"/>
+      <comment>compound assignment</comment>
     </definition>
     <definition>
       <terminal type="case-insensitive">
