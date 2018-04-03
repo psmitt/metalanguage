@@ -280,10 +280,11 @@
     </definition>
     <definition>
       <terminal>Infinity</terminal>
+      <comment>value reference, reserved name</comment>
     </definition>
     <definition>
       <terminal>NaN</terminal>
-      <comment>Not-a-Number</comment>
+      <comment>Not-a-Number, value reference, reserved name</comment>
     </definition>
   </rule>
   <rule name="Character">
