@@ -1,7 +1,7 @@
 {
   "name": "metalanguage",
   "main": "./lib/metalanguage",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "Syntax highlighting and transformation tools for standard syntactic metalanguages: BNF, WSN, EBNF, ABNF, W3C EBNF",
   "keywords": [
     "meta",
