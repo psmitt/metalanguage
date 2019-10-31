@@ -1,0 +1,761 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE syntax SYSTEM "../Syntax.dtd">
+<?xml-stylesheet type="text/xsl" href="../Syntax.xsl"?>
+<syntax language="PowerShell" start="CompilationUnit">
+  <rule name="statementBlockRule">
+    <definition>
+      <terminal>{</terminal>
+      <nonterminal name="statementListRule"/>
+      <terminal>}</terminal>
+    </definition>
+  </rule>
+  <rule name="statementListRule">
+    <definition>
+      <nonterminal name="statementRule"/>
+      <repeated>
+        <optional>
+          <nonterminal name="statementSeparatorToken"/>
+          <nonterminal name="statementRule"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="statementRule">
+    <definition>
+      <nonterminal name="ifStatementRule"/>
+    </definition>
+    <definition>
+      <nonterminal name="switchStatementRule"/>
+    </definition>
+    <definition>
+      <nonterminal name="foreachStatementRule"/>
+    </definition>
+    <definition>
+      <nonterminal name="forWhileStatementRule"/>
+    </definition>
+    <definition>
+      <nonterminal name="doWhileStatementRule"/>
+    </definition>
+    <definition>
+      <nonterminal name="functionDeclarationRule"/>
+    </definition>
+    <definition>
+      <nonterminal name="flowControlStatementRule"/>
+    </definition>
+    <definition>
+      <nonterminal name="trapStatementRule"/>
+    </definition>
+    <definition>
+      <nonterminal name="finallyStatementRule"/>
+    </definition>
+    <definition>
+      <nonterminal name="pipelineRule"/>
+    </definition>
+  </rule>
+  <rule name="pipelineRule">
+    <definition>
+      <nonterminal name="assignmentStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="firstPipelineElement"/>
+      <repeated>
+        <optional>
+          <terminal>|</terminal>
+          <nonterminal name="cmdletCall"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="assignmentStatementRule">
+    <definition>
+      <nonterminal name="lvalueExpression"/>
+      <nonterminal name="AssignmentOperatorToken"/>
+      <nonterminal name="pipelineRule"/>
+    </definition>
+  </rule>
+  <rule name="lvalueExpression">
+    <definition>
+      <nonterminal name="lvalue"/>
+      <repeated>
+        <optional>
+          <terminal>?</terminal>
+          <nonterminal name="lvalue"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="lvalueExpression">
+    <definition>
+      <nonterminal name="simpleLvalue"/>
+      <repeated>
+        <nonterminal name="propertyOrArrayReferenceOperator"/>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="simpleLvalue">
+    <definition>
+      <repeated>
+        <nonterminal name="AttributeSpecificationToken"/>
+      </repeated>
+      <nonterminal name="variableToken"/>
+    </definition>
+  </rule>
+  <rule name="firstPipelineElement">
+    <definition>
+      <nonterminal name="expressionRule"/>
+    </definition>
+    <definition>
+      <nonterminal name="cmdletCall"/>
+    </definition>
+  </rule>
+  <rule name="cmdletCall">
+    <definition>
+      <nonterminal name="expressionRule"/>
+    </definition>
+    <definition>
+      <nonterminal name="cmdletCall"/>
+    </definition>
+  </rule>
+  <rule name="ifStatementRule">
+    <definition>
+      <terminal>if</terminal>
+      <terminal>(</terminal>
+      <nonterminal name="pipelineRule"/>
+      <terminal>)</terminal>
+      <nonterminal name="statementBlockRule"/>
+      <repeated>
+        <optional>
+          <terminal>elseif</terminal>
+          <terminal>(</terminal>
+          <nonterminal name="pipelineRule"/>
+          <terminal>)</terminal>
+          <nonterminal name="statementBlockRule"/>
+        </optional>
+      </repeated>
+      <optional>
+        <terminal>else</terminal>
+        <nonterminal name="statementBlockRule"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="ternaryOperatorRule">
+    <definition>
+      <terminal>if</terminal>
+      <terminal>(</terminal>
+      <nonterminal name="pipelineRule"/>
+      <terminal>)</terminal>
+      <nonterminal name="statementBlockRule"/>
+      <terminal>else</terminal>
+      <nonterminal name="statementBlockRule"/>
+    </definition>
+    <definition>
+      <nonterminal name="pipelineRule"/>
+      <terminal>?</terminal>
+      <nonterminal name="statementBlockRule"/>
+      <terminal>:</terminal>
+      <nonterminal name="statementBlockRule"/>
+    </definition>
+  </rule>
+  <rule name="switchStatementRule">
+    <definition>
+      <terminal>switch</terminal>
+      <optional>
+        <nonterminal name="switchTypeToken"/>
+      </optional>
+      <optional>
+        <terminal>-caseSensitive</terminal>
+      </optional>
+      <nonterminal name="switchConditionRule"/>
+      <terminal>{</terminal>
+      <repeated>
+        <nonterminal name="switchClauseRule"/>
+        <nonterminal name="statementBlockRule"/>
+      </repeated>
+      <terminal>}</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="pipelineRule"/>
+      <terminal>?</terminal>
+      <nonterminal name="statementBlockRule"/>
+      <terminal>:</terminal>
+      <nonterminal name="statementBlockRule"/>
+    </definition>
+  </rule>
+  <rule name="switchTypeToken">
+    <definition>
+      <terminal>-exact</terminal>
+    </definition>
+    <definition>
+      <terminal>-regex</terminal>
+    </definition>
+    <definition>
+      <terminal>-wildcard</terminal>
+    </definition>
+  </rule>
+  <rule name="switchConditionRule">
+    <definition>
+      <terminal>-file</terminal>
+      <nonterminal name="propertyOrArrayReferenceRule"/>
+    </definition>
+    <definition>
+      <terminal>(</terminal>
+      <nonterminal name="pipelineRule"/>
+      <terminal>)</terminal>
+    </definition>
+  </rule>
+  <rule name="switchClauseRule">
+    <definition>
+      <comment>
+        Only one &lt;span class="terminal"
+        style="color:black"&gt;default &lt;/span&gt;
+        clause is allowed in a &lt;span class="terminal"
+        style="color:black"&gt;switch &lt;/span&gt; statement.
+      </comment>
+      <terminal>default</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="ParameterArgumentToken"/>
+    </definition>
+    <definition>
+      <nonterminal name="propertyOrArrayReferenceRule"/>
+    </definition>
+    <definition>
+      <nonterminal name="statementBlockRule"/>
+    </definition>
+  </rule>
+  <rule name="foreachStatementRule">
+    <comment>
+      See also &lt;span class="terminal"
+      style="color:black"&gt;ForEach-Object &lt;/span&gt; cmdlet.
+    </comment>
+    <definition>
+      <optional>
+        <terminal>loopLabelToken</terminal>
+      </optional>
+      <terminal>foreach</terminal>
+      <terminal>(</terminal>
+      <nonterminal name="variableToken"/>
+      <terminal>in</terminal>
+      <nonterminal name="pipelineRule"/>
+      <terminal>)</terminal>
+      <nonterminal name="statementBlockRule"/>
+    </definition>
+  </rule>
+  <rule name="forStatementRule">
+    <definition>
+      <optional>
+        <terminal>loopLabelToken</terminal>
+      </optional>
+      <terminal>for</terminal>
+      <terminal>(</terminal>
+      <optional>
+        <nonterminal name="pipelineRule"/>
+      </optional>
+      <terminal>;</terminal>
+      <optional>
+        <nonterminal name="pipelineRule"/>
+      </optional>
+      <terminal>;</terminal>
+      <optional>
+        <nonterminal name="pipelineRule"/>
+      </optional>
+      <terminal>)</terminal>
+      <nonterminal name="statementBlockRule"/>
+    </definition>
+  </rule>
+  <rule name="whileStatementRule">
+    <definition>
+      <optional>
+        <terminal>loopLabelToken</terminal>
+      </optional>
+      <terminal>while</terminal>
+      <terminal>(</terminal>
+      <nonterminal name="pipelineRule"/>
+      <terminal>)</terminal>
+      <nonterminal name="statementBlockRule"/>
+    </definition>
+  </rule>
+  <rule name="doStatementRule">
+    <definition>
+      <optional>
+        <terminal>loopLabelToken</terminal>
+      </optional>
+      <terminal>do</terminal>
+      <nonterminal name="statementBlockRule"/>
+      <nonterminal name="whileOrUntilToken"/>
+      <terminal>(</terminal>
+      <nonterminal name="pipelineRule"/>
+      <terminal>)</terminal>
+    </definition>
+  </rule>
+  <rule name="whileOrUntilToken">
+    <definition>
+      <terminal>while</terminal>
+    </definition>
+    <definition>
+      <terminal>until</terminal>
+    </definition>
+  </rule>
+  <rule name="trapStatementRule">
+    <definition>
+      <terminal>trap</terminal>
+      <optional>
+        <nonterminal name="AttributeSpecificationToken"/>
+      </optional>
+      <nonterminal name="statementBlockRule"/>
+    </definition>
+  </rule>
+  <rule name="finallyStatementRule">
+    <definition>
+      <terminal>finally</terminal>
+      <nonterminal name="statementBlockRule"/>
+    </definition>
+  </rule>
+  <rule name="flowControlStatementRule">
+    <definition>
+      <nonterminal name="breakOrContinueToken"/>
+      <optional>
+        <nonterminal name="propertyNameToken"/>
+      </optional>
+    </definition>
+    <definition>
+      <nonterminal name="breakOrContinueToken"/>
+      <optional>
+        <nonterminal name="propertyOrArrayReferenceRule"/>
+      </optional>
+    </definition>
+    <definition>
+      <terminal>return</terminal>
+      <optional>
+        <nonterminal name="pipelineRule"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="breakOrContinueToken">
+    <definition>
+      <terminal>break</terminal>
+    </definition>
+    <definition>
+      <terminal>continue</terminal>
+    </definition>
+  </rule>
+  <rule name="functionDeclarationRule">
+    <definition>
+      <nonterminal name="FunctionDeclarationToken"/>
+      <nonterminal name="ParameterArgumentToken"/>
+      <optional>
+        <terminal>(</terminal>
+        <nonterminal name="parameterDeclarationExpressionRule"/>
+        <terminal>)</terminal>
+      </optional>
+      <nonterminal name="cmdletBodyRule"/>
+    </definition>
+  </rule>
+  <rule name="cmdletBodyRule">
+    <definition>
+      <terminal>{</terminal>
+      <optional>
+        <terminal>(</terminal>
+        <nonterminal name="parameterDeclarationExpressionRule"/>
+        <terminal>)</terminal>
+      </optional>
+      <nonterminal name="prodecureRule"/>
+      <terminal>}</terminal>
+    </definition>
+  </rule>
+  <rule name="prodecureRule">
+    <definition>
+      <nonterminal name="statementList"/>
+    </definition>
+    <definition>
+      <optional>
+        <terminal>begin</terminal>
+        <nonterminal name="statementBlock"/>
+      </optional>
+      <terminal>process</terminal>
+      <nonterminal name="statementBlock"/>
+      <optional>
+        <terminal>end</terminal>
+        <nonterminal name="statementBlock"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="FunctionDeclarationToken">
+    <definition>
+      <terminal>filter</terminal>
+    </definition>
+    <definition>
+      <terminal>function</terminal>
+    </definition>
+  </rule>
+  <rule name="parameterDeclarationRule">
+    <definition>
+      <nonterminal name="ParameterDeclarationToken"/>
+      <terminal>(</terminal>
+      <nonterminal name="parameterDeclarationExpressionRule"/>
+      <terminal>)</terminal>
+    </definition>
+  </rule>
+  <rule name="parameterDeclarationExpressionRule">
+    <definition>
+      <nonterminal name="parameterWithIntializer"/>
+      <repeated>
+        <optional>
+          <nonterminal name="commaToken"/>
+          <nonterminal name="parameterWithIntializer"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="parameterWithIntializer">
+    <definition>
+      <nonterminal name="simpleLvalue"/>
+      <optional>
+        <terminal>=</terminal>
+        <nonterminal name="expressionRule"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="expressionRule">
+    <definition>
+      <nonterminal name="logicalExpressionRule"/>
+    </definition>
+  </rule>
+  <rule name="logicalExpressionRule">
+    <definition>
+      <nonterminal name="bitwiseExpressionRule"/>
+      <repeated>
+        <optional>
+          <nonterminal name="LogicalOperatorToken"/>
+          <nonterminal name="bitwiseExpressionRule"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="bitwiseExpressionRule">
+    <definition>
+      <nonterminal name="comparisonExpressionRule"/>
+      <repeated>
+        <optional>
+          <nonterminal name="bitwiseOperatorToken>"/>
+          <nonterminal name="comparisonExpressionRule"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="comparisonExpressionRule">
+    <definition>
+      <nonterminal name="addExpressionRule"/>
+      <repeated>
+        <optional>
+          <nonterminal name="comparisonOperatorToken>"/>
+          <nonterminal name="addExpressionRule"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="addExpressionRule">
+    <definition>
+      <nonterminal name="multiplyExpressionRule"/>
+      <repeated>
+        <optional>
+          <nonterminal name="additionOperatorToken>"/>
+          <nonterminal name="multiplyExpressionRule"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="multiplyExpressionRule">
+    <definition>
+      <nonterminal name="formatExpressionRule"/>
+      <repeated>
+        <optional>
+          <nonterminal name="multiplicationOperatorToken>"/>
+          <nonterminal name="formatExpressionRule"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="formatExpressionRule">
+    <definition>
+      <nonterminal name="rangeExpressionRule"/>
+      <repeated>
+        <optional>
+          <nonterminal name="formatOperatorToken>"/>
+          <nonterminal name="rangeExpressionRule"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="rangeExpressionRule">
+    <definition>
+      <nonterminal name="arrayLiteralRule"/>
+      <repeated>
+        <optional>
+          <nonterminal name="rangeOperatorToken>"/>
+          <nonterminal name="arrayLiteralRule"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="arrayLiteralRule">
+    <definition>
+      <nonterminal name="postfixOperatorRule"/>
+      <repeated>
+        <optional>
+          <nonterminal name="commaToken"/>
+          <nonterminal name="postfixOperatorRule"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="postfixOperatorRule">
+    <definition>
+      <nonterminal name="lvalueExpression"/>
+      <nonterminal name="PrePostfixOperatorToken"/>
+    </definition>
+    <definition>
+      <nonterminal name="propertyOrArrayReferenceRule"/>
+    </definition>
+  </rule>
+  <rule name="propertyOrArrayReferenceRule">
+    <definition>
+      <nonterminal name="valueRule"/>
+      <repeated>
+        <nonterminal name="propertyOrArrayReferenceOperator"/>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="propertyOrArrayReferenceOperator">
+    <definition>
+      <terminal>[</terminal>
+      <nonterminal name="expressionRule"/>
+      <terminal>]</terminal>
+    </definition>
+    <definition>
+      <terminal>.</terminal>
+      <nonterminal name="propertyNameToken"/>
+      <optional>
+        <nonterminal name="parseCallRule"/>
+      </optional>
+    </definition>
+    <definition>
+      <terminal>.</terminal>
+      <nonterminal name="valueRule"/>
+    </definition>
+  </rule>
+  <rule name="parseCallRule">
+    <definition>
+      <terminal>(</terminal>
+      <nonterminal name="arrayLiteralRule"/>
+      <terminal>)</terminal>
+    </definition>
+  </rule>
+  <rule name="valueRule">
+    <definition>
+      <terminal>(</terminal>
+      <nonterminal name="assignmentStatementRule"/>
+      <terminal>)</terminal>
+    </definition>
+    <definition>
+      <terminal>$(</terminal>
+      <nonterminal name="statementListRule"/>
+      <terminal>)</terminal>
+    </definition>
+    <definition>
+      <terminal>@(</terminal>
+      <nonterminal name="statementListRule"/>
+      <terminal>)</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="cmdletBodyRule"/>
+    </definition>
+    <definition>
+      <terminal>@{</terminal>
+      <nonterminal name="hashLiteralRule"/>
+      <terminal>}</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="unaryOperatorToken"/>
+      <nonterminal name="propertyOrArrayReferenceRule"/>
+    </definition>
+    <definition>
+      <nonterminal name="unaryOperatorToken"/>
+      <nonterminal name="propertyOrArrayReferenceRule"/>
+    </definition>
+    <definition>
+      <nonterminal name="AttributeSpecificationToken"/>
+      <optional>
+        <nonterminal name="propertyOrArrayReferenceRule"/>
+      </optional>
+    </definition>
+    <definition>
+      <nonterminal name="PrePostfixOperatorToken"/>
+      <nonterminal name="lvalue"/>
+    </definition>
+    <definition>
+      <nonterminal name="NumberToken"/>
+    </definition>
+    <definition>
+      <nonterminal name="LiteralStringToken"/>
+    </definition>
+    <definition>
+      <nonterminal name="ExpandableStringToken"/>
+    </definition>
+    <definition>
+      <nonterminal name="variableToken"/>
+    </definition>
+  </rule>
+  <rule name="hashLiteralRule">
+    <definition>
+      <nonterminal name="keyExpression"/>
+      <terminal>=</terminal>
+      <nonterminal name="pipelineRule"/>
+      <repeated>
+        <optional>
+          <nonterminal name="statementSeparatorToken"/>
+          <nonterminal name="hashLiteralRule"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+
+  <comment>
+    TOKENIZER RULES
+  </comment>
+  <comment>
+    Type Operators, Comparison Operators, and String Operators have the same precedence!
+  </comment>
+  <rule name="TypeOperatorToken">
+    <definition>
+      <terminal>-is</terminal>
+    </definition>
+    <definition>
+      <terminal>-isNot</terminal>
+    </definition>
+    <definition>
+      <terminal>-as</terminal>
+    </definition>
+  </rule>
+  <rule name="ComparisonOperatorToken">
+    <comment>
+      Use prefix 'c' for case-sensitive variant (e.g. -ceq).&lt;br/&gt;
+      Use prefix 'i' for explicitly case-insensitive variant (e.g. -ieq).&lt;br/&gt;
+    </comment>
+    <definition>
+      <terminal>-eq</terminal>
+    </definition>
+    <definition>
+      <terminal>-ne</terminal>
+    </definition>
+    <definition>
+      <terminal>-ge</terminal>
+    </definition>
+    <definition>
+      <terminal>-gt</terminal>
+    </definition>
+    <definition>
+      <terminal>-lt</terminal>
+    </definition>
+    <definition>
+      <terminal>-le</terminal>
+    </definition>
+    <definition>
+      <terminal>-in</terminal>
+    </definition>
+    <definition>
+      <terminal>-notIn</terminal>
+    </definition>
+    <definition>
+      <terminal>-contains</terminal>
+    </definition>
+    <definition>
+      <terminal>-notContains</terminal>
+    </definition>
+    <definition>
+      <terminal>-match</terminal>
+    </definition>
+    <definition>
+      <terminal>-notMatch</terminal>
+    </definition>
+    <definition>
+      <terminal>-like</terminal>
+    </definition>
+    <definition>
+      <terminal>-notLike</terminal>
+    </definition>
+    <definition>
+      <terminal>-replace</terminal>
+    </definition>
+  </rule>
+  <rule name="StringOperatorToken">
+    <definition>
+      <comment>binary</comment>
+      <terminal>-split</terminal>
+    </definition>
+    <definition>
+      <comment>binary</comment>
+      <terminal>-join</terminal>
+    </definition>
+  </rule>
+  <rule name="LogicalOperatorToken">
+    <definition>
+      <terminal>-and</terminal>
+    </definition>
+    <definition>
+      <terminal>-or</terminal>
+    </definition>
+    <definition>
+      <terminal>-xor</terminal>
+    </definition>
+    <definition>
+      <terminal>-not</terminal>
+    </definition>
+    <definition>
+      <terminal>!</terminal>
+    </definition>
+  </rule>
+  <rule name="RedirectionOperatorToken">
+    <comment>
+      See also &lt;span class="terminal"
+      style="color:black"&gt;Out-File &lt;/span&gt;
+      and &lt;span class="terminal"
+      style="color:black"&gt;Tee-Object &lt;/span&gt; cmdlets.
+    </comment>
+    <definition>
+      <terminal>&gt;</terminal>
+    </definition>
+    <definition>
+      <terminal>&gt;&gt;</terminal>
+    </definition>
+    <definition>
+      <terminal>2&gt;</terminal>
+    </definition>
+    <definition>
+      <terminal>2&gt;&gt;</terminal>
+    </definition>
+    <definition>
+      <terminal>2&gt;&amp;1</terminal>
+    </definition>
+  </rule>
+  <rule name="AssignmentOperatorToken">
+    <definition>
+      <terminal>=</terminal>
+    </definition>
+    <definition>
+      <terminal>+=</terminal>
+    </definition>
+    <definition>
+      <terminal>-=</terminal>
+    </definition>
+    <definition>
+      <terminal>*=</terminal>
+    </definition>
+    <definition>
+      <terminal>/=</terminal>
+    </definition>
+    <definition>
+      <terminal>%=</terminal>
+    </definition>
+  </rule>
+</syntax>
