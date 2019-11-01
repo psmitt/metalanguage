@@ -2,6 +2,10 @@
 <!DOCTYPE syntax SYSTEM "../Syntax.dtd">
 <?xml-stylesheet type="text/xsl" href="../Syntax.xsl"?>
 <syntax language="PowerShell" start="CompilationUnit">
+  <comment>
+    &lt;span style="color:black;font-weight:normal;font-style:italic"&gt;
+    ␤ &lt;/span&gt; means optional new lines.
+  </comment>
   <rule name="ScriptBlock">
     <definition>
       <terminal>{</terminal>
@@ -23,10 +27,233 @@
       <terminal>}</terminal>
     </definition>
   </rule>
-  <rule name="Procedure">
+  <rule name="ScriptBlock">
     <definition>
-      <nonterminal name="Statements"/>
+      <repeated>
+        <optional>
+          <nonterminal name="UsingStatement"/>
+        </optional>
+      </repeated>
+      <optional>
+        <nonterminal name="ParamBlock"/>
+      </optional>
+      <repeated>
+        <optional>
+          <nonterminal name="StatementTerminator"/>
+        </optional>
+      </repeated>
+      <optional>
+        <nonterminal name="ScriptBlockBody"/>
+      </optional>
     </definition>
+  </rule>
+  <rule name="UsingStatement">
+    <definition>
+      <terminal type="case-insensitive">using</terminal>
+      <terminal type="case-insensitive">namespace</terminal>
+      <nonterminal name="Identifier"/>
+      <optional>
+        <terminal>=</terminal>
+        <nonterminal name="Identifier"/>
+      </optional>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">using</terminal>
+      <terminal type="case-insensitive">module</terminal>
+      <nonterminal name="Identifier"/>
+      <optional>
+        <terminal>=</terminal>
+        <nonterminal name="Identifier"/>
+      </optional>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">using</terminal>
+      <terminal type="case-insensitive">module</terminal>
+      <optional>
+        <nonterminal name="Identifier"/>
+        <terminal>=</terminal>
+      </optional>
+      <nonterminal name="HashTable"/>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">using</terminal>
+      <terminal type="case-insensitive">type</terminal>
+      <nonterminal name="Identifier"/>
+      <terminal>=</terminal>
+      <nonterminal name="Identifier"/>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">using</terminal>
+      <terminal type="case-insensitive">assembly</terminal>
+      <nonterminal name="Identifier"/>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">using</terminal>
+      <terminal type="case-insensitive">command</terminal>
+      <nonterminal name="Identifier"/>
+      <terminal>=</terminal>
+      <nonterminal name="Identifier"/>
+    </definition>
+  </rule>
+  <rule name="ParamBlock">
+    <definition>
+      <nonterminal name="␤"/>
+      <repeated>
+        <optional>
+          <nonterminal name="Attribute"/>
+        </optional>
+      </repeated>
+      <nonterminal name="␤"/>
+      <terminal type="case-insensitive">param</terminal>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <optional>
+        <nonterminal name="ParameterList"/>
+      </optional>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+    </definition>
+  </rule>
+  <rule name="Attribute">
+    <definition>
+      <terminal>[</terminal>
+      <nonterminal name="TypeSpec"/>
+      <terminal>(</terminal>
+      <nonterminal name="AttributeArgument"/>
+      <repeated>
+        <optional>
+          <nonterminal name="␤"/>
+          <terminal>,</terminal>
+          <nonterminal name="AttributeArgument"/>
+        </optional>
+      </repeated>
+      <terminal>)</terminal>
+      <terminal>]</terminal>
+    </definition>
+  </rule>
+  <rule name="TypeSpec">
+    <definition>
+      <comment>array type with optional dimensions</comment>
+      <nonterminal name="TypeName"/>
+      <terminal>[</terminal>
+      <repeated>
+        <optional>
+          <terminal>,</terminal>
+        </optional>
+      </repeated>
+      <terminal>]</terminal>
+    </definition>
+    <definition>
+      <comment>generic type</comment>
+      <nonterminal name="TypeName"/>
+      <terminal>[</terminal>
+      <nonterminal name="TypeSpec"/>
+      <repeated>
+        <optional>
+          <terminal>,</terminal>
+          <nonterminal name="TypeSpec"/>
+        </optional>
+      </repeated>
+      <terminal>]</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="TypeName"/>
+    </definition>
+  </rule>
+  <rule name="TypeName">
+    <definition>
+      <nonterminal name="NamespaceTypeName"/>
+      <optional>
+        <terminal>,</terminal>
+        <nonterminal name="AssemblyNameSpec"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="NamespaceTypeName">
+    <definition>
+      <optional>
+        <nonterminal name="NamespaceSpec"/>
+        <terminal>.</terminal>
+      </optional>
+      <nonterminal name="NestedTypeName"/>
+    </definition>
+  </rule>
+  <rule name="NamespaceSpec">
+    <definition>
+      <optional>
+        <nonterminal name="TypeNameIdentifier"/>
+        <terminal>.</terminal>
+      </optional>
+      <nonterminal name="TypeNameIdentifier"/>
+    </definition>
+  </rule>
+  <rule name="NestedTypeName">
+    <definition>
+      <nonterminal name="TypeNameIdentifier"/>
+      <repeated>
+        <optional>
+          <terminal>+</terminal>
+          <nonterminal name="TypeNameIdentifier"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="TypeNameIdentifier">
+    <definition>
+      <terminal type="regular">[\p{L}\p{Nd}.`_]+</terminal>
+    </definition>
+  </rule>
+  <rule name="AttributeArgument">
+    <definition>
+      <optional>
+        <nonterminal name="␤"/>
+        <nonterminal name="PropertyName"/>
+        <terminal>=</terminal>
+      </optional>
+      <nonterminal name="␤"/>
+      <nonterminal name="Expression"/>
+    </definition>
+  </rule>
+  <rule name="ParameterList">
+    <definition>
+      <nonterminal name="ScriptParameter"/>
+      <repeated>
+        <optional>
+          <nonterminal name="␤"/>
+          <terminal>,</terminal>
+          <nonterminal name="ScriptParameter"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="ScriptParameter">
+    <definition>
+      <nonterminal name="␤"/>
+      <repeated>
+        <optional>
+          <nonterminal name="Attribute"/>
+        </optional>
+      </repeated>
+      <nonterminal name="␤"/>
+      <nonterminal name="Variable"/>
+      <optional>
+        <nonterminal name="␤"/>
+        <terminal>=</terminal>
+        <nonterminal name="␤"/>
+        <nonterminal name="Expression"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="StatementTerminator">
+    <definition>
+      <nonterminal name="EndOfLine"/>
+    </definition>
+    <definition>
+      <terminal>;</terminal>
+    </definition>
+  </rule>
+
+  <rule name="Procedure">
     <definition>
       <optional>
         <terminal type="case-insensitive">begin</terminal>
@@ -47,7 +274,61 @@
         <terminal>}</terminal>
       </optional>
     </definition>
+    <definition>
+      <nonterminal name="Statements"/>
+    </definition>
   </rule>
+  <rule name="ScriptBlockBody">
+    <definition>
+      <repeated>
+        <nonterminal name="NamedBlock"/>
+      </repeated>
+    </definition>
+    <definition>
+      <repeated>
+        <nonterminal name="Statement"/>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="NamedBlock">
+    <definition>
+      <repeated>
+        <optional>
+          <nonterminal name="StatementTerminator"/>
+        </optional>
+      </repeated>
+      <nonterminal name="BlockName"/>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+  </rule>
+  <rule name="BlockName">
+    <definition>
+      <terminal type="case-insensitive">dynamicparam</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">begin</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">process</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">end</terminal>
+    </definition>
+  </rule>
+  <rule name="StatementBlock">
+    <definition>
+      <nonterminal name="␤"/>
+      <terminal>{</terminal>
+      <repeated>
+        <optional>
+          <nonterminal name="Statement"/>
+        </optional>
+      </repeated>
+      <nonterminal name="␤"/>
+      <terminal>}</terminal>
+    </definition>
+  </rule>
+
   <rule name="Statements">
     <definition>
       <optional>
@@ -123,6 +404,515 @@
       <nonterminal name="FinallyStatement"/>
     </definition>
   </rule>
+  <rule name="Statement">
+    <definition>
+      <nonterminal name="IfStatement"/>
+    </definition>
+    <definition>
+      <optional>
+        <nonterminal name="Label"/>
+      </optional>
+      <nonterminal name="LabeledStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="FunctionStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="FlowControlStatement"/>
+      <nonterminal name="StatementTerminator"/>
+    </definition>
+    <definition>
+      <nonterminal name="TrapStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="TryStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="DataStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="PipelineChain"/>
+      <nonterminal name="StatementTerminator"/>
+    </definition>
+  </rule>
+  <rule name="LabeledStatement">
+    <definition>
+      <nonterminal name="SwitchStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="ForEachStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="ForStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="WhileStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="DoStatement"/>
+    </definition>
+  </rule>
+
+  <rule name="FlowControlStatement">
+    <definition>
+      <nonterminal name="breakOrContinueToken"/>
+      <optional>
+        <nonterminal name="PropertyName"/>
+      </optional>
+    </definition>
+    <definition>
+      <nonterminal name="breakOrContinueToken"/>
+      <optional>
+        <nonterminal name="Member"/>
+      </optional>
+    </definition>
+    <definition>
+      <terminal>return</terminal>
+      <optional>
+        <nonterminal name="Pipeline"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="FlowControlStatement">
+    <definition>
+      <terminal type="case-insensitive">break</terminal>
+      <optional>
+        <nonterminal name="LabelExpression"/>
+      </optional>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">continue</terminal>
+      <optional>
+        <nonterminal name="LabelExpression"/>
+      </optional>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">throw</terminal>
+      <optional>
+        <nonterminal name="Pipeline"/>
+      </optional>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">return</terminal>
+      <optional>
+        <nonterminal name="Pipeline"/>
+      </optional>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">exit</terminal>
+      <optional>
+        <nonterminal name="Pipeline"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="LabelExpression">
+    <definition>
+      <nonterminal name="SimpleName"/>
+    </definition>
+    <definition>
+      <nonterminal name="UnaryExpression"/>
+    </definition>
+  </rule>
+  <rule name="KeyExpression">
+    <definition>
+      <nonterminal name="SimpleName"/>
+    </definition>
+    <definition>
+      <nonterminal name="UnaryExpression"/>
+    </definition>
+  </rule>
+
+
+  <rule name="IfStatement">
+    <definition>
+      <terminal>if</terminal>
+      <terminal>(</terminal>
+      <nonterminal name="Pipeline"/>
+      <terminal>)</terminal>
+      <nonterminal name="ScriptBlock"/>
+      <repeated>
+        <optional>
+          <terminal>elseif</terminal>
+          <terminal>(</terminal>
+          <nonterminal name="Pipeline"/>
+          <terminal>)</terminal>
+          <nonterminal name="ScriptBlock"/>
+        </optional>
+      </repeated>
+      <optional>
+        <terminal>else</terminal>
+        <nonterminal name="ScriptBlock"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="IfStatement">
+    <definition>
+      <terminal type="case-insensitive">if</terminal>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <nonterminal name="PipelineChain"/>
+      <terminal>)</terminal>
+      <nonterminal name="StatementBlock"/>
+      <repeated>
+        <optional>
+          <terminal type="case-insensitive">elseif</terminal>
+          <nonterminal name="␤"/>
+          <terminal>(</terminal>
+          <nonterminal name="PipelineChain"/>
+          <terminal>)</terminal>
+          <nonterminal name="StatementBlock"/>
+        </optional>
+      </repeated>
+      <optional>
+        <terminal type="case-insensitive">else</terminal>
+        <nonterminal name="StatementBlock"/>
+      </optional>
+    </definition>
+  </rule>
+
+  <rule name="SwitchStatement">
+    <definition>
+      <terminal>switch</terminal>
+      <optional>
+        <nonterminal name="switchTypeToken"/>
+      </optional>
+      <optional>
+        <terminal>-caseSensitive</terminal>
+      </optional>
+      <nonterminal name="switchConditionRule"/>
+      <terminal>{</terminal>
+      <repeated>
+        <nonterminal name="switchClauseRule"/>
+        <nonterminal name="ScriptBlock"/>
+      </repeated>
+      <terminal>}</terminal>
+    </definition>
+  </rule>
+  <rule name="SwitchStatement">
+    <definition>
+      <terminal type="case-insensitive">switch</terminal>
+      <nonterminal name="␤"/>
+      <repeated>
+        <optional>
+          <nonterminal name="SwitchParameter"/>
+        </optional>
+      </repeated>
+      <nonterminal name="SwitchCondition"/>
+      <nonterminal name="␤"/>
+      <terminal>{</terminal>
+      <nonterminal name="␤"/>
+      <repeated>
+        <nonterminal name="SwitchClause"/>
+      </repeated>
+      <terminal>}</terminal>
+    </definition>
+  </rule>
+  <rule name="SwitchParameter">
+    <definition>
+      <terminal type="case-insensitive">-regex</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-wildcard</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-exact</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-casesensitive</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-parallel</terminal>
+    </definition>
+  </rule>
+
+
+  <rule name="switchConditionRule">
+    <definition>
+      <terminal>(</terminal>
+      <nonterminal name="Pipeline"/>
+      <terminal>)</terminal>
+    </definition>
+    <definition>
+      <terminal>-file</terminal>
+      <nonterminal name="Member"/>
+    </definition>
+  </rule>
+
+  <rule name="SwitchCondition">
+    <definition>
+      <terminal>(</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="Pipeline"/>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-file</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="SwitchFilename"/>
+    </definition>
+  </rule>
+  <rule name="SwitchFilename">
+    <definition>
+      <nonterminal name="CommandArgument"/>
+    </definition>
+    <definition>
+      <nonterminal name="PrimaryExpression"/>
+    </definition>
+  </rule>
+
+  <rule name="switchClauseRule">
+    <definition>
+      <comment>
+        Only one &lt;span class="terminal"
+        style="color:black"&gt;default &lt;/span&gt;
+        clause is allowed in a &lt;span class="terminal"
+        style="color:black"&gt;switch &lt;/span&gt; statement.
+      </comment>
+      <terminal>default</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="Name"/>
+    </definition>
+    <definition>
+      <nonterminal name="Member"/>
+    </definition>
+    <definition>
+      <nonterminal name="ScriptBlock"/>
+    </definition>
+  </rule>
+
+  <rule name="SwitchClause">
+    <definition>
+      <nonterminal name="SwitchClauseCondition"/>
+      <nonterminal name="StatementBlock"/>
+      <repeated>
+        <optional>
+          <nonterminal name="StatementTerminator"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="SwitchClauseCondition">
+    <definition>
+      <nonterminal name="CommandArgument"/>
+    </definition>
+    <definition>
+      <nonterminal name="PrimaryExpression"/>
+    </definition>
+  </rule>
+
+
+  <rule name="foreachStatement">
+    <comment>
+      See also &lt;span class="terminal"
+      style="color:black"&gt;ForEach-Object &lt;/span&gt;
+    </comment>
+    <definition>
+      <optional>
+        <terminal>loopLabelToken</terminal>
+      </optional>
+      <terminal>foreach</terminal>
+      <terminal>(</terminal>
+      <nonterminal name="Variable"/>
+      <terminal>in</terminal>
+      <nonterminal name="Pipeline"/>
+      <terminal>)</terminal>
+      <nonterminal name="ScriptBlock"/>
+    </definition>
+  </rule>
+  <rule name="ForeachStatement">
+    <comment>
+      See also &lt;span class="terminal"
+      style="color:black"&gt;ForEach-Object &lt;/span&gt;
+    </comment>
+    <definition>
+      <terminal type="case-insensitive">foreach</terminal>
+      <nonterminal name="␤"/>
+      <repeated>
+        <optional>
+          <nonterminal name="ForeachParameters"/>
+        </optional>
+      </repeated>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="Variable"/>
+      <nonterminal name="␤"/>
+      <terminal type="case-insensitive">in</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="Pipeline"/>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+  </rule>
+  <rule name="ForeachParameters">
+    <definition>
+      <terminal type="case-insensitive">-parallel</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-throttlelimit</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="ForeachThrottleLimit"/>
+    </definition>
+  </rule>
+  <rule name="ForeachThrottleLimit">
+    <definition>
+      <nonterminal name="CommandArgument"/>
+    </definition>
+    <definition>
+      <nonterminal name="PrimaryExpression"/>
+    </definition>
+  </rule>
+
+  <rule name="ForStatement">
+    <definition>
+      <terminal type="case-insensitive">for</terminal>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <nonterminal name="␤"/>
+      <optional>
+        <nonterminal name="PipelineChain"/>
+      </optional>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">for</terminal>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <nonterminal name="␤"/>
+      <optional>
+        <nonterminal name="PipelineChain"/>
+      </optional>
+      <nonterminal name="StatementTerminator"/>
+      <nonterminal name="␤"/>
+      <optional>
+        <nonterminal name="PipelineChain"/>
+      </optional>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">for</terminal>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <nonterminal name="␤"/>
+      <optional>
+        <nonterminal name="PipelineChain"/>
+      </optional>
+      <nonterminal name="StatementTerminator"/>
+      <nonterminal name="␤"/>
+      <optional>
+        <nonterminal name="PipelineChain"/>
+      </optional>
+      <nonterminal name="StatementTerminator"/>
+      <nonterminal name="␤"/>
+      <optional>
+        <nonterminal name="PipelineChain"/>
+      </optional>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+  </rule>
+
+  <rule name="WhileStatement">
+    <definition>
+      <terminal type="case-insensitive">while</terminal>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="PipelineChain"/>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+  </rule>
+
+  <rule name="DoStatement">
+    <definition>
+      <terminal type="case-insensitive">do</terminal>
+      <nonterminal name="StatementBlock"/>
+      <nonterminal name="␤"/>
+      <terminal type="case-insensitive">while</terminal>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="Pipeline"/>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">do</terminal>
+      <nonterminal name="StatementBlock"/>
+      <nonterminal name="␤"/>
+      <terminal type="case-insensitive">until</terminal>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="Pipeline"/>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+    </definition>
+  </rule>
+
+  <rule name="TrapStatement">
+    <definition>
+      <terminal type="case-insensitive">trap</terminal>
+      <nonterminal name="␤"/>
+      <optional>
+        <nonterminal name="TypeLiteral"/>
+      </optional>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+  </rule>
+
+  <rule name="TryStatement">
+    <definition>
+      <terminal type="case-insensitive">try</terminal>
+      <nonterminal name="StatementBlock"/>
+      <nonterminal name="␤"/>
+      <terminal type="case-insensitive">finally</terminal>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">try</terminal>
+      <nonterminal name="StatementBlock"/>
+      <repeated>
+        <nonterminal name="␤"/>
+        <terminal type="case-insensitive">catch</terminal>
+        <optional>
+          <nonterminal name="TypeList"/>
+        </optional>
+        <nonterminal name="StatementBlock"/>
+      </repeated>
+      <optional>
+        <nonterminal name="␤"/>
+        <terminal type="case-insensitive">finally</terminal>
+        <nonterminal name="StatementBlock"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="TypeList">
+    <definition>
+      <nonterminal name="␤"/>
+      <nonterminal name="TypeLiteral"/>
+      <repeated>
+        <optional>
+          <nonterminal name="␤"/>
+          <terminal>,</terminal>
+          <nonterminal name="␤"/>
+          <nonterminal name="TypeLiteral"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+
+
   <rule name="Pipeline">
     <definition>
       <nonterminal name="Assignment"/>
@@ -147,13 +937,75 @@
     </definition>
   </rule>
   <rule name="Assignment">
-    <comment>
-      Specify AssignableExpression!
-    </comment>
     <definition>
       <nonterminal name="AssignableExpression"/>
       <nonterminal name="AssignmentOperator"/>
       <nonterminal name="Pipeline"/>
+    </definition>
+  </rule>
+  <rule name="AssignableExpression">
+    <definition>
+      <repeated>
+        <optional>
+          <nonterminal name="Type"/>
+        </optional>
+      </repeated>
+      <nonterminal name="Variable"/>
+      <repeated>
+        <optional>
+          <nonterminal name="MemberAccess"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="Type">
+    <definition>
+      <terminal>[</terminal>
+      <terminal type="regular">.*</terminal>
+      <terminal>]</terminal>
+    </definition>
+  </rule>
+  <rule name="Variable">
+    <comment>Variable names are case-insensitive!</comment>
+    <definition>
+      <terminal>$</terminal>
+      <optional>
+        <nonterminal name="Scope"/>
+        <terminal>:</terminal>
+      </optional>
+      <repeated>
+        <terminal type="regular">(\p{L}|\p{Nd}|_|?)+</terminal>
+      </repeated>
+    </definition>
+    <definition>
+      <terminal>$</terminal>
+      <terminal>{</terminal>
+      <terminal type="regular">.+</terminal>
+      <terminal>}</terminal>
+    </definition>
+  </rule>
+  <rule name="Scope">
+    <definition>
+      <terminal type="case-insensitive">global</terminal>
+    </definition>
+    <definition>
+      <comment>default scope for functions and aliases</comment>
+      <terminal type="case-insensitive">local</terminal>
+    </definition>
+    <definition>
+      <comment>restricts visibility to current scope</comment>
+      <terminal type="case-insensitive">private</terminal>
+    </definition>
+    <definition>
+      <comment>default scope for scripts</comment>
+      <terminal type="case-insensitive">script</terminal>
+    </definition>
+    <definition>
+      <comment>identifies local variable in a remote command</comment>
+      <terminal type="case-insensitive">using</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">workflow</terminal>
     </definition>
   </rule>
   <rule name="AssignmentOperator">
@@ -166,6 +1018,9 @@
       <terminal>%=</terminal>
     </definition>
   </rule>
+
+
+
   <rule name="Expression">
     <definition>
       <nonterminal name="LogicalExpression"/>
@@ -173,10 +1028,31 @@
   </rule>
   <rule name="LogicalExpression">
     <definition>
+      <nonterminal name="TernaryExpression"/>
+    </definition>
+    <definition>
+      <nonterminal name="BinaryExpression"/>
+    </definition>
+  </rule>
+  <rule name="TernaryExpression">
+    <definition>
+      <nonterminal name="BinaryExpression"/>
+      <terminal>?</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="TernaryExpression"/>
+      <nonterminal name="␤"/>
+      <terminal>:</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="TernaryExpression"/>
+    </definition>
+  </rule>
+  <rule name="BinaryExpression">
+    <definition>
       <nonterminal name="BitwiseExpression"/>
       <repeated>
         <optional>
           <nonterminal name="LogicalOperator"/>
+          <nonterminal name="␤"/>
           <nonterminal name="BitwiseExpression"/>
         </optional>
       </repeated>
@@ -195,6 +1071,7 @@
       <repeated>
         <optional>
           <nonterminal name="BitwiseOperator"/>
+          <nonterminal name="␤"/>
           <nonterminal name="Comparison"/>
         </optional>
       </repeated>
@@ -209,38 +1086,42 @@
   </rule>
   <rule name="Comparison">
     <definition>
-      <nonterminal name="Addition"/>
+      <nonterminal name="NullCoalesceExpression"/>
       <repeated>
         <optional>
           <nonterminal name="TypeOperator"/>
-          <nonterminal name="Addition"/>
+          <nonterminal name="␤"/>
+          <nonterminal name="NullCoalesceExpression"/>
         </optional>
       </repeated>
     </definition>
     <definition>
-      <nonterminal name="Addition"/>
+      <nonterminal name="NullCoalesceExpression"/>
       <repeated>
         <optional>
           <nonterminal name="ComparisonOperator"/>
-          <nonterminal name="Addition"/>
+          <nonterminal name="␤"/>
+          <nonterminal name="NullCoalesceExpression"/>
         </optional>
       </repeated>
     </definition>
     <definition>
-      <nonterminal name="Addition"/>
+      <nonterminal name="NullCoalesceExpression"/>
       <repeated>
         <optional>
           <terminal type="case-insensitive">-split</terminal>
-          <nonterminal name="Addition"/>
+          <nonterminal name="␤"/>
+          <nonterminal name="NullCoalesceExpression"/>
         </optional>
       </repeated>
     </definition>
     <definition>
-      <nonterminal name="Addition"/>
+      <nonterminal name="NullCoalesceExpression"/>
       <repeated>
         <optional>
           <terminal type="case-insensitive">-join</terminal>
-          <nonterminal name="Addition"/>
+          <nonterminal name="␤"/>
+          <nonterminal name="NullCoalesceExpression"/>
         </optional>
       </repeated>
     </definition>
@@ -297,12 +1178,25 @@
       <terminal type="case-insensitive">-replace</terminal>
     </definition>
   </rule>
+  <rule name="NullCoalesceExpression">
+    <definition>
+      <nonterminal name="Addition"/>
+      <repeated>
+        <optional>
+          <terminal>??</terminal>
+          <nonterminal name="␤"/>
+          <nonterminal name="Addition"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
   <rule name="Addition">
     <definition>
       <nonterminal name="Multiplication"/>
       <repeated>
         <optional>
           <nonterminal name="AdditionOperator"/>
+          <nonterminal name="␤"/>
           <nonterminal name="Multiplication"/>
         </optional>
       </repeated>
@@ -310,17 +1204,21 @@
   </rule>
   <rule name="AdditionOperator">
     <definition>
+      <comment>
+        Minus may be any dash character.
+      </comment>
       <terminal>+</terminal>
       <terminal>-</terminal>
     </definition>
   </rule>
   <rule name="Multiplication">
     <definition>
-      <nonterminal name="SignedExpression"/>
+      <nonterminal name="FormatExpression"/>
       <repeated>
         <optional>
           <nonterminal name="MultiplicationOperator"/>
-          <nonterminal name="SignedExpression"/>
+          <nonterminal name="␤"/>
+          <nonterminal name="FormatExpression"/>
         </optional>
       </repeated>
     </definition>
@@ -332,26 +1230,13 @@
       <terminal>%</terminal>
     </definition>
   </rule>
-  <rule name="SignedExpression">
-    <definition>
-      <optional>
-        <nonterminal name="Sign"/>
-      </optional>
-      <nonterminal name="FormatExpression"/>
-    </definition>
-  </rule>
-  <rule name="Sign">
-    <definition>
-      <terminal>+</terminal>
-      <terminal>-</terminal>
-    </definition>
-  </rule>
   <rule name="FormatExpression">
     <definition>
       <nonterminal name="RangeExpression"/>
       <repeated>
         <optional>
           <terminal type="case-insensitive">-f</terminal>
+          <nonterminal name="␤"/>
           <nonterminal name="RangeExpression"/>
         </optional>
       </repeated>
@@ -363,6 +1248,7 @@
       <repeated>
         <optional>
           <terminal>..</terminal>
+          <nonterminal name="␤"/>
           <nonterminal name="ArrayLiteral"/>
         </optional>
       </repeated>
@@ -370,159 +1256,238 @@
   </rule>
   <rule name="ArrayLiteral">
     <definition>
-      <nonterminal name="PostfixOperation"/>
+      <nonterminal name="UnaryExpression"/>
       <repeated>
         <optional>
           <terminal>,</terminal>
-          <nonterminal name="PostfixOperation"/>
+          <nonterminal name="␤"/>
+          <nonterminal name="UnaryExpression"/>
         </optional>
       </repeated>
     </definition>
   </rule>
-  <rule name="PostfixOperation">
+  <rule name="UnaryExpression">
     <definition>
-      <nonterminal name="AssignableExpression"/>
-      <nonterminal name="PostfixOperator"/>
+      <nonterminal name="PrimaryExpression"/>
     </definition>
     <definition>
-      <nonterminal name="PropertyOrArrayReference"/>
+      <nonterminal name="PrefixOperation"/>
     </definition>
   </rule>
-  <rule name="PostfixOperator">
+  <rule name="PrefixOperation">
     <definition>
+      <nonterminal name="PrefixOperator"/>
+      <nonterminal name="␤"/>
+      <nonterminal name="UnaryExpression"/>
+    </definition>
+    <definition>
+      <comment>cast expression</comment>
+      <nonterminal name="TypeLiteral"/>
+      <nonterminal name="UnaryExpression"/>
+    </definition>
+  </rule>
+  <rule name="PrefixOperator">
+    <definition>
+      <comment>sign of numbers</comment>
+      <terminal>+</terminal>
+      <terminal>-</terminal>
+    </definition>
+    <definition>
+      <comment>logical negation</comment>
+      <terminal>!</terminal>
+      <terminal type="case-insensitive">-not</terminal>
+    </definition>
+    <definition>
+      <comment>bitwise complement</comment>
+      <terminal type="case-insensitive">-bnot</terminal>
+    </definition>
+    <definition>
+      <comment>pre-increment and decrement</comment>
       <terminal>++</terminal>
       <terminal>--</terminal>
     </definition>
+    <definition>
+      <comment>unary operator</comment>
+      <terminal type="case-insensitive">-split</terminal>
+      <terminal type="case-insensitive">-join</terminal>
+    </definition>
+    <definition>
+      <comment>unary operator?</comment>
+      <terminal>,</terminal>
+    </definition>
   </rule>
-  <rule name="PropertyOrArrayReference">
+
+  <rule name="PrimaryExpression">
     <definition>
       <nonterminal name="Value"/>
-      <repeated>
-        <nonterminal name="PropertyOrArrayReferenceOperator"/>
-      </repeated>
-    </definition>
-  </rule>
-  <rule name="propertyOrArrayReferenceOperator">
-    <definition>
-      <terminal>[</terminal>
-      <nonterminal name="Expression"/>
-      <terminal>]</terminal>
     </definition>
     <definition>
-      <terminal>.</terminal>
-      <nonterminal name="PropertyName"/>
-      <optional>
-        <nonterminal name="ParseCall"/>
-      </optional>
+      <nonterminal name="MemberAccess"/>
     </definition>
     <definition>
-      <terminal>.</terminal>
-      <nonterminal name="Value"/>
+      <nonterminal name="ElementAccess"/>
     </definition>
-  </rule>
-  <rule name="ParseCall">
     <definition>
-      <terminal>(</terminal>
-      <nonterminal name="ArrayLiteral"/>
-      <terminal>)</terminal>
+      <nonterminal name="InvocationExpression"/>
+    </definition>
+    <definition>
+      <nonterminal name="PostIncrementExpression"/>
+    </definition>
+    <definition>
+      <nonterminal name="PostDecrementExpression"/>
     </definition>
   </rule>
   <rule name="Value">
     <definition>
+      <comment>parenthesized expression</comment>
       <terminal>(</terminal>
-      <nonterminal name="Assignment"/>
+      <nonterminal name="␤"/>
+      <nonterminal name="PipelineChain"/>
+      <nonterminal name="␤"/>
       <terminal>)</terminal>
     </definition>
     <definition>
+      <comment>subexpression (scalar on a single result)</comment>
       <terminal>$(</terminal>
-      <nonterminal name="Statements"/>
+      <nonterminal name="␤"/>
+      <repeated>
+        <optional>
+          <nonterminal name="Statement"/>
+        </optional>
+      </repeated>
+      <nonterminal name="␤"/>
       <terminal>)</terminal>
     </definition>
     <definition>
-      <comment>
-        array subexpression
-      </comment>
+      <comment>array expression (array on a single result)</comment>
       <terminal>@(</terminal>
-      <nonterminal name="Statements"/>
+      <nonterminal name="␤"/>
+      <repeated>
+        <optional>
+          <nonterminal name="Statement"/>
+        </optional>
+      </repeated>
+      <nonterminal name="␤"/>
       <terminal>)</terminal>
     </definition>
     <definition>
+      <comment>script block expression</comment>
+      <terminal>{</terminal>
+      <nonterminal name="␤"/>
       <nonterminal name="ScriptBlock"/>
-    </definition>
-    <definition>
-      <terminal>@{</terminal>
-      <nonterminal name="HashLiteral"/>
+      <nonterminal name="␤"/>
       <terminal>}</terminal>
     </definition>
     <definition>
-      <nonterminal name="UnaryOperator"/>
-      <nonterminal name="PropertyOrArrayReference"/>
-    </definition>
-    <definition>
-      <nonterminal name="AttributeSpecification"/>
+      <comment>hash literal, dictionary, associative array</comment>
+      <terminal>@{</terminal>
+      <nonterminal name="␤"/>
       <optional>
-        <nonterminal name="PropertyOrArrayReference"/>
+        <nonterminal name="HashLiteralBody"/>
       </optional>
-    </definition>
-    <definition>
-      <nonterminal name="prePostfixOperatorToken"/>
-      <nonterminal name="lvalue"/>
+      <nonterminal name="␤"/>
+      <terminal>}</terminal>
     </definition>
     <definition>
       <nonterminal name="Number"/>
     </definition>
     <definition>
-      <nonterminal name="LiteralString"/>
+      <nonterminal name="String"/>
     </definition>
     <definition>
-      <nonterminal name="ExpandableString"/>
+      <nonterminal name="TypeLiteral"/>
     </definition>
     <definition>
       <nonterminal name="Variable"/>
     </definition>
   </rule>
-  <rule name="HashLiteral">
+  <rule name="HashLiteralBody">
     <definition>
-      <nonterminal name="keyExpression"/>
+      <nonterminal name="HashEntry"/>
+      <repeated>
+        <optional>
+          <nonterminal name="StatementTerminator"/>
+          <nonterminal name="HashEntry"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="HashEntry">
+    <definition>
+      <nonterminal name="KeyExpression"/>
+      <terminal>=</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="Statement"/>
+    </definition>
+  </rule>
+
+
+
+  <rule name="PostfixOperation">
+    <definition>
+      <nonterminal name="AssignableExpression"/>
+      <optional>
+        <nonterminal name="PostfixOperator"/>
+      </optional>
+    </definition>
+    <definition>
+      <nonterminal name="Member"/>
+    </definition>
+    <definition>
+      <nonterminal name="Value"/>
+    </definition>
+  </rule>
+  <rule name="PostfixOperator">
+    <definition>
+      <comment>post-increment and decrement</comment>
+      <terminal>++</terminal>
+      <terminal>--</terminal>
+    </definition>
+  </rule>
+  <rule name="Member">
+    <definition>
+      <comment>static class member</comment>
+      <nonterminal name="Type"/>
+      <terminal>::</terminal>
+      <nonterminal name="PropertyName"/>
+    </definition>
+    <definition>
+      <comment>data member or function call</comment>
+      <nonterminal name="Value"/>
+      <repeated>
+        <nonterminal name="MemberAccess"/>
+        <optional>
+          <terminal>(</terminal>
+          <nonterminal name="Array"/>
+          <terminal>)</terminal>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="MemberAccess">
+    <definition>
+      <comment>array member</comment>
+      <terminal>[</terminal>
+      <nonterminal name="Expression"/>
+      <terminal>]</terminal>
+    </definition>
+    <definition>
+      <comment>object member</comment>
+      <terminal>.</terminal>
+      <nonterminal name="PropertyName"/>
+    </definition>
+  </rule>
+  <rule name="HashTable">
+    <definition>
+      <nonterminal name="Name"/>
       <terminal>=</terminal>
       <nonterminal name="Pipeline"/>
       <repeated>
         <optional>
           <nonterminal name="StatementSeparator"/>
-          <nonterminal name="HashLiteral"/>
+          <nonterminal name="HashTable"/>
         </optional>
       </repeated>
-    </definition>
-  </rule>
-
-
-
-
-  <rule name="AssignableExpression">
-    <definition>
-      <nonterminal name="lvalue"/>
-      <repeated>
-        <optional>
-          <terminal>?</terminal>
-          <nonterminal name="lvalue"/>
-        </optional>
-      </repeated>
-    </definition>
-  </rule>
-  <rule name="lvalue">
-    <definition>
-      <nonterminal name="simpleLvalue"/>
-      <repeated>
-        <nonterminal name="propertyOrArrayReferenceOperator"/>
-      </repeated>
-    </definition>
-  </rule>
-  <rule name="simpleLvalue">
-    <definition>
-      <repeated>
-        <nonterminal name="AttributeSpecification"/>
-      </repeated>
-      <nonterminal name="Variable"/>
     </definition>
   </rule>
 
@@ -550,53 +1515,37 @@
       <terminal type="case-insensitive">function</terminal>
     </definition>
   </rule>
-  <rule name="Scope">
+  <rule name="Name">
     <definition>
-      <terminal type="case-insensitive">global</terminal>
-    </definition>
-    <definition>
-      <comment>default scope for functions and aliases</comment>
-      <terminal type="case-insensitive">local</terminal>
-    </definition>
-    <definition>
-      <comment>restricts visibility to current scope</comment>
-      <terminal type="case-insensitive">private</terminal>
-    </definition>
-    <definition>
-      <comment>default scope for scripts</comment>
-      <terminal type="case-insensitive">script</terminal>
-    </definition>
-    <definition>
-      <comment>identifies local variable in a remote command</comment>
-      <terminal type="case-insensitive">using</terminal>
-    </definition>
-    <definition>
-      <terminal type="case-insensitive">workflow</terminal>
+      <terminal type="regular">[^-($].*[^ \t]</terminal>
     </definition>
   </rule>
-
-  <rule name="IfStatement">
+  <rule name="Parameters">
     <definition>
-      <terminal>if</terminal>
-      <terminal>(</terminal>
-      <nonterminal name="Pipeline"/>
-      <terminal>)</terminal>
-      <nonterminal name="ScriptBlock"/>
+      <nonterminal name="Parameter"/>
       <repeated>
         <optional>
-          <terminal>elseif</terminal>
-          <terminal>(</terminal>
-          <nonterminal name="Pipeline"/>
-          <terminal>)</terminal>
-          <nonterminal name="ScriptBlock"/>
+          <terminal>,</terminal>
+          <nonterminal name="Parameter"/>
         </optional>
       </repeated>
+    </definition>
+  </rule>
+  <rule name="Parameter">
+    <definition>
+      <repeated>
+        <optional>
+          <nonterminal name="Type"/>
+        </optional>
+      </repeated>
+      <nonterminal name="Variable"/>
       <optional>
-        <terminal>else</terminal>
-        <nonterminal name="ScriptBlock"/>
+        <terminal>=</terminal>
+        <nonterminal name="Expression"/>
       </optional>
     </definition>
   </rule>
+
   <rule name="ternaryOperatorRule">
     <definition>
       <terminal>if</terminal>
@@ -615,181 +1564,7 @@
       <nonterminal name="ScriptBlock"/>
     </definition>
   </rule>
-  <rule name="SwitchStatement">
-    <definition>
-      <terminal>switch</terminal>
-      <optional>
-        <nonterminal name="switchTypeToken"/>
-      </optional>
-      <optional>
-        <terminal>-caseSensitive</terminal>
-      </optional>
-      <nonterminal name="switchConditionRule"/>
-      <terminal>{</terminal>
-      <repeated>
-        <nonterminal name="switchClauseRule"/>
-        <nonterminal name="ScriptBlock"/>
-      </repeated>
-      <terminal>}</terminal>
-    </definition>
-    <definition>
-      <nonterminal name="Pipeline"/>
-      <terminal>?</terminal>
-      <nonterminal name="ScriptBlock"/>
-      <terminal>:</terminal>
-      <nonterminal name="ScriptBlock"/>
-    </definition>
-  </rule>
-  <rule name="switchTypeToken">
-    <definition>
-      <terminal>-exact</terminal>
-    </definition>
-    <definition>
-      <terminal>-regex</terminal>
-    </definition>
-    <definition>
-      <terminal>-wildcard</terminal>
-    </definition>
-  </rule>
-  <rule name="switchConditionRule">
-    <definition>
-      <terminal>-file</terminal>
-      <nonterminal name="PropertyOrArrayReference"/>
-    </definition>
-    <definition>
-      <terminal>(</terminal>
-      <nonterminal name="Pipeline"/>
-      <terminal>)</terminal>
-    </definition>
-  </rule>
-  <rule name="switchClauseRule">
-    <definition>
-      <comment>
-        Only one &lt;span class="terminal"
-        style="color:black"&gt;default &lt;/span&gt;
-        clause is allowed in a &lt;span class="terminal"
-        style="color:black"&gt;switch &lt;/span&gt; statement.
-      </comment>
-      <terminal>default</terminal>
-    </definition>
-    <definition>
-      <nonterminal name="Name"/>
-    </definition>
-    <definition>
-      <nonterminal name="PropertyOrArrayReference"/>
-    </definition>
-    <definition>
-      <nonterminal name="ScriptBlock"/>
-    </definition>
-  </rule>
-  <rule name="foreachStatement">
-    <comment>
-      See also &lt;span class="terminal"
-      style="color:black"&gt;ForEach-Object &lt;/span&gt;
-    </comment>
-    <definition>
-      <optional>
-        <terminal>loopLabelToken</terminal>
-      </optional>
-      <terminal>foreach</terminal>
-      <terminal>(</terminal>
-      <nonterminal name="Variable"/>
-      <terminal>in</terminal>
-      <nonterminal name="Pipeline"/>
-      <terminal>)</terminal>
-      <nonterminal name="ScriptBlock"/>
-    </definition>
-  </rule>
-  <rule name="forStatement">
-    <definition>
-      <optional>
-        <terminal>loopLabelToken</terminal>
-      </optional>
-      <terminal>for</terminal>
-      <terminal>(</terminal>
-      <optional>
-        <nonterminal name="Pipeline"/>
-      </optional>
-      <terminal>;</terminal>
-      <optional>
-        <nonterminal name="Pipeline"/>
-      </optional>
-      <terminal>;</terminal>
-      <optional>
-        <nonterminal name="Pipeline"/>
-      </optional>
-      <terminal>)</terminal>
-      <nonterminal name="ScriptBlock"/>
-    </definition>
-  </rule>
-  <rule name="whileStatement">
-    <definition>
-      <optional>
-        <terminal>loopLabelToken</terminal>
-      </optional>
-      <terminal>while</terminal>
-      <terminal>(</terminal>
-      <nonterminal name="Pipeline"/>
-      <terminal>)</terminal>
-      <nonterminal name="ScriptBlock"/>
-    </definition>
-  </rule>
-  <rule name="doStatement">
-    <definition>
-      <optional>
-        <terminal>loopLabelToken</terminal>
-      </optional>
-      <terminal>do</terminal>
-      <nonterminal name="ScriptBlock"/>
-      <nonterminal name="whileOrUntilToken"/>
-      <terminal>(</terminal>
-      <nonterminal name="Pipeline"/>
-      <terminal>)</terminal>
-    </definition>
-  </rule>
-  <rule name="whileOrUntilToken">
-    <definition>
-      <terminal>while</terminal>
-    </definition>
-    <definition>
-      <terminal>until</terminal>
-    </definition>
-  </rule>
-  <rule name="trapStatement">
-    <definition>
-      <terminal>trap</terminal>
-      <optional>
-        <nonterminal name="AttributeSpecification"/>
-      </optional>
-      <nonterminal name="ScriptBlock"/>
-    </definition>
-  </rule>
-  <rule name="finallyStatement">
-    <definition>
-      <terminal>finally</terminal>
-      <nonterminal name="ScriptBlock"/>
-    </definition>
-  </rule>
-  <rule name="flowControlStatement">
-    <definition>
-      <nonterminal name="breakOrContinueToken"/>
-      <optional>
-        <nonterminal name="PropertyName"/>
-      </optional>
-    </definition>
-    <definition>
-      <nonterminal name="breakOrContinueToken"/>
-      <optional>
-        <nonterminal name="PropertyOrArrayReference"/>
-      </optional>
-    </definition>
-    <definition>
-      <terminal>return</terminal>
-      <optional>
-        <nonterminal name="Pipeline"/>
-      </optional>
-    </definition>
-  </rule>
+
   <rule name="breakOrContinueToken">
     <definition>
       <terminal>break</terminal>
@@ -878,7 +1653,7 @@
         <nonterminal name="StreamNumber"/>
       </optional>
       <terminal>&gt;</terminal>
-      <nonterminal name="PropertyOrArrayReference"/>
+      <nonterminal name="Member"/>
     </definition>
     <definition>
       <comment>append to file</comment>
@@ -886,7 +1661,7 @@
         <nonterminal name="StreamNumber"/>
       </optional>
       <terminal>&gt;&gt;</terminal>
-      <nonterminal name="PropertyOrArrayReference"/>
+      <nonterminal name="Member"/>
     </definition>
   </rule>
   <rule name="StreamNumber">
@@ -920,77 +1695,42 @@
     </definition>
   </rule>
 
-  <rule name="Parameters">
-    <definition>
-      <nonterminal name="parameterWithIntializer"/>
-      <repeated>
-        <optional>
-          <nonterminal name="commaToken"/>
-          <nonterminal name="parameterWithIntializer"/>
-        </optional>
-      </repeated>
-    </definition>
-  </rule>
-  <rule name="parameterWithIntializer">
-    <definition>
-      <nonterminal name="simpleLvalue"/>
-      <optional>
-        <terminal>=</terminal>
-        <nonterminal name="Expression"/>
-      </optional>
-    </definition>
-  </rule>
 
-  <comment>
-    TOKENIZER RULES
-  </comment>
-  <comment>
-    Type Operators, Comparison Operators, and String Operators have the same precedence!
-  </comment>
-  <rule name="ExpandableString">
-    <comment>
-      with variable expansion / string interpolatioin
-    </comment>
+  <rule name="String">
     <definition>
-      <terminal>"</terminal>
-      <terminal type="regular">.*</terminal>
-      <terminal>"</terminal>
-    </definition>
-  </rule>
-  <rule name="constantStringToken">
-    <comment>
-      without variable expansion / string interpolatioin
-    </comment>
-    <definition>
+      <comment>literal</comment>
       <terminal>'</terminal>
       <terminal type="regular">.*</terminal>
       <terminal>'</terminal>
     </definition>
-  </rule>
-  <rule name="Variable">
     <definition>
-      <terminal>$</terminal>
-      <optional>
-        <nonterminal name="Scope"/>
-        <terminal>:</terminal>
-      </optional>
-      <repeated>
-        <terminal type="regular">\p{alnum}</terminal>
-      </repeated>
-      <terminal>'</terminal>
+      <comment>with interpolation</comment>
+      <terminal>"</terminal>
+      <terminal type="regular">.*</terminal>
+      <terminal>"</terminal>
     </definition>
     <definition>
-      <terminal>$</terminal>
-      <terminal>{</terminal>
-      <terminal type="regular">.+</terminal>
-      <terminal>}</terminal>
+      <comment>literal multiline here-string</comment>
+      <terminal>@'</terminal>
+      <nonterminal name="LineBreak"/>
+      <terminal type="regular">.*</terminal>
+      <nonterminal name="LineBreak"/>
+      <terminal>'@</terminal>
+    </definition>
+    <definition>
+      <comment>multiline here-string with interpolation</comment>
+      <terminal>@"</terminal>
+      <nonterminal name="LineBreak"/>
+      <terminal type="regular">.*</terminal>
+      <nonterminal name="LineBreak"/>
+      <terminal>"@</terminal>
     </definition>
   </rule>
   <rule name="parameterToken">
     <definition>
       <terminal>-</terminal>
       <repeated>
-        <terminal type="regular">\p{Letter}</terminal>
+        <terminal type="regular">\p{L}+</terminal>
       </repeated>
       <optional>
         <terminal>:</terminal>
@@ -998,22 +1738,74 @@
     </definition>
   </rule>
   <rule name="Number">
-    <comment>
-      C#-like number pattern
-    </comment>
+    <comment>Hexadecimal prefix is only for integers.</comment>
     <definition>
+      <optional>
+        <terminal type="case-insensitive">0x</terminal>
+      </optional>
+      <terminal type="regular">(0|[1-9]\d*)(\.\d+)?([Ee][+-]?\d+)?</terminal>
+      <optional>
+        <nonterminal name="TypeSuffix"/>
+      </optional>
+      <optional>
+        <nonterminal name="MultiplierSuffix"/>
+      </optional>
     </definition>
   </rule>
-  <rule name="referenceOperatorToken">
+  <rule name="TypeSuffix">
     <definition>
-      <terminal>.</terminal>
-      <terminal>::</terminal>
-      <terminal>[</terminal>
+      <comment>decimal real number</comment>
+      <terminal type="case-insensitive">d</terminal>
+    </definition>
+    <definition>
+      <comment>signed byte integer</comment>
+      <terminal type="case-insensitive">y</terminal>
+    </definition>
+    <definition>
+      <comment>unsigned byte integer</comment>
+      <terminal type="case-insensitive">uy</terminal>
+    </definition>
+    <definition>
+      <comment>signed short integer</comment>
+      <terminal type="case-insensitive">s</terminal>
+    </definition>
+    <definition>
+      <comment>unsigned short integer</comment>
+      <terminal type="case-insensitive">us</terminal>
+    </definition>
+    <definition>
+      <comment>signed long integer</comment>
+      <terminal type="case-insensitive">l</terminal>
+    </definition>
+    <definition>
+      <comment>unsigned long integer</comment>
+      <terminal type="case-insensitive">ul</terminal>
+    </definition>
+    <definition>
+      <comment>unsigned int or long integer</comment>
+      <terminal type="case-insensitive">u</terminal>
     </definition>
   </rule>
-  <rule name="Name">
+  <rule name="MultiplierSuffix">
     <definition>
-      <terminal type="regular">[^-($0-9].*[^ \t]</terminal>
+      <comment>kilobyte</comment>
+      <terminal type="case-insensitive">KB</terminal>
+    </definition>
+    <definition>
+      <comment>megabyte</comment>
+      <terminal type="case-insensitive">MB</terminal>
+    </definition>
+    <definition>
+      <comment>gigabyte</comment>
+      <terminal type="case-insensitive">GB</terminal>
+    </definition>
+    <definition>
+      <comment>terabyte</comment>
+      <terminal type="case-insensitive">TB</terminal>
+    </definition>
+    <definition>
+      <comment>petabyte</comment>
+      <terminal type="case-insensitive">PB</terminal>
     </definition>
   </rule>
   <rule name="UnaryOperator">
@@ -1023,7 +1815,7 @@
       <terminal>-bnot</terminal>
       <terminal>+</terminal>
       <terminal>-</terminal>
-      <nonterminal name="AttributeSpecification"/>
+      <nonterminal name="Type"/>
     </definition>
   </rule>
   <rule name="loopLabelToken">
@@ -1035,18 +1827,6 @@
         </optional>
       </repeated>
       <terminal>:</terminal>
-    </definition>
-  </rule>
-  <rule name="parameterToken">
-    <definition>
-      <terminal>param</terminal>
-    </definition>
-  </rule>
-  <rule name="AttributeSpecification">
-    <definition>
-      <terminal>[</terminal>
-      <terminal type="regular">.*</terminal>
-      <terminal>]</terminal>
     </definition>
   </rule>
   <rule name="cmdletNameToken">
