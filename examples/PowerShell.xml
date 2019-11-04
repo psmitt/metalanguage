@@ -600,7 +600,7 @@
       <nonterminal name="StatementBlock"/>
     </definition>
   </rule>
-  <rule name="ForeachStatement">
+  <rule name="ForEachStatement">
     <comment>
       See also &lt;span class="terminal"
       style="color:black"&gt;ForEach-Object &lt;/span&gt;
@@ -610,7 +610,7 @@
       <nonterminal name="␤"/>
       <repeated>
         <optional>
-          <nonterminal name="ForeachParameters"/>
+          <nonterminal name="ForEachFlags"/>
         </optional>
       </repeated>
       <nonterminal name="␤"/>
@@ -626,17 +626,17 @@
       <nonterminal name="StatementBlock"/>
     </definition>
   </rule>
-  <rule name="ForeachParameters">
+  <rule name="ForEachFlags">
     <definition>
       <terminal type="case-insensitive">-parallel</terminal>
     </definition>
     <definition>
       <terminal type="case-insensitive">-throttlelimit</terminal>
       <nonterminal name="␤"/>
-      <nonterminal name="ForeachThrottleLimit"/>
+      <nonterminal name="ThrottleLimit"/>
     </definition>
   </rule>
-  <rule name="ForeachThrottleLimit">
+  <rule name="ThrottleLimit">
     <definition>
       <nonterminal name="CommandArgument"/>
     </definition>
@@ -1575,13 +1575,13 @@
     </definition>
   </rule>
 
-  <rule name="ConfigurationStatement">
+  <rule name="ConfigurationDefinition">
     <definition>
       <terminal type="case-insensitive">configuration</terminal>
       <nonterminal name="␤"/>
       <nonterminal name="SingleNameExpression"/>
       <nonterminal name="␤"/>
-      <nonterminal name="StatementBlock"/>
+      <nonterminal name="ScriptBlock"/>
     </definition>
   </rule>
 
