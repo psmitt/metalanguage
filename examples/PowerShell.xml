@@ -363,7 +363,27 @@
       </repeated>
     </definition>
   </rule>
+
   <rule name="Statement">
+    <definition>
+      <nonterminal name="Assignment"/>
+    </definition>
+    <definition>
+      <nonterminal name="PipelineChain"/>
+      <terminal>;</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="DataSection"/>
+    </definition>
+    <definition>
+      <nonterminal name="EnumDefinition"/>
+    </definition>
+    <definition>
+      <nonterminal name="ClassDefinition"/>
+    </definition>
+    <definition>
+      <nonterminal name="FunctionDefinition"/>
+    </definition>
     <definition>
       <nonterminal name="BlockStatement"/>
     </definition>
@@ -382,435 +402,28 @@
       <terminal>;</terminal>
     </definition>
     <definition>
-      <nonterminal name="TryStatement"/>
-    </definition>
-    <definition>
       <nonterminal name="TrapStatement"/>
     </definition>
     <definition>
-      <nonterminal name="DataStatement"/>
-    </definition>
-    <definition>
-      <nonterminal name="DynamicKeywordStatement"/>
-    </definition>
-    <definition>
-      <nonterminal name="ErrorStatement"/>
-    </definition>
-    <definition>
-      <nonterminal name="ClassDefinition"/>
-    </definition>
-    <definition>
-      <nonterminal name="EnumDefinition"/>
-    </definition>
-    <definition>
-      <nonterminal name="FunctionDefinition"/>
-    </definition>
-    <definition>
-      <nonterminal name="TypeDefinition"/>
-    </definition>
-    <definition>
-      <nonterminal name="PipelineChain"/>
-      <terminal>;</terminal>
-    </definition>
-  </rule>
-  <rule name="BlockStatement">
-    <definition>
-      <terminal type="case-insensitive">parallel</terminal>
-      <nonterminal name="StatementBlock"/>
-    </definition>
-    <definition>
-      <terminal type="case-insensitive">sequence</terminal>
-      <nonterminal name="StatementBlock"/>
-    </definition>
-    <definition>
-      <terminal type="case-insensitive">inlinescript</terminal>
-      <nonterminal name="ScriptBlock"/>
-    </definition>
-  </rule>
-  <rule name="IfStatement">
-    <definition>
-      <terminal type="case-insensitive">if</terminal>
-      <nonterminal name="␤"/>
-      <terminal>(</terminal>
-      <nonterminal name="PipelineChain"/>
-      <terminal>)</terminal>
-      <nonterminal name="StatementBlock"/>
-      <repeated>
-        <optional>
-          <terminal type="case-insensitive">elseif</terminal>
-          <nonterminal name="␤"/>
-          <terminal>(</terminal>
-          <nonterminal name="PipelineChain"/>
-          <terminal>)</terminal>
-          <nonterminal name="StatementBlock"/>
-        </optional>
-      </repeated>
-      <optional>
-        <terminal type="case-insensitive">else</terminal>
-        <nonterminal name="StatementBlock"/>
-      </optional>
-    </definition>
-  </rule>
-  <rule name="LabeledStatement">
-    <definition>
-      <nonterminal name="SwitchStatement"/>
-    </definition>
-    <definition>
-      <nonterminal name="LoopStatement"/>
-    </definition>
-  </rule>
-  <rule name="SwitchStatement">
-    <definition>
-      <terminal type="case-insensitive">switch</terminal>
-      <nonterminal name="␤"/>
-      <repeated>
-        <optional>
-          <nonterminal name="SwitchFlag"/>
-        </optional>
-      </repeated>
-      <nonterminal name="SwitchCondition"/>
-      <nonterminal name="␤"/>
-      <terminal>{</terminal>
-      <nonterminal name="␤"/>
-      <repeated>
-        <nonterminal name="SwitchClause"/>
-      </repeated>
-      <terminal>}</terminal>
-    </definition>
-  </rule>
-  <rule name="SwitchFlag">
-    <comment>[System.Enum]::GetNames('System.Management.Automation.Language.SwitchFlags')</comment>
-    <definition>
-      <terminal type="case-insensitive">-regex</terminal>
-    </definition>
-    <definition>
-      <terminal type="case-insensitive">-wildcard</terminal>
-    </definition>
-    <definition>
-      <terminal type="case-insensitive">-exact</terminal>
-    </definition>
-    <definition>
-      <terminal type="case-insensitive">-casesensitive</terminal>
-    </definition>
-    <definition>
-      <terminal type="case-insensitive">-parallel</terminal>
-    </definition>
-  </rule>
-  <rule name="SwitchCondition">
-    <definition>
-      <terminal>(</terminal>
-      <nonterminal name="␤"/>
-      <nonterminal name="PipelineChain"/>
-      <nonterminal name="␤"/>
-      <terminal>)</terminal>
-    </definition>
-    <definition>
-      <terminal type="case-insensitive">-file</terminal>
-      <nonterminal name="␤"/>
-      <nonterminal name="Filename"/>
-    </definition>
-  </rule>
-  <rule name="Filename">
-    <definition>
-      <nonterminal name="CommandArgument"/>
-    </definition>
-    <definition>
-      <nonterminal name="PrimaryExpression"/>
-    </definition>
-  </rule>
-  <rule name="SwitchClause">
-    <definition>
-      <nonterminal name="SwitchClauseCondition"/>
-      <nonterminal name="StatementBlock"/>
-      <repeated>
-        <optional>
-          <terminal>;</terminal>
-        </optional>
-      </repeated>
-    </definition>
-  </rule>
-  <rule name="SwitchClauseCondition">
-    <definition>
-      <nonterminal name="CommandArgument"/>
-    </definition>
-    <definition>
-      <nonterminal name="PrimaryExpression"/>
-    </definition>
-    <definition>
-      <comment>
-        Only one &lt;span class="terminal"
-        style="color:black"&gt;default &lt;/span&gt;
-        clause is allowed in a &lt;span class="terminal"
-        style="color:black"&gt;switch &lt;/span&gt; statement.
-      </comment>
-      <terminal>default</terminal>
-    </definition>
-  </rule>
-  <rule name="LoopStatement">
-    <definition>
-      <nonterminal name="DoStatement"/>
-    </definition>
-    <definition>
-      <nonterminal name="WhileStatement"/>
-    </definition>
-    <definition>
-      <nonterminal name="ForStatement"/>
-    </definition>
-    <definition>
-      <nonterminal name="ForEachStatement"/>
-    </definition>
-  </rule>
-  <rule name="DoStatement">
-    <definition>
-      <comment>&lt;i&gt;DoUntilStatement&lt;/i&gt;</comment>
-      <terminal type="case-insensitive">do</terminal>
-      <nonterminal name="StatementBlock"/>
-      <nonterminal name="␤"/>
-      <terminal type="case-insensitive">until</terminal>
-      <nonterminal name="␤"/>
-      <terminal>(</terminal>
-      <nonterminal name="␤"/>
-      <nonterminal name="PipelineChain"/>
-      <nonterminal name="␤"/>
-      <terminal>)</terminal>
-    </definition>
-    <definition>
-      <comment>&lt;i&gt;DoWhileStatement&lt;/i&gt;</comment>
-      <terminal type="case-insensitive">do</terminal>
-      <nonterminal name="StatementBlock"/>
-      <nonterminal name="␤"/>
-      <terminal type="case-insensitive">while</terminal>
-      <nonterminal name="␤"/>
-      <terminal>(</terminal>
-      <nonterminal name="␤"/>
-      <nonterminal name="PipelineChain"/>
-      <nonterminal name="␤"/>
-      <terminal>)</terminal>
-    </definition>
-  </rule>
-  <rule name="WhileStatement">
-    <definition>
-      <terminal type="case-insensitive">while</terminal>
-      <nonterminal name="␤"/>
-      <terminal>(</terminal>
-      <nonterminal name="␤"/>
-      <nonterminal name="PipelineChain"/>
-      <nonterminal name="␤"/>
-      <terminal>)</terminal>
-      <nonterminal name="StatementBlock"/>
-    </definition>
-  </rule>
-  <rule name="ForStatement">
-    <definition>
-      <comment>ForInitializer</comment>
-      <terminal type="case-insensitive">for</terminal>
-      <nonterminal name="␤"/>
-      <terminal>(</terminal>
-      <nonterminal name="␤"/>
-      <optional>
-        <nonterminal name="PipelineChain"/>
-      </optional>
-      <nonterminal name="␤"/>
-      <terminal>)</terminal>
-      <nonterminal name="StatementBlock"/>
-    </definition>
-    <definition>
-      <comment>ForCondition</comment>
-      <terminal type="case-insensitive">for</terminal>
-      <nonterminal name="␤"/>
-      <terminal>(</terminal>
-      <nonterminal name="␤"/>
-      <optional>
-        <nonterminal name="PipelineChain"/>
-      </optional>
-      <terminal>;</terminal>
-      <nonterminal name="␤"/>
-      <optional>
-        <nonterminal name="PipelineChain"/>
-      </optional>
-      <nonterminal name="␤"/>
-      <terminal>)</terminal>
-      <nonterminal name="StatementBlock"/>
-    </definition>
-    <definition>
-      <comment>ForIterator</comment>
-      <terminal type="case-insensitive">for</terminal>
-      <nonterminal name="␤"/>
-      <terminal>(</terminal>
-      <nonterminal name="␤"/>
-      <optional>
-        <nonterminal name="PipelineChain"/>
-      </optional>
-      <terminal>;</terminal>
-      <nonterminal name="␤"/>
-      <optional>
-        <nonterminal name="PipelineChain"/>
-      </optional>
-      <terminal>;</terminal>
-      <nonterminal name="␤"/>
-      <optional>
-        <nonterminal name="PipelineChain"/>
-      </optional>
-      <nonterminal name="␤"/>
-      <terminal>)</terminal>
-      <nonterminal name="StatementBlock"/>
-    </definition>
-  </rule>
-  <rule name="ForEachStatement">
-    <comment>
-      See also &lt;span class="terminal"
-      style="color:black"&gt;ForEach-Object &lt;/span&gt;
-    </comment>
-    <definition>
-      <terminal type="case-insensitive">foreach</terminal>
-      <nonterminal name="␤"/>
-      <repeated>
-        <optional>
-          <nonterminal name="ForEachFlags"/>
-        </optional>
-      </repeated>
-      <nonterminal name="␤"/>
-      <terminal>(</terminal>
-      <nonterminal name="␤"/>
-      <nonterminal name="Variable"/>
-      <nonterminal name="␤"/>
-      <terminal type="case-insensitive">in</terminal>
-      <nonterminal name="␤"/>
-      <nonterminal name="PipelineChain"/>
-      <nonterminal name="␤"/>
-      <terminal>)</terminal>
-      <nonterminal name="StatementBlock"/>
-    </definition>
-  </rule>
-  <rule name="ForEachFlags">
-    <comment>[System.Enum]::GetNames('System.Management.Automation.Language.ForEachFlags')</comment>
-    <definition>
-      <terminal type="case-insensitive">-parallel</terminal>
-    </definition>
-    <definition>
-      <terminal type="case-insensitive">-throttlelimit</terminal>
-      <nonterminal name="␤"/>
-      <nonterminal name="ThrottleLimit"/>
-    </definition>
-  </rule>
-  <rule name="ThrottleLimit">
-    <definition>
-      <nonterminal name="CommandArgument"/>
-    </definition>
-    <definition>
-      <nonterminal name="PrimaryExpression"/>
-    </definition>
-  </rule>
-  <rule name="FlowControlStatement">
-    <definition>
-      <comment>&lt;i&gt;BreakStatement&lt;/i&gt;</comment>
-      <terminal type="case-insensitive">break</terminal>
-      <optional>
-        <nonterminal name="LabelExpression"/>
-      </optional>
-    </definition>
-    <definition>
-      <comment>&lt;i&gt;ContinueStatement&lt;/i&gt;</comment>
-      <terminal type="case-insensitive">continue</terminal>
-      <optional>
-        <nonterminal name="LabelExpression"/>
-      </optional>
-    </definition>
-    <definition>
-      <comment>&lt;i&gt;ThrowStatement&lt;/i&gt;</comment>
-      <terminal type="case-insensitive">throw</terminal>
-      <optional>
-        <nonterminal name="PipelineChain"/>
-      </optional>
-    </definition>
-    <definition>
-      <comment>&lt;i&gt;ReturnStatement&lt;/i&gt;</comment>
-      <terminal type="case-insensitive">return</terminal>
-      <optional>
-        <nonterminal name="PipelineChain"/>
-      </optional>
-    </definition>
-    <definition>
-      <comment>&lt;i&gt;ExitStatement&lt;/i&gt;</comment>
-      <terminal type="case-insensitive">exit</terminal>
-      <optional>
-        <nonterminal name="PipelineChain"/>
-      </optional>
+      <nonterminal name="TryStatement"/>
     </definition>
   </rule>
 
-
-
-
-  <rule name="LabelExpression">
+  <rule name="Assignment">
     <definition>
-      <nonterminal name="SimpleName"/>
-    </definition>
-    <definition>
-      <nonterminal name="UnaryExpression"/>
+      <nonterminal name="Expression"/>
+      <nonterminal name="AssignmentOperator"/>
+      <nonterminal name="Statement"/>
     </definition>
   </rule>
-  <rule name="KeyExpression">
+  <rule name="AssignmentOperator">
     <definition>
-      <nonterminal name="SimpleName"/>
-    </definition>
-    <definition>
-      <nonterminal name="UnaryExpression"/>
-    </definition>
-  </rule>
-
-
-
-
-  <rule name="TrapStatement">
-    <definition>
-      <terminal type="case-insensitive">trap</terminal>
-      <nonterminal name="␤"/>
-      <optional>
-        <nonterminal name="TypeLiteral"/>
-      </optional>
-      <nonterminal name="StatementBlock"/>
-    </definition>
-  </rule>
-
-  <rule name="TryStatement">
-    <definition>
-      <terminal type="case-insensitive">try</terminal>
-      <nonterminal name="StatementBlock"/>
-      <nonterminal name="␤"/>
-      <terminal type="case-insensitive">finally</terminal>
-      <nonterminal name="StatementBlock"/>
-    </definition>
-    <definition>
-      <terminal type="case-insensitive">try</terminal>
-      <nonterminal name="StatementBlock"/>
-      <repeated>
-        <nonterminal name="␤"/>
-        <terminal type="case-insensitive">catch</terminal>
-        <optional>
-          <nonterminal name="TypeList"/>
-        </optional>
-        <nonterminal name="StatementBlock"/>
-      </repeated>
-      <optional>
-        <nonterminal name="␤"/>
-        <terminal type="case-insensitive">finally</terminal>
-        <nonterminal name="StatementBlock"/>
-      </optional>
-    </definition>
-  </rule>
-  <rule name="TypeList">
-    <definition>
-      <nonterminal name="␤"/>
-      <nonterminal name="TypeLiteral"/>
-      <repeated>
-        <optional>
-          <nonterminal name="␤"/>
-          <terminal>,</terminal>
-          <nonterminal name="␤"/>
-          <nonterminal name="TypeLiteral"/>
-        </optional>
-      </repeated>
+      <terminal>=</terminal>
+      <terminal>+=</terminal>
+      <terminal>-=</terminal>
+      <terminal>*=</terminal>
+      <terminal>/=</terminal>
+      <terminal>%=</terminal>
     </definition>
   </rule>
 
@@ -835,14 +448,13 @@
   <rule name="ChainOperator">
     <definition>
       <terminal>&amp;&amp;</terminal>
+    </definition>
+    <definition>
       <terminal>||</terminal>
     </definition>
   </rule>
 
   <rule name="Pipeline">
-    <definition>
-      <nonterminal name="Assignment"/>
-    </definition>
     <definition>
       <nonterminal name="Expression"/>
       <repeated>
@@ -931,11 +543,84 @@
     </definition>
   </rule>
 
-  <rule name="Assignment">
+  <rule name="Command">
     <definition>
-      <nonterminal name="Expression"/>
-      <nonterminal name="AssignmentOperator"/>
-      <nonterminal name="Statement"/>
+      <nonterminal name="CommandName"/>
+      <repeated>
+        <optional>
+          <nonterminal name="CommandElement"/>
+        </optional>
+      </repeated>
+    </definition>
+    <definition>
+      <nonterminal name="CommandInvocationOperator"/>
+      <optional>
+        <nonterminal name="CommandModule"/>
+      </optional>
+      <nonterminal name="CommandNameExpression"/>
+      <repeated>
+        <optional>
+          <nonterminal name="CommandElement"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="CommandName">
+    <definition>
+      <terminal type="regular">[^$0-9(@"'][^ \t]*</terminal>
+    </definition>
+  </rule>
+  <rule name="CommandElement">
+    <definition>
+      <nonterminal name="CommandParameter"/>
+    </definition>
+    <definition>
+      <nonterminal name="CommandArgument"/>
+    </definition>
+    <definition>
+      <nonterminal name="CommandParameter"/>
+      <terminal>:</terminal>
+      <nonterminal name="CommandArgument"/>
+    </definition>
+    <definition>
+      <nonterminal name="Redirection"/>
+    </definition>
+  </rule>
+  <rule name="CommandParameter">
+    <definition>
+      <terminal>-</terminal>
+      <terminal type="regular">[\p{L}\p{Nd}_?]+</terminal>
+    </definition>
+  </rule>
+  <rule name="CommandArgument">
+    <definition>
+      <nonterminal name="CommandNameExpression"/>
+    </definition>
+  </rule>
+  <rule name="CommandNameExpression">
+    <definition>
+      <nonterminal name="CommandName"/>
+    </definition>
+    <definition>
+      <nonterminal name="PrimaryExpression"/>
+    </definition>
+  </rule>
+  <rule name="CommandInvocationOperator">
+    <definition>
+      <comment>
+        call operator, see also &lt;span class="terminal"
+        style="color:black"&gt;Invoke-Expression &lt;/span&gt;
+      </comment>
+      <terminal>&amp;</terminal>
+    </definition>
+    <definition>
+      <comment>add and run script or function to the local scope</comment>
+      <terminal>.</terminal>
+    </definition>
+  </rule>
+  <rule name="CommandModule">
+    <definition>
+      <nonterminal name="PrimaryExpression"/>
     </definition>
   </rule>
 
@@ -978,16 +663,6 @@
     </definition>
     <definition>
       <terminal type="case-insensitive">workflow</terminal>
-    </definition>
-  </rule>
-  <rule name="AssignmentOperator">
-    <definition>
-      <terminal>=</terminal>
-      <terminal>+=</terminal>
-      <terminal>-=</terminal>
-      <terminal>*=</terminal>
-      <terminal>/=</terminal>
-      <terminal>%=</terminal>
     </definition>
   </rule>
 
@@ -1412,6 +1087,14 @@
       <nonterminal name="Statement"/>
     </definition>
   </rule>
+  <rule name="KeyExpression">
+    <definition>
+      <nonterminal name="SimpleName"/>
+    </definition>
+    <definition>
+      <nonterminal name="UnaryExpression"/>
+    </definition>
+  </rule>
 
   <rule name="MemberAccess">
     <comment>No whitespace between terms!</comment>
@@ -1472,7 +1155,7 @@
     <definition>
       <nonterminal name="TargetExpression"/>
       <nonterminal name="MemberName"/>
-      <nonterminal name="Script"/>
+      <nonterminal name="ScriptBlock"/>
     </definition>
   </rule>
   <rule name="ArgumentList">
@@ -1489,317 +1172,6 @@
     </definition>
   </rule>
 
-  <rule name="MethodStatement">
-    <definition>
-      <nonterminal name="␤"/>
-      <nonterminal name="FunctionName"/>
-      <nonterminal name="␤"/>
-      <terminal>(</terminal>
-      <nonterminal name="ParameterList"/>
-      <nonterminal name="␤"/>
-      <terminal>)</terminal>
-      <optional>
-      <nonterminal name="BaseConstructorCall"/>
-      </optional>
-      <terminal>{</terminal>
-      <nonterminal name="Script"/>
-      <terminal>}</terminal>
-    </definition>
-  </rule>
-  <rule name="BaseConstructorCall">
-    <comment>can be present only if FunctionName == ClassName</comment>
-    <definition>
-      <terminal>:</terminal>
-      <nonterminal name="␤"/>
-      <terminal type="case-insensitive">base</terminal>
-      <nonterminal name="␤"/>
-      <terminal>(</terminal>
-      <nonterminal name="␤"/>
-      <nonterminal name="PipelineChain"/>
-      <nonterminal name="␤"/>
-      <terminal>)</terminal>
-      <nonterminal name="␤"/>
-    </definition>
-  </rule>
-  <rule name="FunctionDefinition">
-    <definition>
-      <nonterminal name="Declarator"/>
-      <nonterminal name="␤"/>
-      <optional>
-        <nonterminal name="Scope"/>
-        <terminal>:</terminal>
-      </optional>
-      <nonterminal name="FunctionName"/>
-      <optional>
-        <nonterminal name="␤"/>
-        <terminal>(</terminal>
-        <nonterminal name="ParameterList"/>
-        <nonterminal name="␤"/>
-        <terminal>)</terminal>
-      </optional>
-      <terminal>{</terminal>
-      <nonterminal name="Script"/>
-      <terminal>}</terminal>
-    </definition>
-  </rule>
-  <rule name="Declarator">
-    <definition>
-      <comment>[System.Enum]::GetNames('System.Management.Automation.Language.ConfigurationType')</comment>
-      <terminal type="case-insensitive">configuration</terminal>
-    </definition>
-    <definition>
-      <terminal type="case-insensitive">function</terminal>
-    </definition>
-    <definition>
-      <terminal type="case-insensitive">filter</terminal>
-    </definition>
-    <definition>
-      <terminal type="case-insensitive">workflow</terminal>
-    </definition>
-  </rule>
-  <rule name="FunctionName">
-    <definition>
-      <terminal type="regular">[^-($].*[^ \t]</terminal>
-    </definition>
-    <definition>
-      <nonterminal name="CommandArgument"/>
-    </definition>
-  </rule>
-
-  <rule name="Command">
-    <definition>
-      <nonterminal name="CommandName"/>
-      <repeated>
-        <optional>
-          <nonterminal name="CommandElement"/>
-        </optional>
-      </repeated>
-    </definition>
-    <definition>
-      <nonterminal name="CommandInvocationOperator"/>
-      <optional>
-        <nonterminal name="CommandModule"/>
-      </optional>
-      <nonterminal name="CommandNameExpression"/>
-      <repeated>
-        <optional>
-          <nonterminal name="CommandElement"/>
-        </optional>
-      </repeated>
-      <repeated>
-        <optional>
-          <nonterminal name="cmdletPostfix"/>
-        </optional>
-      </repeated>
-    </definition>
-  </rule>
-  <rule name="CommandInvocationOperator">
-    <definition>
-      <comment>
-        call operator, see also &lt;span class="terminal"
-        style="color:black"&gt;Invoke-Expression &lt;/span&gt;
-      </comment>
-      <terminal>&amp;</terminal>
-    </definition>
-    <definition>
-      <comment>add and run script or function to the local scope</comment>
-      <terminal>.</terminal>
-    </definition>
-  </rule>
-  <rule name="CommandModule">
-    <definition>
-      <nonterminal name="PrimaryExpression"/>
-    </definition>
-  </rule>
-  <rule name="CommandNameExpression">
-    <definition>
-      <nonterminal name="CommandName"/>
-    </definition>
-    <definition>
-      <nonterminal name="PrimaryExpression"/>
-    </definition>
-  </rule>
-
-  <rule name="CommandElement">
-    <definition>
-      <nonterminal name="CommandParameter"/>
-    </definition>
-    <definition>
-      <nonterminal name="CommandArgument"/>
-    </definition>
-    <definition>
-      <nonterminal name="Redirection"/>
-    </definition>
-  </rule>
-
-  <rule name="CommandArgument">
-    <definition>
-      <nonterminal name="CommandNameExpression"/>
-    </definition>
-  </rule>
-
-  <rule name="InstanceName">
-    <definition>
-      <nonterminal name="CommandArgument"/>
-    </definition>
-    <definition>
-      <nonterminal name="PrimaryExpression"/>
-    </definition>
-  </rule>
-
-  <rule name="ClassDefinition">
-    <comment>PowerShell classes are not supported in ConstrainedLanguage.</comment>
-    <definition>
-      <repeated>
-        <optional>
-          <nonterminal name="Attribute"/>
-        </optional>
-      </repeated>
-      <terminal type="case-insensitive">class</terminal>
-      <nonterminal name="␤"/>
-      <nonterminal name="SimpleName"/>
-      <nonterminal name="␤"/>
-      <terminal>{</terminal>
-      <repeated>
-        <nonterminal name="ClassMember"/>
-        <nonterminal name="␤"/>
-      </repeated>
-      <terminal>}</terminal>
-    </definition>
-    <definition>
-      <repeated>
-        <optional>
-          <nonterminal name="Attribute"/>
-        </optional>
-      </repeated>
-      <terminal type="case-insensitive">class</terminal>
-      <nonterminal name="␤"/>
-      <nonterminal name="SimpleName"/>
-      <nonterminal name="␤"/>
-      <terminal>:</terminal>
-      <nonterminal name="BaseTypeList"/>
-      <terminal>{</terminal>
-      <nonterminal name="␤"/>
-      <repeated>
-        <optional>
-          <nonterminal name="ClassMember"/>
-          <nonterminal name="␤"/>
-        </optional>
-      </repeated>
-      <terminal>}</terminal>
-    </definition>
-  </rule>
-  <rule name="BaseTypeList">
-    <comment>basetype + interfaces</comment>
-    <definition>
-      <nonterminal name="␤"/>
-      <nonterminal name="TypeName"/>
-      <nonterminal name="␤"/>
-      <repeated>
-        <optional>
-          <terminal>,</terminal>
-          <nonterminal name="␤"/>
-          <nonterminal name="TypeName"/>
-          <nonterminal name="␤"/>
-        </optional>
-      </repeated>
-    </definition>
-  </rule>
-  <rule name="ClassMember">
-    <definition>
-      <nonterminal name="PropertyMember"/>
-    </definition>
-    <definition>
-      <nonterminal name="MethodMember"/>
-    </definition>
-  </rule>
-  <rule name="PropertyMember">
-    <definition>
-      <repeated>
-        <optional>
-          <nonterminal name="MemberAttribute"/>
-        </optional>
-      </repeated>
-      <nonterminal name="Variable"/>
-      <optional>
-        <terminal>=</terminal>
-        <nonterminal name="Expression"/>
-      </optional>
-    </definition>
-  </rule>
-  <rule name="MethodMember">
-    <definition>
-      <comment>Constructors have the same name as the class.</comment>
-      <repeated>
-        <optional>
-          <nonterminal name="MemberAttribute"/>
-        </optional>
-      </repeated>
-      <nonterminal name="FunctionDefinition"/>
-    </definition>
-  </rule>
-  <rule name="MemberAttribute">
-    <comment>
-      [System.Enum]::GetNames('System.Management.Automation.Language.PropertyAttributes')
-      &lt;br/&gt;
-      [System.Enum]::GetNames('System.Management.Automation.Language.MethodAttributes')
-    </comment>
-    <definition>
-      <nonterminal name="Attribute"/>
-    </definition>
-    <definition>
-      <comment>not yet supported</comment>
-      <terminal type="case-insensitive">public</terminal>
-    </definition>
-    <definition>
-      <comment>not yet supported</comment>
-      <terminal type="case-insensitive">private</terminal>
-    </definition>
-    <definition>
-      <comment>
-        Hidden members are hidden from the &lt;span class="terminal"
-        style="color:black"&gt;Get-Member &lt;/span&gt; cmdlet and &lt;br/&gt;
-        can't be displayed using tab completion
-        or IntelliSense outside of the class definition.
-      </comment>
-      <terminal type="case-insensitive">hidden</terminal>
-    </definition>
-    <definition>
-      <comment>
-        A static property is always available, independent of class instantiation. &lt;br/&gt;
-        A static property is shared across all instances of the class. &lt;br/&gt;
-        A static method is available always. All static properties live for the entire session span.
-      </comment>
-      <terminal type="case-insensitive">static</terminal>
-    </definition>
-  </rule>
-
-  <rule name="EnumDefinition">
-    <definition>
-      <optional>
-        <terminal type="case-insensitive">[flags()]</terminal>
-      </optional>
-      <terminal type="case-insensitive">enum</terminal>
-      <nonterminal name="␤"/>
-      <nonterminal name="SimpleName"/>
-      <optional>
-        <terminal>:</terminal>
-        <nonterminal name="␤"/>
-        <nonterminal name="ValidTypeName"/>
-        <nonterminal name="␤"/>
-      </optional>
-      <terminal>{</terminal>
-      <repeated>
-        <nonterminal name="SimpleName"/>
-        <optional>
-          <terminal>=</terminal>
-          <nonterminal name="Expression"/>
-        </optional>
-        <nonterminal name="␤"/>
-      </repeated>
-      <terminal>}</terminal>
-    </definition>
-  </rule>
 
   <rule name="String">
     <definition>
@@ -1829,17 +1201,6 @@
       <terminal type="regular">.*</terminal>
       <nonterminal name="LineBreak"/>
       <terminal>"@</terminal>
-    </definition>
-  </rule>
-  <rule name="parameterToken">
-    <definition>
-      <terminal>-</terminal>
-      <repeated>
-        <terminal type="regular">\p{L}+</terminal>
-      </repeated>
-      <optional>
-        <terminal>:</terminal>
-      </optional>
     </definition>
   </rule>
   <rule name="Number">
@@ -1914,24 +1275,7 @@
     </definition>
   </rule>
 
-  <rule name="loopLabelToken">
-    <definition>
-      <terminal type="regular">\p{Letter}</terminal>
-      <repeated>
-        <optional>
-          <terminal type="regular">\p{alnum}</terminal>
-        </optional>
-      </repeated>
-      <terminal>:</terminal>
-    </definition>
-  </rule>
-  <rule name="cmdletNameToken">
-    <definition>
-      <terminal type="regular">[^$0-9(@"'][^ \t]*</terminal>
-    </definition>
-  </rule>
-
-  <rule name="DataStatement">
+  <rule name="DataSection">
     <definition>
       <terminal type="case-insensitive">data</terminal>
       <nonterminal name="␤"/>
@@ -1953,6 +1297,630 @@
           <terminal>,</terminal>
           <nonterminal name="␤"/>
           <nonterminal name="CommandNameExpression"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+
+  <rule name="EnumDefinition">
+    <definition>
+      <comment>Default underlying type is Int32.</comment>
+      <optional>
+        <terminal type="case-insensitive">[flags()]</terminal>
+      </optional>
+      <terminal type="case-insensitive">enum</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="SimpleName"/>
+      <optional>
+        <terminal>:</terminal>
+        <nonterminal name="␤"/>
+        <nonterminal name="TypeName"/>
+        <nonterminal name="␤"/>
+      </optional>
+      <terminal>{</terminal>
+      <repeated>
+        <nonterminal name="SimpleName"/>
+        <optional>
+          <terminal>=</terminal>
+          <nonterminal name="Expression"/>
+        </optional>
+        <nonterminal name="␤"/>
+      </repeated>
+      <terminal>}</terminal>
+    </definition>
+  </rule>
+
+  <rule name="ClassDefinition">
+    <comment>PowerShell classes are not supported in ConstrainedLanguage.</comment>
+    <definition>
+      <repeated>
+        <optional>
+          <nonterminal name="Attribute"/>
+        </optional>
+      </repeated>
+      <terminal type="case-insensitive">class</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="SimpleName"/>
+      <nonterminal name="␤"/>
+      <terminal>{</terminal>
+      <repeated>
+        <nonterminal name="ClassMember"/>
+        <nonterminal name="␤"/>
+      </repeated>
+      <terminal>}</terminal>
+    </definition>
+    <definition>
+      <repeated>
+        <optional>
+          <nonterminal name="Attribute"/>
+        </optional>
+      </repeated>
+      <terminal type="case-insensitive">class</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="SimpleName"/>
+      <nonterminal name="␤"/>
+      <terminal>:</terminal>
+      <nonterminal name="BaseTypeList"/>
+      <terminal>{</terminal>
+      <nonterminal name="␤"/>
+      <repeated>
+        <optional>
+          <nonterminal name="ClassMember"/>
+          <nonterminal name="␤"/>
+        </optional>
+      </repeated>
+      <terminal>}</terminal>
+    </definition>
+  </rule>
+  <rule name="BaseTypeList">
+    <comment>basetype + interfaces</comment>
+    <definition>
+      <nonterminal name="␤"/>
+      <nonterminal name="TypeName"/>
+      <nonterminal name="␤"/>
+      <repeated>
+        <optional>
+          <terminal>,</terminal>
+          <nonterminal name="␤"/>
+          <nonterminal name="TypeName"/>
+          <nonterminal name="␤"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="ClassMember">
+    <definition>
+      <repeated>
+        <optional>
+          <nonterminal name="MemberAttribute"/>
+          <nonterminal name="␤"/>
+        </optional>
+      </repeated>
+      <nonterminal name="PropertyMember"/>
+    </definition>
+    <definition>
+      <repeated>
+        <optional>
+          <nonterminal name="MemberAttribute"/>
+          <nonterminal name="␤"/>
+        </optional>
+      </repeated>
+      <nonterminal name="MethodMember"/>
+    </definition>
+  </rule>
+  <rule name="MemberAttribute">
+    <comment>
+      [System.Enum]::GetNames('System.Management.Automation.Language.PropertyAttributes')
+      &lt;br/&gt;
+      [System.Enum]::GetNames('System.Management.Automation.Language.MethodAttributes')
+    </comment>
+    <definition>
+      <nonterminal name="Attribute"/>
+    </definition>
+    <definition>
+      <comment>not yet supported</comment>
+      <terminal type="case-insensitive">public</terminal>
+    </definition>
+    <definition>
+      <comment>not yet supported</comment>
+      <terminal type="case-insensitive">private</terminal>
+    </definition>
+    <definition>
+      <comment>
+        Hidden members are hidden from the &lt;span class="terminal"
+        style="color:black"&gt;Get-Member &lt;/span&gt; cmdlet and &lt;br/&gt;
+        can't be displayed using tab completion
+        or IntelliSense outside of the class definition.
+      </comment>
+      <terminal type="case-insensitive">hidden</terminal>
+    </definition>
+    <definition>
+      <comment>
+        A static property is always available, independent of class instantiation. &lt;br/&gt;
+        A static property is shared across all instances of the class. &lt;br/&gt;
+        A static method is available always. All static properties live for the entire session span.
+      </comment>
+      <terminal type="case-insensitive">static</terminal>
+    </definition>
+  </rule>
+  <rule name="PropertyMember">
+    <definition>
+      <nonterminal name="Variable"/>
+      <optional>
+        <terminal>=</terminal>
+        <nonterminal name="Expression"/>
+      </optional>
+    </definition>
+  </rule>
+  <rule name="MethodMember">
+    <definition>
+      <comment>Constructors have the same name as the class.</comment>
+      <nonterminal name="␤"/>
+      <nonterminal name="SimpleName"/>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <optional>
+        <nonterminal name="ParameterList"/>
+      </optional>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+      <optional>
+      <nonterminal name="BaseConstructorCall"/>
+      </optional>
+      <terminal>{</terminal>
+      <nonterminal name="Script"/>
+      <terminal>}</terminal>
+    </definition>
+  </rule>
+  <rule name="BaseConstructorCall">
+    <comment>can be present only if FunctionName == ClassName</comment>
+    <definition>
+      <terminal>:</terminal>
+      <nonterminal name="␤"/>
+      <terminal type="case-insensitive">base</terminal>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <optional>
+        <nonterminal name="␤"/>
+        <nonterminal name="PipelineChain"/>
+        <nonterminal name="␤"/>
+      </optional>
+      <terminal>)</terminal>
+      <nonterminal name="␤"/>
+    </definition>
+  </rule>
+
+  <rule name="FunctionDefinition">
+    <definition>
+      <nonterminal name="Declarator"/>
+      <nonterminal name="␤"/>
+      <optional>
+        <nonterminal name="Scope"/>
+        <terminal>:</terminal>
+      </optional>
+      <nonterminal name="SimpleName"/>
+      <optional>
+        <nonterminal name="␤"/>
+        <terminal>(</terminal>
+        <nonterminal name="ParameterList"/>
+        <nonterminal name="␤"/>
+        <terminal>)</terminal>
+      </optional>
+      <terminal>{</terminal>
+      <nonterminal name="Script"/>
+      <terminal>}</terminal>
+    </definition>
+  </rule>
+  <rule name="Declarator">
+    <definition>
+      <comment>[System.Enum]::GetNames('System.Management.Automation.Language.ConfigurationType')</comment>
+      <terminal type="case-insensitive">configuration</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">function</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">filter</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">workflow</terminal>
+    </definition>
+  </rule>
+  <rule name="SimpleName">
+    <definition>
+      <terminal type="regular">[^-($].*[^ \t]</terminal>
+    </definition>
+    <definition>
+      <nonterminal name="CommandArgument"/>
+    </definition>
+  </rule>
+
+  <rule name="BlockStatement">
+    <definition>
+      <terminal type="case-insensitive">parallel</terminal>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">sequence</terminal>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">inlinescript</terminal>
+      <nonterminal name="ScriptBlock"/>
+    </definition>
+  </rule>
+
+  <rule name="IfStatement">
+    <definition>
+      <terminal type="case-insensitive">if</terminal>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <nonterminal name="PipelineChain"/>
+      <terminal>)</terminal>
+      <nonterminal name="StatementBlock"/>
+      <repeated>
+        <optional>
+          <terminal type="case-insensitive">elseif</terminal>
+          <nonterminal name="␤"/>
+          <terminal>(</terminal>
+          <nonterminal name="PipelineChain"/>
+          <terminal>)</terminal>
+          <nonterminal name="StatementBlock"/>
+        </optional>
+      </repeated>
+      <optional>
+        <terminal type="case-insensitive">else</terminal>
+        <nonterminal name="StatementBlock"/>
+      </optional>
+    </definition>
+  </rule>
+
+  <rule name="LabelExpression">
+    <definition>
+      <nonterminal name="SimpleName"/>
+    </definition>
+    <definition>
+      <nonterminal name="UnaryExpression"/>
+    </definition>
+  </rule>
+  <rule name="LabeledStatement">
+    <definition>
+      <nonterminal name="SwitchStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="LoopStatement"/>
+    </definition>
+  </rule>
+  <rule name="SwitchStatement">
+    <definition>
+      <terminal type="case-insensitive">switch</terminal>
+      <nonterminal name="␤"/>
+      <repeated>
+        <optional>
+          <nonterminal name="SwitchFlag"/>
+        </optional>
+      </repeated>
+      <nonterminal name="SwitchCondition"/>
+      <nonterminal name="␤"/>
+      <terminal>{</terminal>
+      <nonterminal name="␤"/>
+      <repeated>
+        <nonterminal name="SwitchClause"/>
+      </repeated>
+      <terminal>}</terminal>
+    </definition>
+  </rule>
+  <rule name="SwitchFlag">
+    <comment>[System.Enum]::GetNames('System.Management.Automation.Language.SwitchFlags')</comment>
+    <definition>
+      <terminal type="case-insensitive">-regex</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-wildcard</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-exact</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-casesensitive</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-parallel</terminal>
+    </definition>
+  </rule>
+  <rule name="SwitchCondition">
+    <definition>
+      <terminal>(</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="PipelineChain"/>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-file</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="Filename"/>
+    </definition>
+  </rule>
+  <rule name="Filename">
+    <definition>
+      <nonterminal name="CommandArgument"/>
+    </definition>
+    <definition>
+      <nonterminal name="PrimaryExpression"/>
+    </definition>
+  </rule>
+  <rule name="SwitchClause">
+    <definition>
+      <nonterminal name="SwitchClauseCondition"/>
+      <nonterminal name="StatementBlock"/>
+      <repeated>
+        <optional>
+          <terminal>;</terminal>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="SwitchClauseCondition">
+    <definition>
+      <nonterminal name="CommandArgument"/>
+    </definition>
+    <definition>
+      <nonterminal name="PrimaryExpression"/>
+    </definition>
+    <definition>
+      <comment>
+        Only one &lt;span class="terminal"
+        style="color:black"&gt;default &lt;/span&gt;
+        clause is allowed in a &lt;span class="terminal"
+        style="color:black"&gt;switch &lt;/span&gt; statement.
+      </comment>
+      <terminal>default</terminal>
+    </definition>
+  </rule>
+
+  <rule name="LoopStatement">
+    <definition>
+      <nonterminal name="DoStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="WhileStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="ForStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="ForEachStatement"/>
+    </definition>
+  </rule>
+  <rule name="DoStatement">
+    <definition>
+      <comment>&lt;i&gt;DoUntilStatement&lt;/i&gt;</comment>
+      <terminal type="case-insensitive">do</terminal>
+      <nonterminal name="StatementBlock"/>
+      <nonterminal name="␤"/>
+      <terminal type="case-insensitive">until</terminal>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="PipelineChain"/>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+    </definition>
+    <definition>
+      <comment>&lt;i&gt;DoWhileStatement&lt;/i&gt;</comment>
+      <terminal type="case-insensitive">do</terminal>
+      <nonterminal name="StatementBlock"/>
+      <nonterminal name="␤"/>
+      <terminal type="case-insensitive">while</terminal>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="PipelineChain"/>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+    </definition>
+  </rule>
+  <rule name="WhileStatement">
+    <definition>
+      <terminal type="case-insensitive">while</terminal>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="PipelineChain"/>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+  </rule>
+  <rule name="ForStatement">
+    <definition>
+      <comment>ForInitializer</comment>
+      <terminal type="case-insensitive">for</terminal>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <nonterminal name="␤"/>
+      <optional>
+        <nonterminal name="PipelineChain"/>
+      </optional>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+    <definition>
+      <comment>ForCondition</comment>
+      <terminal type="case-insensitive">for</terminal>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <nonterminal name="␤"/>
+      <optional>
+        <nonterminal name="PipelineChain"/>
+      </optional>
+      <terminal>;</terminal>
+      <nonterminal name="␤"/>
+      <optional>
+        <nonterminal name="PipelineChain"/>
+      </optional>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+    <definition>
+      <comment>ForIterator</comment>
+      <terminal type="case-insensitive">for</terminal>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <nonterminal name="␤"/>
+      <optional>
+        <nonterminal name="PipelineChain"/>
+      </optional>
+      <terminal>;</terminal>
+      <nonterminal name="␤"/>
+      <optional>
+        <nonterminal name="PipelineChain"/>
+      </optional>
+      <terminal>;</terminal>
+      <nonterminal name="␤"/>
+      <optional>
+        <nonterminal name="PipelineChain"/>
+      </optional>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+  </rule>
+  <rule name="ForEachStatement">
+    <comment>
+      See also &lt;span class="terminal"
+      style="color:black"&gt;ForEach-Object &lt;/span&gt;
+    </comment>
+    <definition>
+      <terminal type="case-insensitive">foreach</terminal>
+      <nonterminal name="␤"/>
+      <repeated>
+        <optional>
+          <nonterminal name="ForEachFlags"/>
+        </optional>
+      </repeated>
+      <nonterminal name="␤"/>
+      <terminal>(</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="Variable"/>
+      <nonterminal name="␤"/>
+      <terminal type="case-insensitive">in</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="PipelineChain"/>
+      <nonterminal name="␤"/>
+      <terminal>)</terminal>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+  </rule>
+  <rule name="ForEachFlags">
+    <comment>[System.Enum]::GetNames('System.Management.Automation.Language.ForEachFlags')</comment>
+    <definition>
+      <terminal type="case-insensitive">-parallel</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-throttlelimit</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="ThrottleLimit"/>
+    </definition>
+  </rule>
+  <rule name="ThrottleLimit">
+    <definition>
+      <nonterminal name="CommandArgument"/>
+    </definition>
+    <definition>
+      <nonterminal name="PrimaryExpression"/>
+    </definition>
+  </rule>
+
+  <rule name="FlowControlStatement">
+    <definition>
+      <comment>&lt;i&gt;BreakStatement&lt;/i&gt;</comment>
+      <terminal type="case-insensitive">break</terminal>
+      <optional>
+        <nonterminal name="LabelExpression"/>
+      </optional>
+    </definition>
+    <definition>
+      <comment>&lt;i&gt;ContinueStatement&lt;/i&gt;</comment>
+      <terminal type="case-insensitive">continue</terminal>
+      <optional>
+        <nonterminal name="LabelExpression"/>
+      </optional>
+    </definition>
+    <definition>
+      <comment>&lt;i&gt;ThrowStatement&lt;/i&gt;</comment>
+      <terminal type="case-insensitive">throw</terminal>
+      <optional>
+        <nonterminal name="PipelineChain"/>
+      </optional>
+    </definition>
+    <definition>
+      <comment>&lt;i&gt;ReturnStatement&lt;/i&gt;</comment>
+      <terminal type="case-insensitive">return</terminal>
+      <optional>
+        <nonterminal name="PipelineChain"/>
+      </optional>
+    </definition>
+    <definition>
+      <comment>&lt;i&gt;ExitStatement&lt;/i&gt;</comment>
+      <terminal type="case-insensitive">exit</terminal>
+      <optional>
+        <nonterminal name="PipelineChain"/>
+      </optional>
+    </definition>
+  </rule>
+
+  <rule name="TrapStatement">
+    <definition>
+      <terminal type="case-insensitive">trap</terminal>
+      <nonterminal name="␤"/>
+      <optional>
+        <nonterminal name="TypeLiteral"/>
+      </optional>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+  </rule>
+
+  <rule name="TryStatement">
+    <definition>
+      <terminal type="case-insensitive">try</terminal>
+      <nonterminal name="StatementBlock"/>
+      <nonterminal name="␤"/>
+      <terminal type="case-insensitive">finally</terminal>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">try</terminal>
+      <nonterminal name="StatementBlock"/>
+      <repeated>
+        <nonterminal name="␤"/>
+        <terminal type="case-insensitive">catch</terminal>
+        <optional>
+          <nonterminal name="TypeList"/>
+        </optional>
+        <nonterminal name="StatementBlock"/>
+      </repeated>
+      <optional>
+        <nonterminal name="␤"/>
+        <terminal type="case-insensitive">finally</terminal>
+        <nonterminal name="StatementBlock"/>
+      </optional>
+    </definition>
+  </rule>
+
+  <rule name="TypeList">
+    <definition>
+      <nonterminal name="␤"/>
+      <nonterminal name="TypeLiteral"/>
+      <repeated>
+        <optional>
+          <nonterminal name="␤"/>
+          <terminal>,</terminal>
+          <nonterminal name="␤"/>
+          <nonterminal name="TypeLiteral"/>
         </optional>
       </repeated>
     </definition>
