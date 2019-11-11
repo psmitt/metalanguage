@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE syntax SYSTEM "../Syntax.dtd">
 <?xml-stylesheet type="text/xsl" href="../Syntax.xsl"?>
-<syntax language="PowerShell" start="CompilationUnit">
+<syntax language="PowerShell" start="ScriptBlock">
+
+  <comment>
+    &lt;a style="color:blue;text-decoration:underline"
+    href="https://github.com/PowerShell/EditorSyntax/blob/master/PowerShellSyntax.tmLanguage"
+    &gt;Lexical Analysis Reference &lt;/a&gt;&lt;br/&gt;
+    &lt;a style="color:blue;text-decoration:underline"
+    href="https://github.com/PowerShell/PowerShell/blob/master/src/System.Management.Automation/engine/parser/Parser.cs"
+    &gt;Syntactic Grammar Reference &lt;/a&gt;&lt;br/&gt;
+  </comment>
+
   <comment>
     &lt;span style="color:black;font-weight:normal;font-style:italic"&gt;
     ␤ &lt;/span&gt; &amp;nbsp; means optional new lines.
@@ -10,6 +20,7 @@
     &lt;span style="color:black;font-weight:normal;font-style:italic"&gt;
     StatementTerminator &lt;/span&gt;, which is a semicolor or a new line.
   </comment>
+
   <rule name="ScriptBlock">
     <comment>
       see also &lt;span class="terminal"
@@ -63,6 +74,7 @@
       </optional>
     </definition>
   </rule>
+
   <rule name="UsingStatements">
     <definition>
       <nonterminal name="UsingStatement"/>
@@ -73,68 +85,67 @@
     </definition>
   </rule>
   <rule name="UsingStatement">
-    <comment>Aliases do not seem to work.</comment>
     <definition>
-      <comment>.NET framework namespace</comment>
       <terminal type="case-insensitive">using</terminal>
-      <terminal type="case-insensitive">namespace</terminal>
-      <nonterminal name="Identifier"/>
+      <nonterminal name="UsingStatementKind"/>
       <optional>
+        <nonterminal name="Alias"/>
         <terminal>=</terminal>
-        <nonterminal name="Identifier"/>
       </optional>
+      <nonterminal name="Name"/>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">using</terminal>
+      <terminal type="case-insensitive">module</terminal>
+      <optional>
+        <nonterminal name="Alias"/>
+        <terminal>=</terminal>
+      </optional>
+      <nonterminal name="ModuleSpecification"/>
+    </definition>
+  </rule>
+  <rule name="UsingStatementKind">
+    <comment>[System.Enum]::GetNames('System.Management.Automation.Language.UsingStatementKind')</comment>
+    <definition>
+      <terminal type="case-insensitive">assembly</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">command</terminal>
     </definition>
     <definition>
       <comment>
+        module name or path to module file,
         see also &lt;span class="terminal"
         style="color:black"&gt;Import-Module &lt;/span&gt;
         and &lt;span class="terminal"
         style="color:black"&gt;#requires &lt;/span&gt;
       </comment>
-      <terminal type="case-insensitive">using</terminal>
       <terminal type="case-insensitive">module</terminal>
-      <nonterminal name="Identifier"/>
-      <optional>
-        <terminal>=</terminal>
-        <nonterminal name="Identifier"/>
-      </optional>
     </definition>
     <definition>
-      <comment>module name or path to module file</comment>
-      <terminal type="case-insensitive">using</terminal>
-      <terminal type="case-insensitive">module</terminal>
-      <nonterminal name="String"/>
+      <comment>.NET namespace, like System.Management.Automation.Language</comment>
+      <terminal type="case-insensitive">namespace</terminal>
     </definition>
     <definition>
-      <comment>module specification object</comment>
-      <terminal type="case-insensitive">using</terminal>
-      <terminal type="case-insensitive">module</terminal>
-      <optional>
-        <nonterminal name="Identifier"/>
-        <terminal>=</terminal>
-      </optional>
-      <nonterminal name="HashTable"/>
-    </definition>
-    <definition>
-      <terminal type="case-insensitive">using</terminal>
       <terminal type="case-insensitive">type</terminal>
-      <nonterminal name="Identifier"/>
-      <terminal>=</terminal>
-      <nonterminal name="Identifier"/>
-    </definition>
-    <definition>
-      <terminal type="case-insensitive">using</terminal>
-      <terminal type="case-insensitive">assembly</terminal>
-      <nonterminal name="Identifier"/>
-    </definition>
-    <definition>
-      <terminal type="case-insensitive">using</terminal>
-      <terminal type="case-insensitive">command</terminal>
-      <nonterminal name="Identifier"/>
-      <terminal>=</terminal>
-      <nonterminal name="Identifier"/>
     </definition>
   </rule>
+  <rule name="Alias">
+    <definition>
+      <nonterminal name="StringConstantExpression"/>
+    </definition>
+  </rule>
+  <rule name="Name">
+    <definition>
+      <nonterminal name="StringConstantExpression"/>
+    </definition>
+  </rule>
+  <rule name="ModuleSpecification">
+    <definition>
+      <nonterminal name="HashTable"/>
+    </definition>
+  </rule>
+
   <rule name="ParamBlock">
     <definition>
       <nonterminal name="␤"/>
@@ -157,8 +168,22 @@
   <rule name="Attribute">
     <definition>
       <terminal>[</terminal>
-      <nonterminal name="TypeSpec"/>
+      <nonterminal name="AttributeName"/>
       <terminal>(</terminal>
+      <optional>
+        <nonterminal name="AttributeArgumentList"/>
+      </optional>
+      <terminal>)</terminal>
+      <terminal>]</terminal>
+    </definition>
+    <definition>
+      <terminal>[</terminal>
+      <nonterminal name="TypeSpec"/>
+      <terminal>]</terminal>
+    </definition>
+  </rule>
+  <rule name="AttributeArgumentList">
+    <definition>
       <nonterminal name="AttributeArgument"/>
       <repeated>
         <optional>
@@ -167,12 +192,22 @@
           <nonterminal name="AttributeArgument"/>
         </optional>
       </repeated>
-      <terminal>)</terminal>
-      <terminal>]</terminal>
+    </definition>
+  </rule>
+  <rule name="AttributeArgument">
+    <definition>
+      <optional>
+        <nonterminal name="␤"/>
+        <nonterminal name="PropertyName"/>
+        <terminal>=</terminal>
+      </optional>
+      <nonterminal name="␤"/>
+      <nonterminal name="Expression"/>
     </definition>
   </rule>
   <rule name="TypeSpec">
     <definition>
+      <comment>simple type</comment>
       <nonterminal name="TypeName"/>
     </definition>
     <definition>
@@ -201,6 +236,11 @@
     </definition>
   </rule>
   <rule name="TypeName">
+    <comment>
+      see also &lt;a style="color:blue;text-decoration:underline"
+      href="https://docs.microsoft.com/en-us/dotnet/framework/reflection-and-codedom/specifying-fully-qualified-type-names"
+      &gt;.NET type name specification&lt;/a&gt;
+    </comment>
     <definition>
       <nonterminal name="NamespaceTypeName"/>
       <optional>
@@ -218,15 +258,6 @@
       <nonterminal name="NestedTypeName"/>
     </definition>
   </rule>
-  <rule name="NamespaceSpec">
-    <definition>
-      <optional>
-        <nonterminal name="TypeNameIdentifier"/>
-        <terminal>.</terminal>
-      </optional>
-      <nonterminal name="TypeNameIdentifier"/>
-    </definition>
-  </rule>
   <rule name="NestedTypeName">
     <definition>
       <nonterminal name="TypeNameIdentifier"/>
@@ -238,20 +269,20 @@
       </repeated>
     </definition>
   </rule>
+  <rule name="NamespaceSpec">
+    <definition>
+      <repeated>
+        <optional>
+          <nonterminal name="TypeNameIdentifier"/>
+          <terminal>.</terminal>
+        </optional>
+      </repeated>
+      <nonterminal name="TypeNameIdentifier"/>
+    </definition>
+  </rule>
   <rule name="TypeNameIdentifier">
     <definition>
       <terminal type="regular">[\p{L}\p{Nd}.`_]+</terminal>
-    </definition>
-  </rule>
-  <rule name="AttributeArgument">
-    <definition>
-      <optional>
-        <nonterminal name="␤"/>
-        <nonterminal name="PropertyName"/>
-        <terminal>=</terminal>
-      </optional>
-      <nonterminal name="␤"/>
-      <nonterminal name="Expression"/>
     </definition>
   </rule>
   <rule name="ParameterList">
@@ -296,6 +327,7 @@
     </definition>
   </rule>
   <rule name="BlockKind">
+    <comment>at most one of each</comment>
     <definition>
       <terminal type="case-insensitive">dynamicparam</terminal>
     </definition>
@@ -325,14 +357,13 @@
       <nonterminal name="Statement"/>
       <repeated>
         <optional>
-          <nonterminal name="StatementSeparator"/>
+          <terminal>;</terminal>
           <nonterminal name="Statement"/>
         </optional>
       </repeated>
     </definition>
   </rule>
   <rule name="Statement">
-    <comment>What about DynamicKeywordStatement?</comment>
     <definition>
       <nonterminal name="BlockStatement"/>
     </definition>
@@ -341,7 +372,8 @@
     </definition>
     <definition>
       <optional>
-        <nonterminal name="Label"/>
+        <terminal>:</terminal>
+        <nonterminal name="LabelExpression"/>
       </optional>
       <nonterminal name="LabeledStatement"/>
     </definition>
@@ -350,10 +382,25 @@
       <terminal>;</terminal>
     </definition>
     <definition>
-      <nonterminal name="Pipeline"/>
+      <nonterminal name="TryStatement"/>
     </definition>
     <definition>
-      <nonterminal name="ConfigurationDefinition"/>
+      <nonterminal name="TrapStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="DataStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="DynamicKeywordStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="ErrorStatement"/>
+    </definition>
+    <definition>
+      <nonterminal name="ClassDefinition"/>
+    </definition>
+    <definition>
+      <nonterminal name="EnumDefinition"/>
     </definition>
     <definition>
       <nonterminal name="FunctionDefinition"/>
@@ -362,17 +409,22 @@
       <nonterminal name="TypeDefinition"/>
     </definition>
     <definition>
-      <nonterminal name="TrapStatement"/>
-    </definition>
-    <definition>
-      <nonterminal name="TryStatement"/>
-    </definition>
-    <definition>
-      <nonterminal name="DataStatement"/>
-    </definition>
-    <definition>
       <nonterminal name="PipelineChain"/>
       <terminal>;</terminal>
+    </definition>
+  </rule>
+  <rule name="BlockStatement">
+    <definition>
+      <terminal type="case-insensitive">parallel</terminal>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">sequence</terminal>
+      <nonterminal name="StatementBlock"/>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">inlinescript</terminal>
+      <nonterminal name="ScriptBlock"/>
     </definition>
   </rule>
   <rule name="IfStatement">
@@ -427,6 +479,7 @@
     </definition>
   </rule>
   <rule name="SwitchFlag">
+    <comment>[System.Enum]::GetNames('System.Management.Automation.Language.SwitchFlags')</comment>
     <definition>
       <terminal type="case-insensitive">-regex</terminal>
     </definition>
@@ -447,7 +500,7 @@
     <definition>
       <terminal>(</terminal>
       <nonterminal name="␤"/>
-      <nonterminal name="Pipeline"/>
+      <nonterminal name="PipelineChain"/>
       <nonterminal name="␤"/>
       <terminal>)</terminal>
     </definition>
@@ -517,7 +570,7 @@
       <nonterminal name="␤"/>
       <terminal>(</terminal>
       <nonterminal name="␤"/>
-      <nonterminal name="Pipeline"/>
+      <nonterminal name="PipelineChain"/>
       <nonterminal name="␤"/>
       <terminal>)</terminal>
     </definition>
@@ -530,7 +583,7 @@
       <nonterminal name="␤"/>
       <terminal>(</terminal>
       <nonterminal name="␤"/>
-      <nonterminal name="Pipeline"/>
+      <nonterminal name="PipelineChain"/>
       <nonterminal name="␤"/>
       <terminal>)</terminal>
     </definition>
@@ -549,6 +602,7 @@
   </rule>
   <rule name="ForStatement">
     <definition>
+      <comment>ForInitializer</comment>
       <terminal type="case-insensitive">for</terminal>
       <nonterminal name="␤"/>
       <terminal>(</terminal>
@@ -561,6 +615,7 @@
       <nonterminal name="StatementBlock"/>
     </definition>
     <definition>
+      <comment>ForCondition</comment>
       <terminal type="case-insensitive">for</terminal>
       <nonterminal name="␤"/>
       <terminal>(</terminal>
@@ -578,6 +633,7 @@
       <nonterminal name="StatementBlock"/>
     </definition>
     <definition>
+      <comment>ForIterator</comment>
       <terminal type="case-insensitive">for</terminal>
       <nonterminal name="␤"/>
       <terminal>(</terminal>
@@ -620,13 +676,14 @@
       <nonterminal name="␤"/>
       <terminal type="case-insensitive">in</terminal>
       <nonterminal name="␤"/>
-      <nonterminal name="Pipeline"/>
+      <nonterminal name="PipelineChain"/>
       <nonterminal name="␤"/>
       <terminal>)</terminal>
       <nonterminal name="StatementBlock"/>
     </definition>
   </rule>
   <rule name="ForEachFlags">
+    <comment>[System.Enum]::GetNames('System.Management.Automation.Language.ForEachFlags')</comment>
     <definition>
       <terminal type="case-insensitive">-parallel</terminal>
     </definition>
@@ -663,21 +720,21 @@
       <comment>&lt;i&gt;ThrowStatement&lt;/i&gt;</comment>
       <terminal type="case-insensitive">throw</terminal>
       <optional>
-        <nonterminal name="Pipeline"/>
+        <nonterminal name="PipelineChain"/>
       </optional>
     </definition>
     <definition>
       <comment>&lt;i&gt;ReturnStatement&lt;/i&gt;</comment>
       <terminal type="case-insensitive">return</terminal>
       <optional>
-        <nonterminal name="Pipeline"/>
+        <nonterminal name="PipelineChain"/>
       </optional>
     </definition>
     <definition>
       <comment>&lt;i&gt;ExitStatement&lt;/i&gt;</comment>
       <terminal type="case-insensitive">exit</terminal>
       <optional>
-        <nonterminal name="Pipeline"/>
+        <nonterminal name="PipelineChain"/>
       </optional>
     </definition>
   </rule>
@@ -997,6 +1054,8 @@
       <terminal type="case-insensitive">-band</terminal>
       <terminal type="case-insensitive">-bor</terminal>
       <terminal type="case-insensitive">-bxor</terminal>
+      <terminal type="case-insensitive">-shl</terminal>
+      <terminal type="case-insensitive">-shr</terminal>
     </definition>
   </rule>
   <rule name="Comparison">
@@ -1462,7 +1521,7 @@
       <nonterminal name="␤"/>
     </definition>
   </rule>
-  <rule name="FunctionStatement">
+  <rule name="FunctionDefinition">
     <definition>
       <nonterminal name="Declarator"/>
       <nonterminal name="␤"/>
@@ -1484,6 +1543,10 @@
     </definition>
   </rule>
   <rule name="Declarator">
+    <definition>
+      <comment>[System.Enum]::GetNames('System.Management.Automation.Language.ConfigurationType')</comment>
+      <terminal type="case-insensitive">configuration</terminal>
+    </definition>
     <definition>
       <terminal type="case-insensitive">function</terminal>
     </definition>
@@ -1575,24 +1638,17 @@
     </definition>
   </rule>
 
-  <rule name="ConfigurationDefinition">
-    <definition>
-      <terminal type="case-insensitive">configuration</terminal>
-      <nonterminal name="␤"/>
-      <nonterminal name="SingleNameExpression"/>
-      <nonterminal name="␤"/>
-      <nonterminal name="ScriptBlock"/>
-    </definition>
-  </rule>
-
-  <rule name="SingleNameExpression">
+  <rule name="InstanceName">
     <definition>
       <nonterminal name="CommandArgument"/>
+    </definition>
+    <definition>
       <nonterminal name="PrimaryExpression"/>
     </definition>
   </rule>
 
-  <rule name="ClassStatement">
+  <rule name="ClassDefinition">
+    <comment>PowerShell classes are not supported in ConstrainedLanguage.</comment>
     <definition>
       <repeated>
         <optional>
@@ -1634,6 +1690,7 @@
     </definition>
   </rule>
   <rule name="BaseTypeList">
+    <comment>basetype + interfaces</comment>
     <definition>
       <nonterminal name="␤"/>
       <nonterminal name="TypeName"/>
@@ -1650,18 +1707,10 @@
   </rule>
   <rule name="ClassMember">
     <definition>
-      <nonterminal name="MethodMember"/>
       <nonterminal name="PropertyMember"/>
     </definition>
-  </rule>
-  <rule name="MethodMember">
     <definition>
-      <repeated>
-        <optional>
-          <nonterminal name="MemberAttribute"/>
-        </optional>
-      </repeated>
-      <nonterminal name="FunctionStatement"/>
+      <nonterminal name="MethodMember"/>
     </definition>
   </rule>
   <rule name="PropertyMember">
@@ -1678,18 +1727,79 @@
       </optional>
     </definition>
   </rule>
+  <rule name="MethodMember">
+    <definition>
+      <comment>Constructors have the same name as the class.</comment>
+      <repeated>
+        <optional>
+          <nonterminal name="MemberAttribute"/>
+        </optional>
+      </repeated>
+      <nonterminal name="FunctionDefinition"/>
+    </definition>
+  </rule>
   <rule name="MemberAttribute">
+    <comment>
+      [System.Enum]::GetNames('System.Management.Automation.Language.PropertyAttributes')
+      &lt;br/&gt;
+      [System.Enum]::GetNames('System.Management.Automation.Language.MethodAttributes')
+    </comment>
     <definition>
       <nonterminal name="Attribute"/>
     </definition>
     <definition>
-      <terminal type="case-insensitive">static</terminal>
+      <comment>not yet supported</comment>
+      <terminal type="case-insensitive">public</terminal>
     </definition>
     <definition>
+      <comment>not yet supported</comment>
+      <terminal type="case-insensitive">private</terminal>
+    </definition>
+    <definition>
+      <comment>
+        Hidden members are hidden from the &lt;span class="terminal"
+        style="color:black"&gt;Get-Member &lt;/span&gt; cmdlet and &lt;br/&gt;
+        can't be displayed using tab completion
+        or IntelliSense outside of the class definition.
+      </comment>
       <terminal type="case-insensitive">hidden</terminal>
+    </definition>
+    <definition>
+      <comment>
+        A static property is always available, independent of class instantiation. &lt;br/&gt;
+        A static property is shared across all instances of the class. &lt;br/&gt;
+        A static method is available always. All static properties live for the entire session span.
+      </comment>
+      <terminal type="case-insensitive">static</terminal>
     </definition>
   </rule>
 
+  <rule name="EnumDefinition">
+    <definition>
+      <optional>
+        <terminal type="case-insensitive">[flags()]</terminal>
+      </optional>
+      <terminal type="case-insensitive">enum</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="SimpleName"/>
+      <optional>
+        <terminal>:</terminal>
+        <nonterminal name="␤"/>
+        <nonterminal name="ValidTypeName"/>
+        <nonterminal name="␤"/>
+      </optional>
+      <terminal>{</terminal>
+      <repeated>
+        <nonterminal name="SimpleName"/>
+        <optional>
+          <terminal>=</terminal>
+          <nonterminal name="Expression"/>
+        </optional>
+        <nonterminal name="␤"/>
+      </repeated>
+      <terminal>}</terminal>
+    </definition>
+  </rule>
 
   <rule name="String">
     <definition>
@@ -1845,29 +1955,6 @@
           <nonterminal name="CommandNameExpression"/>
         </optional>
       </repeated>
-    </definition>
-  </rule>
-  <rule name="EnumStatement">
-    <definition>
-      <terminal type="case-insensitive">enum</terminal>
-      <nonterminal name="␤"/>
-      <nonterminal name="SimpleName"/>
-      <optional>
-        <terminal>:</terminal>
-        <nonterminal name="␤"/>
-        <nonterminal name="ValidTypeName"/>
-        <nonterminal name="␤"/>
-      </optional>
-      <terminal>{</terminal>
-      <repeated>
-        <nonterminal name="SimpleName"/>
-        <optional>
-          <terminal>=</terminal>
-          <nonterminal name="Expression"/>
-        </optional>
-        <nonterminal name="␤"/>
-      </repeated>
-      <terminal>}</terminal>
     </definition>
   </rule>
 </syntax>
