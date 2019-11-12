@@ -6,10 +6,19 @@
   <comment>
     &lt;a style="color:blue;text-decoration:underline"
     href="https://github.com/PowerShell/EditorSyntax/blob/master/PowerShellSyntax.tmLanguage"
-    &gt;Lexical Analysis Reference &lt;/a&gt;&lt;br/&gt;
+    &gt;Lexical Analysis Reference: the Editor Syntax&lt;/a&gt;&lt;br/&gt;
     &lt;a style="color:blue;text-decoration:underline"
     href="https://github.com/PowerShell/PowerShell/blob/master/src/System.Management.Automation/engine/parser/Parser.cs"
-    &gt;Syntactic Grammar Reference &lt;/a&gt;&lt;br/&gt;
+    &gt;Syntactic Grammar Reference: the Parser&lt;/a&gt;&lt;br/&gt;
+    &lt;a style="color:blue;text-decoration:underline"
+    href="https://docs.microsoft.com/en-us/dotnet/api/SMAL.ast"
+    &gt;Abstract Syntax Tree class hierarchy&lt;/a&gt;&lt;br/&gt;
+  </comment>
+
+  <comment>
+    SMAL in comments means System.Management.Automation.Language namespace
+    as if we were &lt;br/&gt; &lt;span class="terminal" style="color:black"&gt;
+    using namespace SMAL = System.Management.Automation.Language &lt;/span&gt;
   </comment>
 
   <comment>
@@ -75,6 +84,8 @@
     </definition>
   </rule>
 
+  <comment>USING STATEMENTS</comment>
+
   <rule name="UsingStatements">
     <definition>
       <nonterminal name="UsingStatement"/>
@@ -95,6 +106,7 @@
       <nonterminal name="Name"/>
     </definition>
     <definition>
+      <comment>Is Alias mutually exclusive with ModuleSpecification?</comment>
       <terminal type="case-insensitive">using</terminal>
       <terminal type="case-insensitive">module</terminal>
       <optional>
@@ -105,7 +117,7 @@
     </definition>
   </rule>
   <rule name="UsingStatementKind">
-    <comment>[System.Enum]::GetNames('System.Management.Automation.Language.UsingStatementKind')</comment>
+    <comment>[System.Enum]::GetNames('SMAL.UsingStatementKind')</comment>
     <definition>
       <terminal type="case-insensitive">assembly</terminal>
     </definition>
@@ -132,11 +144,17 @@
   </rule>
   <rule name="Alias">
     <definition>
+      <comment>
+        [System.Enum]::GetNames('SMAL.StringConstantType')
+      </comment>
       <nonterminal name="StringConstantExpression"/>
     </definition>
   </rule>
   <rule name="Name">
     <definition>
+      <comment>
+        [System.Enum]::GetNames('SMAL.StringConstantType')
+      </comment>
       <nonterminal name="StringConstantExpression"/>
     </definition>
   </rule>
@@ -145,6 +163,8 @@
       <nonterminal name="HashTable"/>
     </definition>
   </rule>
+
+  <comment>PARAMETER BLOCK</comment>
 
   <rule name="ParamBlock">
     <definition>
@@ -168,7 +188,7 @@
   <rule name="Attribute">
     <definition>
       <terminal>[</terminal>
-      <nonterminal name="AttributeName"/>
+      <nonterminal name="AttributeClass"/>
       <terminal>(</terminal>
       <optional>
         <nonterminal name="AttributeArgumentList"/>
@@ -181,6 +201,13 @@
       <nonterminal name="TypeSpec"/>
       <terminal>]</terminal>
     </definition>
+  </rule>
+  <rule name="AttributeClass">
+    <comment>
+      is derived from &lt;a style="color:blue;text-decoration:underline"
+      href="https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.internal.cmdletmetadataattribute"
+      &gt;System.Management.Automation.Internal.CmdletMetadataAttribute&lt;/a&gt;
+    </comment>
   </rule>
   <rule name="AttributeArgumentList">
     <definition>
@@ -198,7 +225,7 @@
     <definition>
       <optional>
         <nonterminal name="␤"/>
-        <nonterminal name="PropertyName"/>
+        <nonterminal name="AttributeClassProperty"/>
         <terminal>=</terminal>
       </optional>
       <nonterminal name="␤"/>
@@ -315,6 +342,50 @@
       </optional>
     </definition>
   </rule>
+  <rule name="Variable">
+    <comment>Variable names are case-insensitive!</comment>
+    <definition>
+      <terminal>$</terminal>
+      <optional>
+        <nonterminal name="Scope"/>
+        <terminal>:</terminal>
+      </optional>
+      <terminal type="regular">[\p{L}\p{Nd}_?]+</terminal>
+    </definition>
+    <definition>
+      <terminal>$</terminal>
+      <terminal>{</terminal>
+      <terminal type="regular">[^`}]+</terminal>
+      <terminal>}</terminal>
+    </definition>
+  </rule>
+  <rule name="Scope">
+    <definition>
+      <terminal type="case-insensitive">global</terminal>
+    </definition>
+    <definition>
+      <comment>default scope for functions and aliases</comment>
+      <terminal type="case-insensitive">local</terminal>
+    </definition>
+    <definition>
+      <comment>restricts visibility to current scope</comment>
+      <terminal type="case-insensitive">private</terminal>
+    </definition>
+    <definition>
+      <comment>default scope for scripts</comment>
+      <terminal type="case-insensitive">script</terminal>
+    </definition>
+    <definition>
+      <comment>identifies local variable in a remote command</comment>
+      <terminal type="case-insensitive">using</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">workflow</terminal>
+    </definition>
+  </rule>
+
+  <comment>STATEMENT BLOCKS</comment>
+
   <rule name="NamedBlock">
     <definition>
       <repeated>
@@ -364,6 +435,8 @@
     </definition>
   </rule>
 
+  <comment>STATEMENTS AND COMMANDS</comment>
+
   <rule name="Statement">
     <definition>
       <nonterminal name="Assignment"/>
@@ -376,10 +449,7 @@
       <nonterminal name="DataSection"/>
     </definition>
     <definition>
-      <nonterminal name="EnumDefinition"/>
-    </definition>
-    <definition>
-      <nonterminal name="ClassDefinition"/>
+      <nonterminal name="TypeDefinition"/>
     </definition>
     <definition>
       <nonterminal name="FunctionDefinition"/>
@@ -491,12 +561,12 @@
       style="color:black"&gt;Tee-Object &lt;/span&gt;
     </comment>
     <definition>
-      <comment>redirect to default stream</comment>
+      <comment>redirect to default stream, see SMAL.MerginRedirectionToken</comment>
       <nonterminal name="StreamNumber"/>
       <terminal>&gt;&amp;1</terminal>
     </definition>
     <definition>
-      <comment>overwrite file</comment>
+      <comment>overwrite file, see SMAL.FileRedirectionToken</comment>
       <optional>
         <nonterminal name="StreamNumber"/>
       </optional>
@@ -504,14 +574,20 @@
       <nonterminal name="Filename"/>
     </definition>
     <definition>
-      <comment>append to file</comment>
+      <comment>append to file, see SMAL.FileRedirectionToken</comment>
       <optional>
         <nonterminal name="StreamNumber"/>
       </optional>
       <terminal>&gt;&gt;</terminal>
       <nonterminal name="Filename"/>
     </definition>
+    <definition>
+      <comment>not implemented, see SMAL.InputRedirectionToken</comment>
+      <terminal>&lt;</terminal>
+      <terminal>&lt;&lt;</terminal>
+    </definition>
   </rule>
+
   <rule name="StreamNumber">
     <definition>
       <comment>Success stream (default)</comment>
@@ -587,6 +663,7 @@
     </definition>
   </rule>
   <rule name="CommandParameter">
+    <comment>see SMAL.ParameterToken</comment>
     <definition>
       <terminal>-</terminal>
       <terminal type="regular">[\p{L}\p{Nd}_?]+</terminal>
@@ -623,50 +700,6 @@
       <nonterminal name="PrimaryExpression"/>
     </definition>
   </rule>
-
-  <rule name="Variable">
-    <comment>Variable names are case-insensitive!</comment>
-    <definition>
-      <terminal>$</terminal>
-      <optional>
-        <nonterminal name="Scope"/>
-        <terminal>:</terminal>
-      </optional>
-      <terminal type="regular">[\p{L}\p{Nd}_?]+</terminal>
-    </definition>
-    <definition>
-      <terminal>$</terminal>
-      <terminal>{</terminal>
-      <terminal type="regular">[^`}]+</terminal>
-      <terminal>}</terminal>
-    </definition>
-  </rule>
-  <rule name="Scope">
-    <definition>
-      <terminal type="case-insensitive">global</terminal>
-    </definition>
-    <definition>
-      <comment>default scope for functions and aliases</comment>
-      <terminal type="case-insensitive">local</terminal>
-    </definition>
-    <definition>
-      <comment>restricts visibility to current scope</comment>
-      <terminal type="case-insensitive">private</terminal>
-    </definition>
-    <definition>
-      <comment>default scope for scripts</comment>
-      <terminal type="case-insensitive">script</terminal>
-    </definition>
-    <definition>
-      <comment>identifies local variable in a remote command</comment>
-      <terminal type="case-insensitive">using</terminal>
-    </definition>
-    <definition>
-      <terminal type="case-insensitive">workflow</terminal>
-    </definition>
-  </rule>
-
-
 
   <rule name="Expression">
     <definition>
@@ -1062,24 +1095,24 @@
       <terminal>@{</terminal>
       <nonterminal name="␤"/>
       <optional>
-        <nonterminal name="HashEntries"/>
+        <nonterminal name="KeyValuePairs"/>
       </optional>
       <nonterminal name="␤"/>
       <terminal>}</terminal>
     </definition>
   </rule>
-  <rule name="HashEntries">
+  <rule name="KeyValuePairs">
     <definition>
-      <nonterminal name="HashEntry"/>
+      <nonterminal name="KeyValuePair"/>
       <repeated>
         <optional>
           <terminal>;</terminal>
-          <nonterminal name="HashEntry"/>
+          <nonterminal name="KeyValuePair"/>
         </optional>
       </repeated>
     </definition>
   </rule>
-  <rule name="HashEntry">
+  <rule name="KeyValuePair">
     <definition>
       <nonterminal name="KeyExpression"/>
       <terminal>=</terminal>
@@ -1174,14 +1207,15 @@
 
 
   <rule name="String">
+    <comment>SMAL.StringToken</comment>
     <definition>
-      <comment>literal</comment>
+      <comment>SMAL.StringLiteralToken</comment>
       <terminal>'</terminal>
       <terminal type="regular">.*</terminal>
       <terminal>'</terminal>
     </definition>
     <definition>
-      <comment>with interpolation</comment>
+      <comment>SMAL.StringExpandableToken</comment>
       <terminal>"</terminal>
       <terminal type="regular">.*</terminal>
       <terminal>"</terminal>
@@ -1195,7 +1229,7 @@
       <terminal>'@</terminal>
     </definition>
     <definition>
-      <comment>multiline here-string with interpolation</comment>
+      <comment>expandable multiline here-string</comment>
       <terminal>@"</terminal>
       <nonterminal name="LineBreak"/>
       <terminal type="regular">.*</terminal>
@@ -1204,8 +1238,9 @@
     </definition>
   </rule>
   <rule name="Number">
-    <comment>Hexadecimal prefix is only for integers.</comment>
+    <comment>see SMAL.NumberToken</comment>
     <definition>
+      <comment>Hexadecimal prefix is only for integers.</comment>
       <optional>
         <terminal type="case-insensitive">0x</terminal>
       </optional>
@@ -1301,6 +1336,19 @@
       </repeated>
     </definition>
   </rule>
+
+  <rule name="TypeDefinition">
+    <comment>
+      [System.Enum]::GetNames('SMAL.TypeAttributes')
+    </comment>
+    <definition>
+      <nonterminal name="EnumDefinition"/>
+    </definition>
+    <definition>
+      <nonterminal name="ClassDefinition"/>
+    </definition>
+  </rule>
+
 
   <rule name="EnumDefinition">
     <definition>
@@ -1410,9 +1458,9 @@
   </rule>
   <rule name="MemberAttribute">
     <comment>
-      [System.Enum]::GetNames('System.Management.Automation.Language.PropertyAttributes')
+      [System.Enum]::GetNames('SMAL.PropertyAttributes')
       &lt;br/&gt;
-      [System.Enum]::GetNames('System.Management.Automation.Language.MethodAttributes')
+      [System.Enum]::GetNames('SMAL.MethodAttributes')
     </comment>
     <definition>
       <nonterminal name="Attribute"/>
@@ -1513,7 +1561,7 @@
   </rule>
   <rule name="Declarator">
     <definition>
-      <comment>[System.Enum]::GetNames('System.Management.Automation.Language.ConfigurationType')</comment>
+      <comment>[System.Enum]::GetNames('SMAL.ConfigurationType')</comment>
       <terminal type="case-insensitive">configuration</terminal>
     </definition>
     <definition>
@@ -1577,6 +1625,7 @@
 
   <rule name="LabelExpression">
     <definition>
+      <comment>see SMAL.LabelToken</comment>
       <nonterminal name="SimpleName"/>
     </definition>
     <definition>
@@ -1611,7 +1660,7 @@
     </definition>
   </rule>
   <rule name="SwitchFlag">
-    <comment>[System.Enum]::GetNames('System.Management.Automation.Language.SwitchFlags')</comment>
+    <comment>[System.Enum]::GetNames('SMAL.SwitchFlags')</comment>
     <definition>
       <terminal type="case-insensitive">-regex</terminal>
     </definition>
@@ -1816,7 +1865,7 @@
     </definition>
   </rule>
   <rule name="ForEachFlags">
-    <comment>[System.Enum]::GetNames('System.Management.Automation.Language.ForEachFlags')</comment>
+    <comment>[System.Enum]::GetNames('SMAL.ForEachFlags')</comment>
     <definition>
       <terminal type="case-insensitive">-parallel</terminal>
     </definition>
