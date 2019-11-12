@@ -25,6 +25,7 @@ Provides basic syntax highlighting and transformation tools for formal language 
   * [EBNF (self-descriptive)](http://standards.iso.org/ittf/PubliclyAvailableStandards/s026153_ISO_IEC_14977_1996%28E%29.zip)
   * [JSON](https://tools.ietf.org/html/rfc7159)
   * LESS (planned)
+  * [PowerShell](https://rawgit.com/psmitt/metalanguage/master/examples/PowerShell.xml)
   * [RELAX NG Compact Syntax](http://standards.iso.org/ittf/PubliclyAvailableStandards/c052348_ISO_IEC_19757-2_2008%28E%29.zip)
   * [UTFool Lexical Structure](https://rawgit.com/psmitt/metalanguage/master/examples/UTFool%20Lexical%20Structure.xml)
   * [UTFool Syntactic Grammar](https://rawgit.com/psmitt/metalanguage/master/examples/UTFool%20Syntactic%20Grammar.xml)
