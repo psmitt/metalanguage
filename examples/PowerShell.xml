@@ -160,7 +160,7 @@
   </rule>
   <rule name="ModuleSpecification">
     <definition>
-      <nonterminal name="HashTable"/>
+      <nonterminal name="Hashtable"/>
     </definition>
   </rule>
 
@@ -221,7 +221,7 @@
   </rule>
   <rule name="AttributeArgument">
     <definition>
-      <comment>AttributeName is a property of AttributeClass</comment>
+      <comment>NamedAttributeArgument; AttributeName is a property of AttributeClass</comment>
       <nonterminal name="␤"/>
       <nonterminal name="AttributeName"/>
       <optional>
@@ -231,11 +231,13 @@
       </optional>
     </definition>
     <definition>
+      <comment>AttributeExpression</comment>
       <nonterminal name="␤"/>
       <nonterminal name="Expression"/>
     </definition>
   </rule>
   <rule name="TypeLiteral">
+    <comment>TypeExpression</comment>
     <definition>
       <terminal>[</terminal>
       <nonterminal name="TypeSpec"/>
@@ -248,7 +250,7 @@
       <nonterminal name="TypeName"/>
     </definition>
     <definition>
-      <comment>array type with optional dimensions</comment>
+      <comment>see SMAL.ArrayTypeName, with optional dimensions</comment>
       <nonterminal name="TypeName"/>
       <terminal>[</terminal>
       <repeated>
@@ -259,7 +261,7 @@
       <terminal>]</terminal>
     </definition>
     <definition>
-      <comment>generic type</comment>
+      <comment>see SMAL.GenericTypeName</comment>
       <nonterminal name="TypeName"/>
       <terminal>[</terminal>
       <nonterminal name="TypeSpec"/>
@@ -336,6 +338,7 @@
   </rule>
   <rule name="Parameter">
     <definition>
+      <comment>AttributedExpression</comment>
       <nonterminal name="␤"/>
       <repeated>
         <optional>
@@ -343,7 +346,7 @@
         </optional>
       </repeated>
       <nonterminal name="␤"/>
-      <nonterminal name="Variable"/>
+      <nonterminal name="VariableExpression"/>
       <optional>
         <nonterminal name="␤"/>
         <terminal>=</terminal>
@@ -352,12 +355,12 @@
       </optional>
     </definition>
   </rule>
-  <rule name="Variable">
-    <comment>Variable names are case-insensitive!</comment>
+  <rule name="VariableExpression">
+    <comment>see SMAL.VariableToken</comment>
     <definition>
       <terminal>$</terminal>
       <optional>
-        <nonterminal name="Scope"/>
+        <nonterminal name="VariablePath"/>
         <terminal>:</terminal>
       </optional>
       <terminal type="regular">[\p{L}\p{Nd}_?]+</terminal>
@@ -369,7 +372,8 @@
       <terminal>}</terminal>
     </definition>
   </rule>
-  <rule name="Scope">
+  <rule name="VariablePath">
+    <comment>scope or drive qualification</comment>
     <definition>
       <terminal type="case-insensitive">global</terminal>
     </definition>
@@ -451,12 +455,15 @@
       <nonterminal name="UsingStatement"/>
     </definition>
     <definition>
+      <nonterminal name="ScriptRequirements"/>
+    </definition>
+    <definition>
       <comment>normally allowed only for script workflow</comment>
       <nonterminal name="BlockStatement"/>
     </definition>
     <definition>
       <comment>mainly used for internationalization</comment>
-      <nonterminal name="DataSection"/>
+      <nonterminal name="DataStatement"/>
     </definition>
     <definition>
       <nonterminal name="TypeDefinition"/>
@@ -485,11 +492,46 @@
       <nonterminal name="TryStatement"/>
     </definition>
     <definition>
-      <nonterminal name="Assignment"/>
+      <nonterminal name="AssignmentStatement"/>
     </definition>
     <definition>
       <nonterminal name="PipelineChain"/>
       <terminal>;</terminal>
+    </definition>
+  </rule>
+
+  <rule name="ScriptRequirements">
+    <definition>
+      <terminal type="case-insensitive">#requires</terminal>
+      <repeated>
+        <nonterminal name="RequirementParameter"/>
+        <optional>
+          <nonterminal name="CommandArgument"/>
+        </optional>
+      </repeated>
+    </definition>
+  </rule>
+  <rule name="RequirementParameter">
+    <definition>
+      <terminal type="case-insensitive">-RunAsAdministrator</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-Shellid</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-Assembly</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-Module</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-PSEdition</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-Version</terminal>
+    </definition>
+    <definition>
+      <terminal type="case-insensitive">-PSSnapin</terminal>
     </definition>
   </rule>
 
@@ -510,7 +552,7 @@
 
   <comment>&lt;b&gt;DATA AND TYPE DEFINITIONS&lt;/b&gt;</comment>
 
-  <rule name="DataSection">
+  <rule name="DataStatement">
     <definition>
       <terminal type="case-insensitive">data</terminal>
       <nonterminal name="␤"/>
@@ -548,7 +590,6 @@
       <nonterminal name="ClassDefinition"/>
     </definition>
   </rule>
-
 
   <rule name="EnumDefinition">
     <definition>
@@ -592,7 +633,7 @@
       <nonterminal name="␤"/>
       <terminal>{</terminal>
       <repeated>
-        <nonterminal name="ClassMember"/>
+        <nonterminal name="Member"/>
         <nonterminal name="␤"/>
       </repeated>
       <terminal>}</terminal>
@@ -613,7 +654,7 @@
       <nonterminal name="␤"/>
       <repeated>
         <optional>
-          <nonterminal name="ClassMember"/>
+          <nonterminal name="Member"/>
           <nonterminal name="␤"/>
         </optional>
       </repeated>
@@ -636,8 +677,11 @@
       </repeated>
     </definition>
   </rule>
-  <rule name="ClassMember">
+  <rule name="Member">
     <definition>
+      <comment>
+        [System.Enum]::GetNames('SMAL.PropertyAttributes')
+      </comment>
       <repeated>
         <optional>
           <nonterminal name="MemberAttribute"/>
@@ -647,21 +691,19 @@
       <nonterminal name="PropertyMember"/>
     </definition>
     <definition>
+      <comment>
+        [System.Enum]::GetNames('SMAL.MethodAttributes')
+      </comment>
       <repeated>
         <optional>
           <nonterminal name="MemberAttribute"/>
           <nonterminal name="␤"/>
         </optional>
       </repeated>
-      <nonterminal name="MethodMember"/>
+      <nonterminal name="FunctionMember"/>
     </definition>
   </rule>
   <rule name="MemberAttribute">
-    <comment>
-      [System.Enum]::GetNames('SMAL.PropertyAttributes')
-      &lt;br/&gt;
-      [System.Enum]::GetNames('SMAL.MethodAttributes')
-    </comment>
     <definition>
       <nonterminal name="Attribute"/>
     </definition>
@@ -693,14 +735,14 @@
   </rule>
   <rule name="PropertyMember">
     <definition>
-      <nonterminal name="Variable"/>
+      <nonterminal name="VariableExpression"/>
       <optional>
         <terminal>=</terminal>
         <nonterminal name="Expression"/>
       </optional>
     </definition>
   </rule>
-  <rule name="MethodMember">
+  <rule name="FunctionMember">
     <definition>
       <comment>Constructors have the same name as the class.</comment>
       <nonterminal name="␤"/>
@@ -721,8 +763,9 @@
     </definition>
   </rule>
   <rule name="BaseConstructorCall">
-    <comment>can be present only if FunctionName == ClassName</comment>
+    <comment>see SMAL.BaseCtorInvokeMemberExpression</comment>
     <definition>
+      <comment>can be present only if FunctionName is ClassName</comment>
       <terminal>:</terminal>
       <nonterminal name="␤"/>
       <terminal type="case-insensitive">base</terminal>
@@ -743,7 +786,7 @@
       <nonterminal name="Declarator"/>
       <nonterminal name="␤"/>
       <optional>
-        <nonterminal name="Scope"/>
+        <nonterminal name="VariablePath"/>
         <terminal>:</terminal>
       </optional>
       <nonterminal name="SimpleName"/>
@@ -776,7 +819,7 @@
   </rule>
   <rule name="SimpleName">
     <definition>
-      <terminal type="regular">[^-($].*[^ \t]</terminal>
+      <terminal type="regular">[^-($][^ \t]*</terminal>
     </definition>
     <definition>
       <nonterminal name="CommandArgument"/>
@@ -1041,7 +1084,7 @@
       <nonterminal name="␤"/>
       <terminal>(</terminal>
       <nonterminal name="␤"/>
-      <nonterminal name="Variable"/>
+      <nonterminal name="VariableExpression"/>
       <nonterminal name="␤"/>
       <terminal type="case-insensitive">in</terminal>
       <nonterminal name="␤"/>
@@ -1164,7 +1207,22 @@
 
   <comment>&lt;b&gt;BASIC STATEMENTS&lt;/b&gt;</comment>
 
-  <rule name="Assignment">
+  <rule name="AssignmentStatement">
+    <definition>
+      <comment>AttributedExpression</comment>
+      <nonterminal name="␤"/>
+      <repeated>
+        <optional>
+          <nonterminal name="Attribute"/>
+        </optional>
+      </repeated>
+      <nonterminal name="␤"/>
+      <nonterminal name="VariableExpression"/>
+      <nonterminal name="␤"/>
+      <terminal>=</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="Statement"/>
+    </definition>
     <definition>
       <nonterminal name="Expression"/>
       <nonterminal name="AssignmentOperator"/>
@@ -1213,6 +1271,7 @@
 
   <rule name="Pipeline">
     <definition>
+      <comment>CommandExpression</comment>
       <nonterminal name="Expression"/>
       <repeated>
         <optional>
@@ -1242,6 +1301,7 @@
 
   <rule name="Redirection">
     <comment>
+      see SMAL.RedirectionToken,
       see also &lt;span class="terminal"
       style="color:black"&gt;Out-File &lt;/span&gt;
       and &lt;span class="terminal"
@@ -1276,8 +1336,9 @@
   </rule>
 
   <rule name="StreamNumber">
+    <comment>[System.Enum]::GetNames('SMAL.RedirectionStream')</comment>
     <definition>
-      <comment>Success stream (default)</comment>
+      <comment>Normal stream, Output stream, Success stream (default)</comment>
       <terminal>1</terminal>
     </definition>
     <definition>
@@ -1341,6 +1402,7 @@
       <nonterminal name="CommandArgument"/>
     </definition>
     <definition>
+      <comment>No whitespace before colon!</comment>
       <nonterminal name="CommandParameter"/>
       <terminal>:</terminal>
       <nonterminal name="CommandArgument"/>
@@ -1352,8 +1414,7 @@
   <rule name="CommandParameter">
     <comment>see SMAL.ParameterToken</comment>
     <definition>
-      <terminal>-</terminal>
-      <terminal type="regular">[\p{L}\p{Nd}_?]+</terminal>
+      <terminal type="regular">-[\p{L}\p{Nd}_?]+</terminal>
     </definition>
   </rule>
   <rule name="CommandArgument">
@@ -1652,7 +1713,7 @@
       <nonterminal name="UnaryExpression"/>
     </definition>
     <definition>
-      <comment>cast expression</comment>
+      <comment>ConvertExpression</comment>
       <nonterminal name="TypeLiteral"/>
       <nonterminal name="UnaryExpression"/>
     </definition>
@@ -1693,19 +1754,19 @@
       <nonterminal name="Value"/>
     </definition>
     <definition>
-      <nonterminal name="MemberAccess"/>
+      <nonterminal name="IndexExpression"/>
       <optional>
         <nonterminal name="PostfixOperator"/>
       </optional>
     </definition>
     <definition>
-      <nonterminal name="ElementAccess"/>
+      <nonterminal name="MemberExpression"/>
       <optional>
         <nonterminal name="PostfixOperator"/>
       </optional>
     </definition>
     <definition>
-      <nonterminal name="InvocationExpression"/>
+      <nonterminal name="InvokeMemberExpression"/>
     </definition>
   </rule>
   <rule name="PostfixOperator">
@@ -1717,7 +1778,7 @@
   </rule>
   <rule name="Value">
     <definition>
-      <comment>parenthesized expression</comment>
+      <comment>ParenExpression (parenthesized expression)</comment>
       <terminal>(</terminal>
       <nonterminal name="␤"/>
       <nonterminal name="PipelineChain"/>
@@ -1725,7 +1786,7 @@
       <terminal>)</terminal>
     </definition>
     <definition>
-      <comment>subexpression (scalar on a single result)</comment>
+      <comment>SubExpression (scalar on a single result)</comment>
       <terminal>$(</terminal>
       <nonterminal name="␤"/>
       <repeated>
@@ -1737,7 +1798,7 @@
       <terminal>)</terminal>
     </definition>
     <definition>
-      <comment>array expression (array on a single result)</comment>
+      <comment>ArrayExpression (array on a single result)</comment>
       <terminal>@(</terminal>
       <nonterminal name="␤"/>
       <repeated>
@@ -1749,7 +1810,7 @@
       <terminal>)</terminal>
     </definition>
     <definition>
-      <comment>script block expression</comment>
+      <comment>ScriptBlockExpression (anonymous)</comment>
       <terminal>{</terminal>
       <nonterminal name="␤"/>
       <nonterminal name="Script"/>
@@ -1758,25 +1819,31 @@
     </definition>
     <definition>
       <comment>object, dictionary, associative array</comment>
-      <nonterminal name="HashTable"/>
+      <nonterminal name="Hashtable"/>
     </definition>
     <definition>
+      <comment>ConstantExpression</comment>
       <nonterminal name="Number"/>
     </definition>
     <definition>
+      <comment>
+        see also SMAL.StringConstantExpression, SMAL.ExpandableStringExpression
+      </comment>
       <nonterminal name="String"/>
     </definition>
     <definition>
+      <comment>TypeExpression</comment>
       <nonterminal name="TypeLiteral"/>
     </definition>
     <definition>
-      <nonterminal name="Variable"/>
+      <nonterminal name="VariableExpression"/>
       <optional>
         <nonterminal name="PostfixOperator"/>
       </optional>
     </definition>
   </rule>
-  <rule name="HashTable">
+
+  <rule name="Hashtable">
     <definition>
       <optional>
         <terminal type="case-insensitive">[ordered]</terminal>
@@ -1818,8 +1885,20 @@
     </definition>
   </rule>
 
-  <rule name="MemberAccess">
-    <comment>No whitespace between terms!</comment>
+  <rule name="IndexExpression">
+    <comment>array member</comment>
+    <definition>
+      <nonterminal name="PrimaryExpression"/>
+      <terminal>[</terminal>
+      <nonterminal name="␤"/>
+      <nonterminal name="Expression"/>
+      <nonterminal name="␤"/>
+      <terminal>]</terminal>
+    </definition>
+  </rule>
+
+  <rule name="MemberExpression">
+    <comment>No whitespace before access operators!</comment>
     <definition>
       <comment>object property or method</comment>
       <nonterminal name="PrimaryExpression"/>
@@ -1850,20 +1929,8 @@
       <nonterminal name="Value"/>
     </definition>
   </rule>
-  <rule name="ElementAccess">
-    <comment>array member</comment>
-    <definition>
-      <nonterminal name="PrimaryExpression"/>
-      <terminal>[</terminal>
-      <nonterminal name="␤"/>
-      <nonterminal name="Expression"/>
-      <nonterminal name="␤"/>
-      <terminal>]</terminal>
-    </definition>
-  </rule>
 
-
-  <rule name="InvocationExpression">
+  <rule name="InvokeMemberExpression">
     <definition>
       <nonterminal name="TargetExpression"/>
       <nonterminal name="MemberName"/>
@@ -1894,38 +1961,6 @@
     </definition>
   </rule>
 
-
-  <rule name="String">
-    <comment>SMAL.StringToken</comment>
-    <definition>
-      <comment>SMAL.StringLiteralToken</comment>
-      <terminal>'</terminal>
-      <terminal type="regular">.*</terminal>
-      <terminal>'</terminal>
-    </definition>
-    <definition>
-      <comment>SMAL.StringExpandableToken</comment>
-      <terminal>"</terminal>
-      <terminal type="regular">.*</terminal>
-      <terminal>"</terminal>
-    </definition>
-    <definition>
-      <comment>literal multiline here-string</comment>
-      <terminal>@'</terminal>
-      <nonterminal name="LineBreak"/>
-      <terminal type="regular">.*</terminal>
-      <nonterminal name="LineBreak"/>
-      <terminal>'@</terminal>
-    </definition>
-    <definition>
-      <comment>expandable multiline here-string</comment>
-      <terminal>@"</terminal>
-      <nonterminal name="LineBreak"/>
-      <terminal type="regular">.*</terminal>
-      <nonterminal name="LineBreak"/>
-      <terminal>"@</terminal>
-    </definition>
-  </rule>
   <rule name="Number">
     <comment>see SMAL.NumberToken</comment>
     <definition>
@@ -1996,6 +2031,38 @@
     <definition>
       <comment>petabyte</comment>
       <terminal type="case-insensitive">PB</terminal>
+    </definition>
+  </rule>
+
+  <rule name="String">
+    <comment>see SMAL.StringToken</comment>
+    <definition>
+      <comment>see SMAL.StringLiteralToken</comment>
+      <terminal>'</terminal>
+      <terminal type="regular">.*</terminal>
+      <terminal>'</terminal>
+    </definition>
+    <definition>
+      <comment>see SMAL.StringExpandableToken</comment>
+      <terminal>"</terminal>
+      <terminal type="regular">.*</terminal>
+      <terminal>"</terminal>
+    </definition>
+    <definition>
+      <comment>literal multiline here-string</comment>
+      <terminal>@'</terminal>
+      <nonterminal name="LineBreak"/>
+      <terminal type="regular">.*</terminal>
+      <nonterminal name="LineBreak"/>
+      <terminal>'@</terminal>
+    </definition>
+    <definition>
+      <comment>expandable multiline here-string</comment>
+      <terminal>@"</terminal>
+      <nonterminal name="LineBreak"/>
+      <terminal type="regular">.*</terminal>
+      <nonterminal name="LineBreak"/>
+      <terminal>"@</terminal>
     </definition>
   </rule>
 </syntax>
