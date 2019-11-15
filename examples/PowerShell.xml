@@ -358,6 +358,7 @@
   <rule name="VariableExpression">
     <comment>see SMAL.VariableToken</comment>
     <definition>
+      <comment>No whitespace after $ and after colon!</comment>
       <terminal>$</terminal>
       <optional>
         <nonterminal name="VariablePath"/>
@@ -366,8 +367,7 @@
       <terminal type="regular">[\p{L}\p{Nd}_?]+</terminal>
     </definition>
     <definition>
-      <terminal>$</terminal>
-      <terminal>{</terminal>
+      <terminal>${</terminal>
       <terminal type="regular">[^`}]+</terminal>
       <terminal>}</terminal>
     </definition>
@@ -475,6 +475,7 @@
       <nonterminal name="IfStatement"/>
     </definition>
     <definition>
+      <comment>No whitespace after colon!</comment>
       <optional>
         <terminal>:</terminal>
         <nonterminal name="LabelExpression"/>
@@ -553,6 +554,7 @@
   <comment>&lt;b&gt;DATA AND TYPE DEFINITIONS&lt;/b&gt;</comment>
 
   <rule name="DataStatement">
+    <comment>Get-Help about_Data_Sections</comment>
     <definition>
       <terminal type="case-insensitive">data</terminal>
       <nonterminal name="␤"/>
@@ -592,6 +594,7 @@
   </rule>
 
   <rule name="EnumDefinition">
+    <comment>Get-Help about_Enum</comment>
     <definition>
       <comment>Default underlying type is Int32.</comment>
       <optional>
@@ -620,7 +623,7 @@
   </rule>
 
   <rule name="ClassDefinition">
-    <comment>PowerShell classes are not supported in ConstrainedLanguage.</comment>
+    <comment>Get-Help about_Classes</comment>
     <definition>
       <repeated>
         <optional>
@@ -662,7 +665,7 @@
     </definition>
   </rule>
   <rule name="TypeNameList">
-    <comment>basetype + interfaces</comment>
+    <comment>basetype + optional interfaces</comment>
     <definition>
       <nonterminal name="␤"/>
       <nonterminal name="TypeName"/>
@@ -922,6 +925,7 @@
     </definition>
   </rule>
   <rule name="Filename">
+    <comment>A wildcard match has higher precedence than a literal match.</comment>
     <definition>
       <nonterminal name="CommandArgument"/>
     </definition>
@@ -960,15 +964,19 @@
 
   <rule name="LoopStatement">
     <definition>
+      <comment>Get-Help about_Do</comment>
       <nonterminal name="DoStatement"/>
     </definition>
     <definition>
+      <comment>Get-Help about_While</comment>
       <nonterminal name="WhileStatement"/>
     </definition>
     <definition>
+      <comment>Get-Help about_For</comment>
       <nonterminal name="ForStatement"/>
     </definition>
     <definition>
+      <comment>Get-Help about_Foreach</comment>
       <nonterminal name="ForEachStatement"/>
     </definition>
   </rule>
@@ -1117,28 +1125,28 @@
 
   <rule name="FlowControlStatement">
     <definition>
-      <comment>&lt;i&gt;BreakStatement&lt;/i&gt;</comment>
+      <comment>&lt;i&gt;BreakStatement&lt;/i&gt;, Get-Help about_Break</comment>
       <terminal type="case-insensitive">break</terminal>
       <optional>
         <nonterminal name="LabelExpression"/>
       </optional>
     </definition>
     <definition>
-      <comment>&lt;i&gt;ContinueStatement&lt;/i&gt;</comment>
+      <comment>&lt;i&gt;ContinueStatement&lt;/i&gt;, Get-Help about_Continue</comment>
       <terminal type="case-insensitive">continue</terminal>
       <optional>
         <nonterminal name="LabelExpression"/>
       </optional>
     </definition>
     <definition>
-      <comment>&lt;i&gt;ThrowStatement&lt;/i&gt;</comment>
+      <comment>&lt;i&gt;ThrowStatement&lt;/i&gt;, Get-Help about_Throw</comment>
       <terminal type="case-insensitive">throw</terminal>
       <optional>
         <nonterminal name="PipelineChain"/>
       </optional>
     </definition>
     <definition>
-      <comment>&lt;i&gt;ReturnStatement&lt;/i&gt;</comment>
+      <comment>&lt;i&gt;ReturnStatement&lt;/i&gt;, Get-Help about_Return</comment>
       <terminal type="case-insensitive">return</terminal>
       <optional>
         <nonterminal name="PipelineChain"/>
@@ -1368,6 +1376,7 @@
   </rule>
 
   <rule name="Command">
+    <comment>Get-Help about_Command_Syntax</comment>
     <definition>
       <nonterminal name="CommandName"/>
       <repeated>
@@ -1390,7 +1399,9 @@
     </definition>
   </rule>
   <rule name="CommandName">
+    <comment>Get-Help about_Command_Precedence</comment>
     <definition>
+      <comment>Module-qualified name: ModuleName\CommandName</comment>
       <terminal type="regular">[^$0-9(@"'][^ \t]*</terminal>
     </definition>
   </rule>
@@ -1412,7 +1423,9 @@
     </definition>
   </rule>
   <rule name="CommandParameter">
-    <comment>see SMAL.ParameterToken</comment>
+    <comment>
+      see SMAL.ParameterToken, Get-Help about_CommonParameters
+    </comment>
     <definition>
       <terminal type="regular">-[\p{L}\p{Nd}_?]+</terminal>
     </definition>
@@ -1560,6 +1573,9 @@
   </rule>
   <rule name="TypeOperator">
     <definition>
+      <comment>
+        object compared to type reference
+      </comment>
       <terminal type="case-insensitive">-is</terminal>
       <terminal type="case-insensitive">-isNot</terminal>
       <terminal type="case-insensitive">-as</terminal>
@@ -1576,7 +1592,7 @@
     </comment>
     <definition>
       <comment>
-        Equality operators
+        Equality operators: return Boolean result or the matching elements of the left collection.
       </comment>
       <terminal type="case-insensitive">-eq</terminal>
       <terminal type="case-insensitive">-ne</terminal>
@@ -1587,25 +1603,35 @@
     </definition>
     <definition>
       <comment>
-        Matching operators
+        strings compared to wildcard expression, Get-Help about_Wildcards
       </comment>
-      <terminal type="case-insensitive">-match</terminal>
-      <terminal type="case-insensitive">-notMatch</terminal>
       <terminal type="case-insensitive">-like</terminal>
       <terminal type="case-insensitive">-notLike</terminal>
     </definition>
     <definition>
       <comment>
-        Containment operators
+        strings compared to regular expression, Get-Help about_Regular_Expressions
+      </comment>
+      <terminal type="case-insensitive">-match</terminal>
+      <terminal type="case-insensitive">-notMatch</terminal>
+    </definition>
+    <definition>
+      <comment>
+        collection compared to object: Boolean result
       </comment>
       <terminal type="case-insensitive">-contains</terminal>
       <terminal type="case-insensitive">-notContains</terminal>
+    </definition>
+    <definition>
+      <comment>
+        object compared to collection: Boolean result
+      </comment>
       <terminal type="case-insensitive">-in</terminal>
       <terminal type="case-insensitive">-notIn</terminal>
     </definition>
     <definition>
       <comment>
-        Replacement operator
+        regular expression based value replacement in string, Get-Help about_Regular_Expressions
       </comment>
       <terminal type="case-insensitive">-replace</terminal>
     </definition>
@@ -1635,11 +1661,19 @@
     </definition>
   </rule>
   <rule name="AdditionOperator">
+    <comment>
+      Operation is determined by the type of the leftmost object.
+    </comment>
+    <definition>
+      <comment>
+        Plus is addition and concatenation operator.
+      </comment>
+      <terminal>+</terminal>
+    </definition>
     <definition>
       <comment>
         Minus may be any dash character.
       </comment>
-      <terminal>+</terminal>
       <terminal>-</terminal>
     </definition>
   </rule>
@@ -1656,9 +1690,22 @@
     </definition>
   </rule>
   <rule name="MultiplicationOperator">
+    <comment>
+      Operation is determined by the type of the leftmost object.
+    </comment>
     <definition>
+      <comment>repeated addition or concatenation the given times</comment>
       <terminal>*</terminal>
+    </definition>
+    <definition>
+      <comment>
+        When rounded to [int], half is rounded to the nearest
+        &lt;b&gt;even&lt;/b&gt; integer.
+      </comment>
       <terminal>/</terminal>
+    </definition>
+    <definition>
+      <comment>remainder or integer division</comment>
       <terminal>%</terminal>
     </definition>
   </rule>
@@ -1962,7 +2009,7 @@
   </rule>
 
   <rule name="Number">
-    <comment>see SMAL.NumberToken</comment>
+    <comment>see SMAL.NumberToken, Get-Help about_Numeric_Literals</comment>
     <definition>
       <comment>Hexadecimal prefix is only for integers.</comment>
       <optional>
@@ -2009,6 +2056,10 @@
     <definition>
       <comment>unsigned int or long integer</comment>
       <terminal type="case-insensitive">u</terminal>
+    </definition>
+    <definition>
+      <comment>BigInteger</comment>
+      <terminal type="case-insensitive">n</terminal>
     </definition>
   </rule>
   <rule name="MultiplierSuffix">
