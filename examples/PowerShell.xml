@@ -32,7 +32,7 @@
 
   <rule name="ScriptBlock">
     <comment>
-      see also &lt;span class="terminal"
+      Get-Help about_Script_Blocks, see also &lt;span class="terminal"
       style="color:black"&gt;Invoke-Command &lt;/span&gt;
     </comment>
     <definition>
@@ -87,6 +87,7 @@
   <comment>&lt;b&gt;USING STATEMENTS&lt;/b&gt;</comment>
 
   <rule name="UsingStatements">
+    <comment>Get-Help about_Using</comment>
     <definition>
       <nonterminal name="UsingStatement"/>
       <optional>
@@ -356,7 +357,7 @@
     </definition>
   </rule>
   <rule name="VariableExpression">
-    <comment>see SMAL.VariableToken</comment>
+    <comment>see SMAL.VariableToken, Get-Help about_Variables</comment>
     <definition>
       <comment>No whitespace after $ and after colon!</comment>
       <terminal>$</terminal>
@@ -373,7 +374,7 @@
     </definition>
   </rule>
   <rule name="VariablePath">
-    <comment>scope or drive qualification</comment>
+    <comment>scope or drive qualification, Get-Help about_Scopes</comment>
     <definition>
       <terminal type="case-insensitive">global</terminal>
     </definition>
@@ -455,6 +456,7 @@
       <nonterminal name="UsingStatement"/>
     </definition>
     <definition>
+      <comment>Get-Help about_Requires</comment>
       <nonterminal name="ScriptRequirements"/>
     </definition>
     <definition>
@@ -554,7 +556,7 @@
   <comment>&lt;b&gt;DATA AND TYPE DEFINITIONS&lt;/b&gt;</comment>
 
   <rule name="DataStatement">
-    <comment>Get-Help about_Data_Sections</comment>
+    <comment>Get-Help about_Data_Sections, Get-Help about_Script_Internationalization</comment>
     <definition>
       <terminal type="case-insensitive">data</terminal>
       <nonterminal name="␤"/>
@@ -719,12 +721,7 @@
       <terminal type="case-insensitive">private</terminal>
     </definition>
     <definition>
-      <comment>
-        Hidden members are hidden from the &lt;span class="terminal"
-        style="color:black"&gt;Get-Member &lt;/span&gt; cmdlet and &lt;br/&gt;
-        can't be displayed using tab completion
-        or IntelliSense outside of the class definition.
-      </comment>
+      <comment>Get-Help about_Hidden</comment>
       <terminal type="case-insensitive">hidden</terminal>
     </definition>
     <definition>
@@ -785,6 +782,7 @@
   </rule>
 
   <rule name="FunctionDefinition">
+    <comment>Get-Help about_Functions*, Get-Help about_Ref</comment>
     <definition>
       <nonterminal name="Declarator"/>
       <nonterminal name="␤"/>
@@ -832,6 +830,7 @@
   <comment>&lt;b&gt;CONTROL STRUCTURES&lt;/b&gt;</comment>
 
   <rule name="IfStatement">
+    <comment>Get-Help about_If</comment>
     <definition>
       <terminal type="case-insensitive">if</terminal>
       <nonterminal name="␤"/>
@@ -874,6 +873,7 @@
     </definition>
   </rule>
   <rule name="SwitchStatement">
+    <comment>Get-Help about_Switch</comment>
     <definition>
       <terminal type="case-insensitive">switch</terminal>
       <nonterminal name="␤"/>
@@ -1162,6 +1162,7 @@
   </rule>
 
   <rule name="TrapStatement">
+    <comment>Get-Help about_Trap</comment>
     <definition>
       <terminal type="case-insensitive">trap</terminal>
       <nonterminal name="␤"/>
@@ -1173,6 +1174,7 @@
   </rule>
 
   <rule name="TryStatement">
+    <comment>Get-Help about_Try_Catch_Finally</comment>
     <definition>
       <terminal type="case-insensitive">try</terminal>
       <nonterminal name="StatementBlock"/>
@@ -1269,6 +1271,7 @@
     </definition>
   </rule>
   <rule name="ChainOperator">
+    <comment>Get-Help about_Pipeline_Chain_Operators</comment>
     <definition>
       <terminal>&amp;&amp;</terminal>
     </definition>
@@ -1278,6 +1281,7 @@
   </rule>
 
   <rule name="Pipeline">
+    <comment>Get-Help about_Pipelines</comment>
     <definition>
       <comment>CommandExpression</comment>
       <nonterminal name="Expression"/>
@@ -1309,7 +1313,7 @@
 
   <rule name="Redirection">
     <comment>
-      see SMAL.RedirectionToken,
+      see SMAL.RedirectionToken, Get-Help about_Redirection,
       see also &lt;span class="terminal"
       style="color:black"&gt;Out-File &lt;/span&gt;
       and &lt;span class="terminal"
@@ -1406,6 +1410,7 @@
     </definition>
   </rule>
   <rule name="CommandElement">
+    <comment>Get-Help about_Parameters, Get-Help about_Parameters_Default_Values</comment>
     <definition>
       <nonterminal name="CommandParameter"/>
     </definition>
@@ -1423,10 +1428,9 @@
     </definition>
   </rule>
   <rule name="CommandParameter">
-    <comment>
-      see SMAL.ParameterToken, Get-Help about_CommonParameters
-    </comment>
+    <comment>Get-Help about_CommonParameters</comment>
     <definition>
+      <comment>see SMAL.ParameterToken</comment>
       <terminal type="regular">-[\p{L}\p{Nd}_?]+</terminal>
     </definition>
   </rule>
@@ -1502,6 +1506,7 @@
     </definition>
   </rule>
   <rule name="LogicalOperator">
+    <comment>Get-Help about_Logical_Operators</comment>
     <definition>
       <terminal type="case-insensitive">-and</terminal>
       <terminal type="case-insensitive">-or</terminal>
@@ -1551,16 +1556,7 @@
       </repeated>
     </definition>
     <definition>
-      <nonterminal name="NullCoalesceExpression"/>
-      <repeated>
-        <optional>
-          <terminal type="case-insensitive">-split</terminal>
-          <nonterminal name="␤"/>
-          <nonterminal name="NullCoalesceExpression"/>
-        </optional>
-      </repeated>
-    </definition>
-    <definition>
+      <comment>Get-Help about_Join</comment>
       <nonterminal name="NullCoalesceExpression"/>
       <repeated>
         <optional>
@@ -1570,8 +1566,20 @@
         </optional>
       </repeated>
     </definition>
+    <definition>
+      <comment>Get-Help about_Split</comment>
+      <nonterminal name="NullCoalesceExpression"/>
+      <repeated>
+        <optional>
+          <terminal type="case-insensitive">-split</terminal>
+          <nonterminal name="␤"/>
+          <nonterminal name="NullCoalesceExpression"/>
+        </optional>
+      </repeated>
+    </definition>
   </rule>
   <rule name="TypeOperator">
+    <comment>Get-Help about_Type_Operators</comment>
     <definition>
       <comment>
         object compared to type reference
@@ -1786,9 +1794,12 @@
       <terminal>--</terminal>
     </definition>
     <definition>
-      <comment>unary operator</comment>
-      <terminal type="case-insensitive">-split</terminal>
+      <comment>Get-Help about_Join</comment>
       <terminal type="case-insensitive">-join</terminal>
+    </definition>
+    <definition>
+      <comment>Get-Help about_Split</comment>
+      <terminal type="case-insensitive">-split</terminal>
     </definition>
     <definition>
       <comment>creates array with one member</comment>
@@ -1891,6 +1902,7 @@
   </rule>
 
   <rule name="Hashtable">
+    <comment>Get-Help about_Hash_Tables</comment>
     <definition>
       <optional>
         <terminal type="case-insensitive">[ordered]</terminal>
@@ -2086,7 +2098,7 @@
   </rule>
 
   <rule name="String">
-    <comment>see SMAL.StringToken</comment>
+    <comment>see SMAL.StringToken, Get-Help about_Quoting_Rules</comment>
     <definition>
       <comment>see SMAL.StringLiteralToken</comment>
       <terminal>'</terminal>
@@ -2094,7 +2106,7 @@
       <terminal>'</terminal>
     </definition>
     <definition>
-      <comment>see SMAL.StringExpandableToken</comment>
+      <comment>see SMAL.StringExpandableToken, Get-Help about_Special_Characters</comment>
       <terminal>"</terminal>
       <terminal type="regular">.*</terminal>
       <terminal>"</terminal>
