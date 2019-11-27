@@ -30,9 +30,15 @@
     StatementTerminator &lt;/span&gt;, which is a semicolor or a new line.
   </comment>
 
+  <comment>
+    Get-Help about_Comment_Based_Help, see SMAL.CommentHelpInfo
+  </comment>
+
   <rule name="ScriptBlock">
     <comment>
-      Get-Help about_Script_Blocks, see also &lt;span class="terminal"
+      Get-Help about_Script_Blocks,
+      Get-Help about_Language_Modes,
+      see also &lt;span class="terminal"
       style="color:black"&gt;Invoke-Command &lt;/span&gt;
     </comment>
     <definition>
@@ -168,6 +174,7 @@
   <comment>&lt;b&gt;PARAMETER BLOCK&lt;/b&gt;</comment>
 
   <rule name="ParamBlock">
+    <comment>Cannot be used if arguments were specified in the FunctionDeclaration.</comment>
     <definition>
       <nonterminal name="␤"/>
       <repeated>
@@ -198,6 +205,7 @@
       <terminal>]</terminal>
     </definition>
     <definition>
+      <comment>Get-Help about_Ref</comment>
       <nonterminal name="TypeLiteral"/>
     </definition>
   </rule>
@@ -290,6 +298,7 @@
     </definition>
   </rule>
   <rule name="NamespaceTypeName">
+    <comment>Company.(Product|Technology)[.Feature][.Subnamespace]</comment>
     <definition>
       <optional>
         <nonterminal name="NamespaceSpec"/>
@@ -418,12 +427,23 @@
       <terminal type="case-insensitive">dynamicparam</terminal>
     </definition>
     <definition>
+      <comment>
+        Runs one time before any objects are received from the pipeline.
+      </comment>
       <terminal type="case-insensitive">begin</terminal>
     </definition>
     <definition>
+      <comment>
+        Runs one time for each element received from the pipeline. &lt;br/&gt;
+        If the pipeline provides no objects, the statement block does not run. &lt;br/&gt;
+        If the command is the first command in the pipeline, the statement block runs one time.
+      </comment>
       <terminal type="case-insensitive">process</terminal>
     </definition>
     <definition>
+      <comment>
+        Runs one time after all the objects have been received from the pipeline.
+      </comment>
       <terminal type="case-insensitive">end</terminal>
     </definition>
   </rule>
@@ -464,23 +484,21 @@
       <nonterminal name="BlockStatement"/>
     </definition>
     <definition>
-      <comment>mainly used for internationalization</comment>
+      <comment>Get-Help about_Data_Sections, Get-Help about_Script_Internationalization</comment>
       <nonterminal name="DataStatement"/>
     </definition>
     <definition>
       <nonterminal name="TypeDefinition"/>
     </definition>
     <definition>
-      <nonterminal name="FunctionDefinition"/>
+      <nonterminal name="FunctionDeclaration"/>
     </definition>
     <definition>
       <nonterminal name="IfStatement"/>
     </definition>
     <definition>
-      <comment>No whitespace after colon!</comment>
       <optional>
-        <terminal>:</terminal>
-        <nonterminal name="LabelExpression"/>
+        <nonterminal name="Label"/>
       </optional>
       <nonterminal name="LabeledStatement"/>
     </definition>
@@ -539,6 +557,7 @@
   </rule>
 
   <rule name="BlockStatement">
+    <comment>used only in workflows</comment>
     <definition>
       <terminal type="case-insensitive">parallel</terminal>
       <nonterminal name="StatementBlock"/>
@@ -548,6 +567,7 @@
       <nonterminal name="StatementBlock"/>
     </definition>
     <definition>
+      <comment>runs in its own process, out of workflow process</comment>
       <terminal type="case-insensitive">inlinescript</terminal>
       <nonterminal name="ScriptBlock"/>
     </definition>
@@ -556,11 +576,12 @@
   <comment>&lt;b&gt;DATA AND TYPE DEFINITIONS&lt;/b&gt;</comment>
 
   <rule name="DataStatement">
-    <comment>Get-Help about_Data_Sections, Get-Help about_Script_Internationalization</comment>
     <definition>
       <terminal type="case-insensitive">data</terminal>
-      <nonterminal name="␤"/>
-      <nonterminal name="SimpleName"/>
+      <optional>
+        <nonterminal name="␤"/>
+        <nonterminal name="SimpleName"/>
+      </optional>
       <optional>
         <nonterminal name="␤"/>
         <terminal type="case-insensitive">-supportedcommand</terminal>
@@ -721,7 +742,9 @@
       <terminal type="case-insensitive">private</terminal>
     </definition>
     <definition>
-      <comment>Get-Help about_Hidden</comment>
+      <comment>
+        Hides member from Get-Member, from IntelliSense, and from tab completion results.
+        &lt;br/&gt; Get-Help about_Hidden</comment>
       <terminal type="case-insensitive">hidden</terminal>
     </definition>
     <definition>
@@ -744,7 +767,10 @@
   </rule>
   <rule name="FunctionMember">
     <definition>
-      <comment>Constructors have the same name as the class.</comment>
+      <comment>
+        Constructor name is the same as the class name. &lt;br/&gt;
+        Constructors do not have attributes.
+      </comment>
       <nonterminal name="␤"/>
       <nonterminal name="SimpleName"/>
       <nonterminal name="␤"/>
@@ -757,9 +783,7 @@
       <optional>
       <nonterminal name="BaseConstructorCall"/>
       </optional>
-      <terminal>{</terminal>
-      <nonterminal name="Script"/>
-      <terminal>}</terminal>
+      <nonterminal name="StatementBlock"/>
     </definition>
   </rule>
   <rule name="BaseConstructorCall">
@@ -781,9 +805,10 @@
     </definition>
   </rule>
 
-  <rule name="FunctionDefinition">
+  <rule name="FunctionDeclaration">
     <comment>Get-Help about_Functions*, Get-Help about_Ref</comment>
     <definition>
+      <comment>VariablePath is the scope the function belongs to.</comment>
       <nonterminal name="Declarator"/>
       <nonterminal name="␤"/>
       <optional>
@@ -798,9 +823,7 @@
         <nonterminal name="␤"/>
         <terminal>)</terminal>
       </optional>
-      <terminal>{</terminal>
-      <nonterminal name="Script"/>
-      <terminal>}</terminal>
+      <nonterminal name="ScriptBlock"/>
     </definition>
   </rule>
   <rule name="Declarator">
@@ -812,6 +835,7 @@
       <terminal type="case-insensitive">function</terminal>
     </definition>
     <definition>
+      <comment>It has the same effect as a function that contains only a process block.</comment>
       <terminal type="case-insensitive">filter</terminal>
     </definition>
     <definition>
@@ -855,13 +879,10 @@
     </definition>
   </rule>
 
-  <rule name="LabelExpression">
+  <rule name="Label">
+    <comment>see SMAL.LabelToken</comment>
     <definition>
-      <comment>see SMAL.LabelToken</comment>
-      <nonterminal name="SimpleName"/>
-    </definition>
-    <definition>
-      <nonterminal name="UnaryExpression"/>
+      <terminal type="regular">:[\p{L}\p{Nd}_]+</terminal>
     </definition>
   </rule>
   <rule name="LabeledStatement">
@@ -898,6 +919,11 @@
       <terminal type="case-insensitive">-regex</terminal>
     </definition>
     <definition>
+      <comment>
+        * matches zero or more character &lt;br/&gt;
+        ? matches one character in that position &lt;br/&gt;
+        [] matches the listed characters or range
+      </comment>
       <terminal type="case-insensitive">-wildcard</terminal>
     </definition>
     <definition>
@@ -953,10 +979,9 @@
     </definition>
     <definition>
       <comment>
-        Only one &lt;span class="terminal"
-        style="color:black"&gt;default &lt;/span&gt;
-        clause is allowed in a &lt;span class="terminal"
-        style="color:black"&gt;switch &lt;/span&gt; statement.
+        A &lt;span class="terminal" style="color:black"&gt;switch &lt;/span&gt;
+        statement can have only one &lt;span class="terminal"
+        style="color:black"&gt;default &lt;/span&gt; clause.
       </comment>
       <terminal>default</terminal>
     </definition>
@@ -1158,6 +1183,14 @@
       <optional>
         <nonterminal name="PipelineChain"/>
       </optional>
+    </definition>
+  </rule>
+  <rule name="LabelExpression">
+    <definition>
+      <nonterminal name="SimpleName"/>
+    </definition>
+    <definition>
+      <nonterminal name="UnaryExpression"/>
     </definition>
   </rule>
 
@@ -1422,6 +1455,10 @@
       <nonterminal name="CommandParameter"/>
       <terminal>:</terminal>
       <nonterminal name="CommandArgument"/>
+    </definition>
+    <definition>
+      <comment>Get-Help about_Splatting</comment>
+      <terminal type="regular">@[\p{L}\p{Nd}_?]+</terminal>
     </definition>
     <definition>
       <nonterminal name="Redirection"/>
@@ -1871,7 +1908,9 @@
       <comment>ScriptBlockExpression (anonymous)</comment>
       <terminal>{</terminal>
       <nonterminal name="␤"/>
-      <nonterminal name="Script"/>
+      <optional>
+        <nonterminal name="Script"/>
+      </optional>
       <nonterminal name="␤"/>
       <terminal>}</terminal>
     </definition>
@@ -2113,19 +2152,15 @@
     </definition>
     <definition>
       <comment>literal multiline here-string</comment>
-      <terminal>@'</terminal>
-      <nonterminal name="LineBreak"/>
+      <terminal>@'␤</terminal>
       <terminal type="regular">.*</terminal>
-      <nonterminal name="LineBreak"/>
-      <terminal>'@</terminal>
+      <terminal>␤'@</terminal>
     </definition>
     <definition>
       <comment>expandable multiline here-string</comment>
-      <terminal>@"</terminal>
-      <nonterminal name="LineBreak"/>
+      <terminal>@"␤</terminal>
       <terminal type="regular">.*</terminal>
-      <nonterminal name="LineBreak"/>
-      <terminal>"@</terminal>
+      <terminal>␤"@</terminal>
     </definition>
   </rule>
 </syntax>
