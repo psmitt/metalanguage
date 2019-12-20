@@ -704,6 +704,7 @@
     </definition>
   </rule>
   <rule name="Member">
+    <comment>[System.Enum]::GetNames('System.Reflection.MemberTypes')</comment>
     <definition>
       <comment>
         [System.Enum]::GetNames('SMAL.PropertyAttributes')

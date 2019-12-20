@@ -1,3 +1,5 @@
+## 0.4.0 - Examples added, HTML version moved to psmitt.github.io
+
 ## 0.3.0 - GitHub repository recreated due to publishing errors
 
 ## 0.2.0 - XML-based syntax template for maximum readability and fast learning
